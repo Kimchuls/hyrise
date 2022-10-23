@@ -24,9 +24,9 @@
 #include "storage/table.hpp"
 #include "utils/load_table.hpp"
 
-using namespace opossum::expression_functional;  // NOLINT
+using namespace hyrise::expression_functional;  // NOLINT
 
-namespace opossum {
+namespace hyrise {
 
 class ExpressionEvaluatorToValuesTest : public BaseTest {
  public:
@@ -609,7 +609,7 @@ TEST_F(ExpressionEvaluatorToValuesTest, InSubqueryUncorrelatedWithPrecalculated)
 TEST_F(ExpressionEvaluatorToValuesTest, InSubqueryUncorrelatedWithBrokenPrecalculated) {
   // Make sure the expression evaluator complains if it has been given a list of preevaluated sub queries but one is
   // missing
-  if (!HYRISE_DEBUG) {
+  if constexpr (!HYRISE_DEBUG) {
     GTEST_SKIP();
   }
 
@@ -861,4 +861,4 @@ TEST_F(ExpressionEvaluatorToValuesTest, CastNullableStrings) {
                                        {12, std::nullopt, 1234, std::nullopt}));
 }
 
-}  // namespace opossum
+}  // namespace hyrise

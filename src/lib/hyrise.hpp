@@ -3,6 +3,7 @@
 #include <boost/container/pmr/memory_resource.hpp>
 
 #include "concurrency/transaction_manager.hpp"
+#include "rdma/rdma.h"
 #include "scheduler/immediate_execution_scheduler.hpp"
 #include "scheduler/topology.hpp"
 #include "sql/sql_plan_cache.hpp"
@@ -36,6 +37,9 @@ class Hyrise : public Singleton<Hyrise> {
 
   void set_scheduler(const std::shared_ptr<AbstractScheduler>& new_scheduler);
 
+  char* RDMA_Read();
+  void RDMA_Write(char* data, uint64_t length);
+
   // The order of these members is important because it defines in which order their destructors are called.
   // For example, the StorageManager's destructor should not be called before the PluginManager's destructor.
   // The latter stops all plugins which, in turn, might access tables during their shutdown procedure. This
@@ -47,6 +51,8 @@ class Hyrise : public Singleton<Hyrise> {
   SettingsManager settings_manager;
   LogManager log_manager;
   Topology topology;
+  RDMA_Manager rdma_manager_1;
+  RDMA_Manager rdma_manager_2;
 
   // Plan caches used by the SQLPipelineBuilder if `with_{l/p}qp_cache()` are not used. Both default caches can be
   // nullptr themselves. If both default_{l/p}qp_cache and _{l/p}qp_cache are nullptr, no plan caching is used.

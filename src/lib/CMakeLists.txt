@@ -329,6 +329,8 @@ set(
     optimizer/strategy/stored_table_column_alignment_rule.hpp
     optimizer/strategy/subquery_to_join_rule.cpp
     optimizer/strategy/subquery_to_join_rule.hpp
+    rdma/rdma.cpp
+    rdma/rdma.h
     resolve_type.hpp
     scheduler/abstract_scheduler.cpp
     scheduler/abstract_scheduler.hpp
@@ -457,14 +459,14 @@ set(
     storage/frame_of_reference_segment/frame_of_reference_segment_iterable.hpp
     storage/index/abstract_index.cpp
     storage/index/abstract_index.hpp
-    storage/index/adaptive_radix_tree/adaptive_radix_tree_index.cpp
-    storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp
-    storage/index/adaptive_radix_tree/adaptive_radix_tree_nodes.cpp
-    storage/index/adaptive_radix_tree/adaptive_radix_tree_nodes.hpp
-    storage/index/b_tree/b_tree_index.cpp
-    storage/index/b_tree/b_tree_index.hpp
-    storage/index/b_tree/b_tree_index_impl.cpp
-    storage/index/b_tree/b_tree_index_impl.hpp
+    # storage/index/adaptive_radix_tree/adaptive_radix_tree_index.cpp
+    # storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp
+    # storage/index/adaptive_radix_tree/adaptive_radix_tree_nodes.cpp
+    # storage/index/adaptive_radix_tree/adaptive_radix_tree_nodes.hpp
+    # storage/index/b_tree/b_tree_index.cpp
+    # storage/index/b_tree/b_tree_index.hpp
+    # storage/index/b_tree/b_tree_index_impl.cpp
+    # storage/index/b_tree/b_tree_index_impl.hpp
     storage/index/group_key/composite_group_key_index.cpp
     storage/index/group_key/composite_group_key_index.hpp
     storage/index/group_key/group_key_index.cpp
@@ -653,6 +655,7 @@ set(
 set(
     LIBRARIES
     compact_vector
+    ibverbs
     lz4
     magic_enum
     sqlparser

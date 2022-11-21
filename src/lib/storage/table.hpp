@@ -186,7 +186,8 @@ class Table : private Noncopyable {
   std::vector<IndexStatistics> indexes_statistics() const;
 
   template <typename Index>
-  void create_index(const std::vector<ColumnID>& column_ids, const std::string& name = "") {
+  void create_index(const std::vector<ColumnID>& column_ids, const std::string& table_name = "",
+                    const std::string& name = "") {
     SegmentIndexType index_type = get_index_type_of<Index>();
 
     const auto chunk_count = _chunks.size();
@@ -194,7 +195,7 @@ class Table : private Noncopyable {
       auto chunk = std::atomic_load(&_chunks[chunk_id]);
       Assert(chunk, "Physically deleted chunk should not reach this point, see get_chunk / #1686.");
 
-      chunk->create_index<Index>(column_ids);
+      chunk->create_index<Index>(column_ids, table_name, chunk_id);
     }
     IndexStatistics index_statistics = {column_ids, name, index_type};
     _indexes.emplace_back(index_statistics);

@@ -11,6 +11,10 @@
 
 #include "abstract_segment.hpp"
 #include "index/abstract_index.hpp"
+#include "index/group_key/composite_group_key_index.hpp"
+#include "index/group_key/group_key_index.hpp"
+// #include "index/b_tree/b_tree_index.hpp"
+// #include "index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "reference_segment.hpp"
 #include "resolve_type.hpp"
 #include "storage/segment_iterate.hpp"
@@ -97,6 +101,47 @@ std::shared_ptr<MvccData> Chunk::mvcc_data() const {
   return _mvcc_data;
 }
 
+template <typename Index>
+void Chunk::add_index_es_() {
+  // auto index1 =
+  //     std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+
+  // _indexes.emplace_back(x);
+}
+
+std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(
+    const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
+    const std::string& table_name, const ChunkID& chunk_id) {
+  auto result = std::vector<std::shared_ptr<AbstractIndex>>();
+  if (_indexes.size() == 0) {
+    auto index1 =
+        std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+    if (index1 != nullptr)
+      _indexes.emplace_back(index1);
+    auto index2 =
+        std::shared_ptr<CompositeGroupKeyIndex>(new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+    if (index2 != nullptr)
+      _indexes.emplace_back(index2);
+    // auto index3 =
+    //     std::shared_ptr<BTreeIndex>(new BTreeIndex(table_name, chunk_id, SegmentIndexType::BTree, column_ids));
+    // if (index1 != nullptr)
+    //   _indexes.emplace_back(index3);
+    // auto index4 =
+    //     std::shared_ptr<AdaptiveRadixTreeIndex>(new AdaptiveRadixTreeIndex(table_name, chunk_id, SegmentIndexType::AdaptiveRadixTree, column_ids));
+    // if (index4 != nullptr)
+    //   _indexes.emplace_back(index4);
+  }
+  std::copy_if(_indexes.cbegin(), _indexes.cend(), std::back_inserter(result),
+               [&](const auto& index) { return index->is_index_for(segments); });
+  return result;
+}
+
+std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(const std::vector<ColumnID>& column_ids,
+                                                               const std::string& table_name, const ChunkID& chunk_id) {
+  auto segments = _get_segments_for_ids(column_ids);
+  return get_indexes(segments, column_ids, table_name, chunk_id);
+}
+
 std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(
     const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const {
   auto result = std::vector<std::shared_ptr<AbstractIndex>>();
@@ -134,7 +179,6 @@ std::shared_ptr<AbstractIndex> Chunk::get_index(
   auto index_it = std::find_if(_indexes.cbegin(), _indexes.cend(), [&](const auto& index) {
     return index->is_index_for(segments) && index->type() == index_type;
   });
-
   return (index_it == _indexes.cend()) ? nullptr : *index_it;
 }
 
@@ -142,6 +186,33 @@ std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_typ
                                                 const std::vector<ColumnID>& column_ids) const {
   auto segments = _get_segments_for_ids(column_ids);
   return get_index(index_type, segments);
+}
+
+template <typename Index>
+std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_type,
+                                                const std::vector<std::shared_ptr<const AbstractSegment>>& segments,
+                                                const std::vector<ColumnID>& column_ids, const std::string& table_name,
+                                                const ChunkID& chunk_id) const {
+  auto index_it = std::find_if(_indexes.cbegin(), _indexes.cend(), [&](const auto& index) {
+    return index->is_index_for(segments) && index->type() == index_type;
+  });
+  if (index_it == _indexes.cend()) {
+    auto index = std::make_shared<Index>(table_name, chunk_id, index_type, column_ids);
+    _indexes.emplace_back(index);
+    return *index;
+  } else {
+    return *index_it;
+  }
+
+  // return (index_it == _indexes.cend()) ? nullptr : *index_it;
+}
+
+template <typename Index>
+std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_type,
+                                                const std::vector<ColumnID>& column_ids, const std::string& table_name,
+                                                const ChunkID& chunk_id) const {
+  auto segments = _get_segments_for_ids(column_ids);
+  return get_index<Index>(index_type, segments, column_ids, table_name, chunk_id);
 }
 
 void Chunk::remove_index(const std::shared_ptr<AbstractIndex>& index) {

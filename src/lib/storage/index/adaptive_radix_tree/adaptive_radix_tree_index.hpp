@@ -44,6 +44,8 @@ class AdaptiveRadixTreeIndex : public AbstractIndex {
   static size_t estimate_memory_consumption(ChunkOffset row_count, ChunkOffset distinct_count, uint32_t value_bytes);
 
   explicit AdaptiveRadixTreeIndex(const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index);
+  explicit AdaptiveRadixTreeIndex(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                      const std::vector<ColumnID>& column_ids);
 
   AdaptiveRadixTreeIndex(AdaptiveRadixTreeIndex&&) = default;
 

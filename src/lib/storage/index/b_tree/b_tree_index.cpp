@@ -10,6 +10,10 @@ size_t BTreeIndex::estimate_memory_consumption(ChunkOffset row_count, ChunkOffse
   Fail("BTreeIndex::estimate_memory_consumption() is not implemented yet");
 }
 
+BTreeIndex::BTreeIndex(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                       const std::vector<ColumnID>& column_ids)
+    : AbstractIndex{get_index_type_of<BTreeIndex>()} {}
+
 BTreeIndex::BTreeIndex(const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index)
     : AbstractIndex{get_index_type_of<BTreeIndex>()},
       // Empty segment list is illegal but range check needed for accessing the first segment

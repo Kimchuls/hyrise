@@ -54,7 +54,8 @@ class VariableLengthKeyStore {
    * each entry.
    */
   explicit VariableLengthKeyStore(ChunkOffset size, CompositeKeyLength bytes_per_key);
-
+  explicit VariableLengthKeyStore(CompositeKeyLength bytes_per_key, CompositeKeyLength key_alignment,
+                                               size_t data_size);
   /**
    * Mimics the operator[] as used in std::vector with the difference that proxy objects are returned instead of
    * references. Although proxy objects are returned, they can be nearly used as if they would be references to
@@ -99,7 +100,7 @@ class VariableLengthKeyStore {
   const_iterator cbegin() const;
   const_iterator cend() const;
 
- private:
+ public:
   CompositeKeyLength _bytes_per_key;
   CompositeKeyLength _key_alignment;
   std::vector<VariableLengthKeyWord> _data;

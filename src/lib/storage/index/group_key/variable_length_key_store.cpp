@@ -15,6 +15,12 @@ VariableLengthKeyStore::VariableLengthKeyStore(ChunkOffset size, CompositeKeyLen
       static_cast<std::vector<VariableLengthKeyWord>::size_type>(size * _key_alignment));
 }
 
+VariableLengthKeyStore::VariableLengthKeyStore(CompositeKeyLength bytes_per_key, CompositeKeyLength key_alignment,
+                                               size_t data_size)
+    : _bytes_per_key(bytes_per_key), _key_alignment(key_alignment) {
+  _data = std::vector<VariableLengthKeyWord>(static_cast<std::vector<VariableLengthKeyWord>::size_type>(data_size));
+}
+
 VariableLengthKeyProxy VariableLengthKeyStore::operator[](ChunkOffset position) {
   return VariableLengthKeyProxy(_data.data() + static_cast<size_t>(position) * _key_alignment, _bytes_per_key);
 }

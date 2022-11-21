@@ -365,7 +365,7 @@ namespace hyrise
         else
         {
             /* CQE found */
-            fprintf(stdout, "completion was found in CQ with status 0x%x\n", wc.status);
+            // fprintf(stdout, "completion was found in CQ with status 0x%x\n", wc.status);
             /* check the completion status (here we don't care about the completion opcode */
             if (wc.status != IBV_WC_SUCCESS)
             {

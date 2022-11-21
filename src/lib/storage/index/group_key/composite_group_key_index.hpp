@@ -10,7 +10,7 @@
 #include "variable_length_key_store.hpp"
 
 namespace hyrise {
-
+#define ART_INDEX_SIZE 1024 * 1024 * 1024
 class CompositeGroupKeyIndexTest;
 class BaseDictionarySegment;
 
@@ -53,6 +53,70 @@ class CompositeGroupKeyIndex : public AbstractIndex {
   CompositeGroupKeyIndex(CompositeGroupKeyIndex&&) = default;
 
   explicit CompositeGroupKeyIndex(const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index);
+
+  explicit CompositeGroupKeyIndex(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                                  const std::vector<ColumnID>& column_ids);
+  void _serialization();
+  void _deserialization();
+  void send_RDMA(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                 const std::vector<ColumnID>& column_ids);
+  char* _serialize;
+  uint64_t _serialize_length;
+
+  // Writes a shallow copy of the given value to the ofstream
+  template <typename T>
+  void export_value(char* pointer, uint64_t& length, const T& value);
+  template <typename T, typename Alloc>
+  void export_values(char* pointer, uint64_t& length, const std::vector<T, Alloc>& values);
+  void export_values(char* pointer, uint64_t& length, const FixedStringVector& values);
+  void export_string_values(char* pointer, uint64_t& length, const pmr_vector<pmr_string>& values);
+  template <typename T>
+  void export_values(char* pointer, uint64_t& length, const pmr_vector<pmr_string>& values);
+  template <typename Alloc>
+  void export_values(char* pointer, uint64_t& length, const std::vector<bool, Alloc>& values);
+  void _export_compact_vector(char* pointer, uint64_t& length, const pmr_compact_vector& values);
+  template <typename T>
+  pmr_vector<T> _read_values(char* pointer, uint64_t& length, const size_t count);
+  template <typename T>
+  T _read_value(char* pointer, uint64_t& length);
+  pmr_vector<pmr_string> _read_string_values(char* pointer, uint64_t& length, const size_t count);
+  template <typename T>
+  pmr_compact_vector _read_values_compact_vector(char* pointer, uint64_t& length, const size_t count);
+  std::shared_ptr<BaseCompressedVector> _import_attribute_vector(
+      char* pointer, uint64_t& length, const size_t row_count, const CompressedVectorTypeID compressed_vector_type_id);
+  template <typename T>
+  std::shared_ptr<ValueSegment<T>> _import_value_segment(char* pointer, uint64_t& index);
+  template <typename T>
+  std::shared_ptr<DictionarySegment<T>> _import_dictionary_segment(char* pointer, uint64_t& index);
+  std::shared_ptr<FixedStringDictionarySegment<pmr_string>> _import_fixed_string_dictionary_segment(char* pointer,
+                                                                                                    uint64_t& index);
+  template <typename T>
+  std::shared_ptr<RunLengthSegment<T>> _import_run_length_segment(char* pointer, uint64_t& index);
+  template <typename T>
+  std::shared_ptr<FrameOfReferenceSegment<T>> _import_frame_of_reference_segment(char* pointer, uint64_t& index);
+  template <typename T>
+  std::shared_ptr<LZ4Segment<T>> _import_lz4_segment(char* pointer, uint64_t& index);
+  template <typename ColumnDataType>
+  std::shared_ptr<AbstractSegment> _import_segment(char* pointer, uint64_t& index, EncodingType column_type);
+  template <typename T>
+  CompressedVectorTypeID _compressed_vector_type_id(const AbstractEncodedSegment& abstract_encoded_segment);
+  void _export_compressed_vector(char* pointer, uint64_t& length, const CompressedVectorType type,
+                                 const BaseCompressedVector& compressed_vector);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length, const DictionarySegment<T>& dictionary_segment);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length, const ValueSegment<T>& value_segment);
+  void _write_segment(char* _serialize, uint64_t& _serialize_length, const ReferenceSegment& reference_segment);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length, const LZ4Segment<T>& lz4_segment);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length, const RunLengthSegment<T>& run_length_segment);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length,
+                      const FrameOfReferenceSegment<T>& frame_of_reference_segment);
+  template <typename T>
+  void _write_segment(char* _serialize, uint64_t& _serialize_length,
+                      const FixedStringDictionarySegment<T>& fixed_string_dictionary_segment);
 
  private:
   Iterator _lower_bound(const std::vector<AllTypeVariant>& values) const final;

@@ -26,6 +26,8 @@ class BTreeIndex : public AbstractIndex {
 
   BTreeIndex() = delete;
   explicit BTreeIndex(const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index);
+  explicit BTreeIndex(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                      const std::vector<ColumnID>& column_ids);
 
  protected:
   Iterator _lower_bound(const std::vector<AllTypeVariant>& values) const override;

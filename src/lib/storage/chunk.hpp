@@ -91,14 +91,36 @@ class Chunk : private Noncopyable {
       const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const;
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(const std::vector<ColumnID>& column_ids) const;
 
+  template <typename Index>
+  void add_index_es_();
+
+  std::vector<std::shared_ptr<AbstractIndex>> get_indexes(
+      const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
+      const std::string& table_name, const ChunkID& chunk_id) ;
+
+  std::vector<std::shared_ptr<AbstractIndex>> get_indexes(const std::vector<ColumnID>& column_ids,
+                                                          const std::string& table_name, const ChunkID& chunk_id) ;
+
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const;
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<ColumnID>& column_ids) const;
 
   template <typename Index>
+  std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
+                                           const std::vector<std::shared_ptr<const AbstractSegment>>& segments,
+                                           const std::vector<ColumnID>& column_ids, const std::string& table_name,
+                                           const ChunkID& chunk_id) const;
+  template <typename Index>
+  std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type, const std::vector<ColumnID>& column_ids,
+                                           const std::string& table_name, const ChunkID& chunk_id) const;
+
+  template <typename Index>
   std::shared_ptr<AbstractIndex> create_index(
-      const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index) {
+      const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index,
+      const std::vector<ColumnID>& column_ids = std::vector<ColumnID>{}, const std::string& table_name = "",
+      const ChunkID& chunk_id = ChunkID{0}) {
+    SegmentIndexType index_type = get_index_type_of<Index>();
     DebugAssert(([&]() {
                   for (auto segment : segments_to_index) {
                     const auto segment_it = std::find(_segments.cbegin(), _segments.cend(), segment);
@@ -111,14 +133,20 @@ class Chunk : private Noncopyable {
                 "All segments must be part of the chunk.");
 
     auto index = std::make_shared<Index>(segments_to_index);
-    _indexes.emplace_back(index);
+
+    index->send_RDMA(table_name, chunk_id, index_type, column_ids);
+    auto index2 = std::make_shared<Index>(table_name, chunk_id, index_type, column_ids);
+    // _indexes.emplace_back(index2);
+    _indexes_serialize.emplace_back(index->_serialize);
     return index;
   }
 
   template <typename Index>
-  std::shared_ptr<AbstractIndex> create_index(const std::vector<ColumnID>& column_ids) {
+  std::shared_ptr<AbstractIndex> create_index(const std::vector<ColumnID>& column_ids,
+                                              const std::string& table_name = "",
+                                              const ChunkID& chunk_id = ChunkID{0}) {
     const auto segments = _get_segments_for_ids(column_ids);
-    return create_index<Index>(segments);
+    return create_index<Index>(segments, column_ids, table_name, chunk_id);
   }
 
   void remove_index(const std::shared_ptr<AbstractIndex>& index);
@@ -195,6 +223,7 @@ class Chunk : private Noncopyable {
       const std::vector<ColumnID>& column_ids) const;
 
  private:
+  std::vector<char*> _indexes_serialize;
   PolymorphicAllocator<Chunk> _alloc;
   Segments _segments;
   std::shared_ptr<MvccData> _mvcc_data;

@@ -37,8 +37,8 @@ class Hyrise : public Singleton<Hyrise> {
 
   void set_scheduler(const std::shared_ptr<AbstractScheduler>& new_scheduler);
 
-  char* RDMA_Read();
-  void RDMA_Write(char* data, uint64_t length);
+  char* RDMA_Read(char* data1, uint64_t length1);
+  void RDMA_Write(char* data1, uint64_t length1, char* data2, uint64_t length2);
 
   // The order of these members is important because it defines in which order their destructors are called.
   // For example, the StorageManager's destructor should not be called before the PluginManager's destructor.

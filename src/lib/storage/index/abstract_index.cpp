@@ -27,7 +27,16 @@ size_t AbstractIndex::estimate_memory_consumption(SegmentIndexType type, ChunkOf
   Fail("GCC thinks this is reachable.");
 }
 
-AbstractIndex::AbstractIndex(const SegmentIndexType type) : _type{type} {}
+void AbstractIndex::send_RDMA(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                 const std::vector<ColumnID>& column_ids){
+    printf("If this line shows, the child class of Index does not define send_RDMA function.\n");}
+
+void AbstractIndex::read_RDMA(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                 const std::vector<ColumnID>& column_ids){
+    printf("If this line shows, the child class of Index does not define read_RDMA function.\n");}
+
+AbstractIndex::AbstractIndex(const SegmentIndexType type)
+    : _type{type} {}
 
 bool AbstractIndex::is_index_for(const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const {
   auto indexed_segments = _get_indexed_segments();

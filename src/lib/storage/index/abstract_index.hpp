@@ -8,6 +8,7 @@
 #include "types.hpp"
 #include "utils/assert.hpp"
 
+#define SIZE_DATA1 1024
 namespace hyrise {
 
 class AbstractSegment;
@@ -146,6 +147,13 @@ class AbstractIndex : private Noncopyable {
    * Returns the memory consumption of this Index in bytes
    */
   size_t memory_consumption() const;
+
+  void send_RDMA(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                 const std::vector<ColumnID>& column_ids);
+                 void read_RDMA(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                 const std::vector<ColumnID>& column_ids);
+  char* _serialize;
+  uint64_t _serialize_length;
 
  protected:
   /**

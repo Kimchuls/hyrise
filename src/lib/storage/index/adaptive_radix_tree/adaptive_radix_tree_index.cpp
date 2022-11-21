@@ -21,6 +21,9 @@ size_t AdaptiveRadixTreeIndex::estimate_memory_consumption(ChunkOffset row_count
   Fail("AdaptiveRadixTreeIndex::estimate_memory_consumption() is not implemented yet");
 }
 
+explicit AdaptiveRadixTreeIndex(const std::string& table_name, const ChunkID& chunk_id, SegmentIndexType index_type,
+                      const std::vector<ColumnID>& column_ids): AbstractIndex{get_index_type_of<AdaptiveRadixTreeIndex>()}{}
+
 AdaptiveRadixTreeIndex::AdaptiveRadixTreeIndex(
     const std::vector<std::shared_ptr<const AbstractSegment>>& segments_to_index)
     : AbstractIndex{get_index_type_of<AdaptiveRadixTreeIndex>()},

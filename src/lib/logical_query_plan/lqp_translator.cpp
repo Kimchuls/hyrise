@@ -66,6 +66,9 @@
 #include "projection_node.hpp"
 #include "sort_node.hpp"
 #include "static_table_node.hpp"
+#include "storage/index/abstract_index.hpp"
+#include "storage/index/group_key/composite_group_key_index.hpp"
+#include "storage/index/group_key/group_key_index.hpp"
 #include "stored_table_node.hpp"
 #include "union_node.hpp"
 #include "update_node.hpp"
@@ -211,7 +214,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_predicate_node_to_in
     value2_variant = value_expression->value;
   }
 
-  const std::vector<ColumnID> column_ids = {column_id};
+   std::vector<ColumnID> column_ids = {column_id};
   const std::vector<AllTypeVariant> right_values = {value_variant};
   std::vector<AllTypeVariant> right_values2 = {};
   if (value2_variant) {
@@ -224,7 +227,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_predicate_node_to_in
   DebugAssert(std::is_sorted(pruned_chunk_ids.cbegin(), pruned_chunk_ids.cend()),
               "Expected sorted vector of ColumnIDs");
 
-  const auto table_name = stored_table_node->table_name;
+   auto table_name = stored_table_node->table_name;
   const auto table = Hyrise::get().storage_manager.get_table(table_name);
   std::vector<ChunkID> indexed_chunks;
 
@@ -241,9 +244,17 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_predicate_node_to_in
     }
     // Check if chunk has GroupKey index
     const auto chunk = table->get_chunk(chunk_id);
-    if (chunk && chunk->get_index(SegmentIndexType::GroupKey, column_ids)) {
+    if (chunk && chunk->get_index(SegmentIndexType::GroupKey, column_ids, table_name, chunk_id)) {
+    // if (chunk && chunk->get_index(SegmentIndexType::GroupKey, column_ids)) {
       indexed_chunks.emplace_back(pruned_table_chunk_id);
     }
+    // if (chunk) {
+    //   if (chunk->get_index(SegmentIndexType::GroupKey, column_ids)) {
+    //     indexed_chunks.emplace_back(pruned_table_chunk_id);
+    //   } else if (f1(SegmentIndexType::GroupKey, column_ids, table_name, chunk_id)) {
+    //     indexed_chunks.emplace_back(pruned_table_chunk_id);
+    //   }
+    // }
     ++pruned_table_chunk_id;
   }
 
@@ -263,6 +274,35 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_predicate_node_to_in
 
   return std::make_shared<UnionAll>(index_scan, table_scan);
 }
+
+// std::shared_ptr<AbstractIndex> LQPTranslator::f1(SegmentIndexType index_type, std::vector<ColumnID>& column_ids,
+//                                                  std::string& table_name, ChunkID& chunk_id) const {
+//   struct index_info key;
+//   key.table_name = table_name;
+//   key.chunk_id = chunk_id;
+//   key.index_type = static_cast<uint8_t>(index_type);
+//   key.column_ids.assign(column_ids.begin(), column_ids.end());
+//   auto& index_hyrise = Hyrise::get().memory_index;
+//   auto index_find = index_hyrise.find(key);
+//   if (index_find != index_hyrise.end())
+//     return index_find->second;
+//   if (index_type == SegmentIndexType::GroupKey) {
+//     auto index =
+//         std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+//     index_hyrise[key] = index;
+//     return index;
+//   }
+//   if (index_type == SegmentIndexType::CompositeGroupKey) {
+//     auto index = std::shared_ptr<CompositeGroupKeyIndex>(
+//         new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+//     index_hyrise[key] = index;
+//     return index;
+//   }
+//   // //TODO: add btree and art tree index
+//   // std::vector<AllTypeVariant> right_values2 = {};
+//   // right_values2.emplace_back(0);
+//   return nullptr;
+// }
 
 std::shared_ptr<TableScan> LQPTranslator::_translate_predicate_node_to_table_scan(
     const std::shared_ptr<PredicateNode>& node, const std::shared_ptr<AbstractOperator>& input_operator) const {

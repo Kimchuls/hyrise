@@ -75,6 +75,7 @@ void TPCHBenchmarkItemRunner::on_tables_loaded() {
   if (_config->indexes) {
     const auto indexed_column_ids = std::vector<ColumnID>{ColumnID{0}};
     Assert(!first_chunk->get_indexes(indexed_column_ids).empty(), "Index was lost");
+    // Assert(!first_chunk->get_indexes(indexed_column_ids, "orders", ChunkID{0}).empty(), "Index was lost");
   }
   Assert(!orders_table->soft_key_constraints().empty(), "Constraints were lost");
 

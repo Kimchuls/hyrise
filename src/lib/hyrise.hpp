@@ -19,6 +19,35 @@ namespace hyrise {
 class AbstractScheduler;
 class BenchmarkRunner;
 
+struct index_info {
+  std::string table_name;
+  uint32_t chunk_id;
+  uint8_t index_type;
+  std::vector<uint16_t> column_ids;
+
+  inline bool operator<(const index_info& p) const {
+    if (table_name < p.table_name)
+      return true;
+    else if (table_name == p.table_name && chunk_id < p.chunk_id)
+      return true;
+    else if (table_name == p.table_name && chunk_id == p.chunk_id && index_type < p.index_type)
+      return true;
+    else if (table_name == p.table_name && chunk_id == p.chunk_id && index_type == p.index_type &&
+             column_ids.size() < p.column_ids.size())
+      return true;
+    else if (table_name == p.table_name && chunk_id == p.chunk_id && index_type == p.index_type &&
+             column_ids.size() == p.column_ids.size()) {
+      for (int i = 0; i < p.column_ids.size(); i++) {
+        if (column_ids[i] < p.column_ids[i])
+          return true;
+        if (column_ids[i] > p.column_ids[i])
+          return false;
+      }
+    }
+    return false;
+  }
+};
+
 // This should be the only singleton in the src/lib world. It provides a unified way of accessing components like the
 // storage manager, the transaction manager, and more. Encapsulating this in one class avoids the static initialization
 // order fiasco, which would otherwise make the initialization/destruction order hard to control.
@@ -53,6 +82,7 @@ class Hyrise : public Singleton<Hyrise> {
   Topology topology;
   RDMA_Manager rdma_manager_1;
   RDMA_Manager rdma_manager_2;
+  std::map<index_info, std::shared_ptr<AbstractIndex>> memory_index;
 
   // Plan caches used by the SQLPipelineBuilder if `with_{l/p}qp_cache()` are not used. Both default caches can be
   // nullptr themselves. If both default_{l/p}qp_cache and _{l/p}qp_cache are nullptr, no plan caching is used.

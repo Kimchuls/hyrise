@@ -225,6 +225,7 @@ class Table : private Noncopyable {
    */
   const std::vector<ColumnID>& value_clustered_by() const;
   void set_value_clustered_by(const std::vector<ColumnID>& value_clustered_by);
+  std::string _table_name;
 
  protected:
   const TableColumnDefinitions _column_definitions;

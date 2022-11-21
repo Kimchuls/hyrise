@@ -15,6 +15,7 @@
 #include "index/group_key/group_key_index.hpp"
 // #include "index/b_tree/b_tree_index.hpp"
 // #include "index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
+#include "hyrise.hpp"
 #include "reference_segment.hpp"
 #include "resolve_type.hpp"
 #include "storage/segment_iterate.hpp"
@@ -101,38 +102,47 @@ std::shared_ptr<MvccData> Chunk::mvcc_data() const {
   return _mvcc_data;
 }
 
-template <typename Index>
-void Chunk::add_index_es_() {
-  // auto index1 =
-  //     std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
-
-  // _indexes.emplace_back(x);
-}
-
 std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(
     const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
     const std::string& table_name, const ChunkID& chunk_id) {
   auto result = std::vector<std::shared_ptr<AbstractIndex>>();
-  if (_indexes.size() == 0) {
-    auto index1 =
-        std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
-    if (index1 != nullptr)
-      _indexes.emplace_back(index1);
-    auto index2 =
-        std::shared_ptr<CompositeGroupKeyIndex>(new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
-    if (index2 != nullptr)
-      _indexes.emplace_back(index2);
-    // auto index3 =
-    //     std::shared_ptr<BTreeIndex>(new BTreeIndex(table_name, chunk_id, SegmentIndexType::BTree, column_ids));
-    // if (index1 != nullptr)
-    //   _indexes.emplace_back(index3);
-    // auto index4 =
-    //     std::shared_ptr<AdaptiveRadixTreeIndex>(new AdaptiveRadixTreeIndex(table_name, chunk_id, SegmentIndexType::AdaptiveRadixTree, column_ids));
-    // if (index4 != nullptr)
-    //   _indexes.emplace_back(index4);
-  }
   std::copy_if(_indexes.cbegin(), _indexes.cend(), std::back_inserter(result),
                [&](const auto& index) { return index->is_index_for(segments); });
+  //   struct index_info key;
+  //   key.table_name = table_name;
+  //   key.chunk_id = chunk_id;
+  //   key.column_ids.assign(column_ids.begin(), column_ids.end());
+  //   auto& index_hyrise = Hyrise::get().memory_index;
+  //   {  //GroupKeyIndex
+  //     key.index_type = static_cast<uint8_t>(SegmentIndexType::GroupKey);
+  //     auto index_find = index_hyrise.find(key);
+  //     if (index_find != index_hyrise.end()) {
+  //       result.emplace_back(index_find->second);
+  //     } else {
+  //       auto index = std::shared_ptr<GroupKeyIndex>(
+  //           new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+  //       if (index != nullptr) {
+  //         result.emplace_back(index);
+  //       }
+  //     }
+  //   }
+  //   {
+  //     //CompositeGroupKeyIndex
+  //     key.index_type = static_cast<uint8_t>(SegmentIndexType::CompositeGroupKey);
+  //     auto index_find = index_hyrise.find(key);
+  //     if (index_find != index_hyrise.end()) {
+  //       result.emplace_back(index_find->second);
+  //     } else {
+  //       auto index = std::shared_ptr<CompositeGroupKeyIndex>(
+  //           new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+  //       if (index != nullptr) {
+  //         result.emplace_back(index);
+  //       }
+  //     }
+  //   }
+  //   {  //ART && BTree
+  //     //TODO: add btree and art tree index
+  //   }
   return result;
 }
 
@@ -188,7 +198,33 @@ std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_typ
   return get_index(index_type, segments);
 }
 
-template <typename Index>
+// std::shared_ptr<AbstractIndex> Chunk::f1(const SegmentIndexType index_type, const std::vector<ColumnID>& column_ids,
+//                                          const std::string& table_name, const ChunkID& chunk_id) const {
+//   struct index_info key;
+//   key.table_name = table_name;
+//   key.chunk_id = chunk_id;
+//   key.index_type = static_cast<uint8_t>(index_type);
+//   key.column_ids.assign(column_ids.begin(), column_ids.end());
+//   auto& index_hyrise = Hyrise::get().memory_index;
+//   auto index_find = index_hyrise.find(key);
+//   if (index_find != index_hyrise.end())
+//     return index_find->second;
+//   if (index_type == SegmentIndexType::GroupKey) {
+//     auto index =
+//         std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+//     index_hyrise[key] = index;
+//     return index;
+//   }
+//   if (index_type == SegmentIndexType::CompositeGroupKey) {
+//     auto index = std::shared_ptr<CompositeGroupKeyIndex>(
+//         new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+//     index_hyrise[key] = index;
+//     return index;
+//   }
+//   //TODO: add btree and art tree index
+//   return nullptr;
+// }
+
 std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_type,
                                                 const std::vector<std::shared_ptr<const AbstractSegment>>& segments,
                                                 const std::vector<ColumnID>& column_ids, const std::string& table_name,
@@ -196,23 +232,41 @@ std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_typ
   auto index_it = std::find_if(_indexes.cbegin(), _indexes.cend(), [&](const auto& index) {
     return index->is_index_for(segments) && index->type() == index_type;
   });
-  if (index_it == _indexes.cend()) {
-    auto index = std::make_shared<Index>(table_name, chunk_id, index_type, column_ids);
-    _indexes.emplace_back(index);
-    return *index;
-  } else {
+  if (index_it != _indexes.cend())
     return *index_it;
+  // else
+  //   return f1(index_type, column_ids, table_name, chunk_id);
+  struct index_info key;
+  key.table_name = table_name;
+  key.chunk_id = chunk_id;
+  key.index_type = static_cast<uint8_t>(index_type);
+  key.column_ids.assign(column_ids.begin(), column_ids.end());
+  auto& index_hyrise = Hyrise::get().memory_index;
+  auto index_find = index_hyrise.find(key);
+  if (index_find != index_hyrise.end())
+    return index_find->second;
+  if (index_type == SegmentIndexType::GroupKey) {
+    auto index =
+        std::shared_ptr<GroupKeyIndex>(new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+    index_hyrise[key] = index;
+    return index;
   }
-
+  if (index_type == SegmentIndexType::CompositeGroupKey) {
+    auto index = std::shared_ptr<CompositeGroupKeyIndex>(
+        new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+    index_hyrise[key] = index;
+    return index;
+  }
+  //TODO: add btree and art tree index
+  return nullptr;
   // return (index_it == _indexes.cend()) ? nullptr : *index_it;
 }
 
-template <typename Index>
 std::shared_ptr<AbstractIndex> Chunk::get_index(const SegmentIndexType index_type,
                                                 const std::vector<ColumnID>& column_ids, const std::string& table_name,
                                                 const ChunkID& chunk_id) const {
   auto segments = _get_segments_for_ids(column_ids);
-  return get_index<Index>(index_type, segments, column_ids, table_name, chunk_id);
+  return get_index(index_type, segments, column_ids, table_name, chunk_id);
 }
 
 void Chunk::remove_index(const std::shared_ptr<AbstractIndex>& index) {
@@ -251,19 +305,19 @@ bool Chunk::references_exactly_one_table() const {
   return true;
 }
 
-void Chunk::migrate(boost::container::pmr::memory_resource* memory_source) {
-  // Migrating chunks with indexes is not implemented yet.
-  if (!_indexes.empty()) {
-    Fail("Cannot migrate Chunk with Indexes.");
-  }
+// void Chunk::migrate(boost::container::pmr::memory_resource* memory_source) {
+//   // Migrating chunks with indexes is not implemented yet.
+//   if (!_indexes.empty()) {
+//     Fail("Cannot migrate Chunk with Indexes.");
+//   }
 
-  _alloc = PolymorphicAllocator<size_t>(memory_source);
-  Segments new_segments(_alloc);
-  for (const auto& segment : _segments) {
-    new_segments.push_back(segment->copy_using_allocator(_alloc));
-  }
-  _segments = std::move(new_segments);
-}
+//   _alloc = PolymorphicAllocator<size_t>(memory_source);
+//   Segments new_segments(_alloc);
+//   for (const auto& segment : _segments) {
+//     new_segments.push_back(segment->copy_using_allocator(_alloc));
+//   }
+//   _segments = std::move(new_segments);
+// }
 
 const PolymorphicAllocator<Chunk>& Chunk::get_allocator() const {
   return _alloc;

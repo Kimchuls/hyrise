@@ -10,6 +10,8 @@
 #include "scheduler/job_task.hpp"
 
 #include "storage/index/abstract_index.hpp"
+#include "storage/index/group_key/composite_group_key_index.hpp"
+#include "storage/index/group_key/group_key_index.hpp"
 #include "storage/reference_segment.hpp"
 
 #include "utils/assert.hpp"
@@ -123,8 +125,9 @@ RowIDPosList IndexScan::_scan_chunk(const ChunkID chunk_id) {
 
   const auto chunk = _in_table->get_chunk(chunk_id);
   auto matches_out = RowIDPosList{};
+  const auto index = chunk->get_index(_index_type, _left_column_ids, _in_table->_table_name, chunk_id);
+  // const auto index = chunk->get_index(_index_type, _left_column_ids);
 
-  const auto index = chunk->get_index(_index_type, _left_column_ids);
   Assert(index, "Index of specified type not found for segment (vector).");
 
   switch (_predicate_condition) {

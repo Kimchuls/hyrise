@@ -53,6 +53,7 @@ void AbstractTableGenerator::generate_and_store() {
   // TODO(any): Finalization might trigger encoding in the future.
   for (auto& [table_name, table_info] : table_info_by_name) {
     auto& table = table_info_by_name[table_name].table;
+    table->_table_name=table_name;
     for (auto chunk_id = ChunkID{0}; chunk_id < table->chunk_count(); ++chunk_id) {
       const auto chunk = table->get_chunk(chunk_id);
       if (chunk->is_mutable()) {

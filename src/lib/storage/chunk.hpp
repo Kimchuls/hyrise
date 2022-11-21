@@ -91,27 +91,23 @@ class Chunk : private Noncopyable {
       const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const;
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(const std::vector<ColumnID>& column_ids) const;
 
-  template <typename Index>
-  void add_index_es_();
-
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(
       const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
-      const std::string& table_name, const ChunkID& chunk_id) ;
+      const std::string& table_name, const ChunkID& chunk_id);
 
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(const std::vector<ColumnID>& column_ids,
-                                                          const std::string& table_name, const ChunkID& chunk_id) ;
+                                                          const std::string& table_name, const ChunkID& chunk_id);
 
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const;
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<ColumnID>& column_ids) const;
-
-  template <typename Index>
+  // std::shared_ptr<AbstractIndex> f1(const SegmentIndexType index_type, const std::vector<ColumnID>& column_ids,
+  //                                  const std::string& table_name, const ChunkID& chunk_id)const;
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<std::shared_ptr<const AbstractSegment>>& segments,
                                            const std::vector<ColumnID>& column_ids, const std::string& table_name,
                                            const ChunkID& chunk_id) const;
-  template <typename Index>
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type, const std::vector<ColumnID>& column_ids,
                                            const std::string& table_name, const ChunkID& chunk_id) const;
 

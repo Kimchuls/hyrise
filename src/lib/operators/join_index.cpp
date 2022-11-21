@@ -170,6 +170,8 @@ std::shared_ptr<const Table> JoinIndex::_on_execute() {
         const auto index_data_table_chunk = index_data_table->get_chunk((*reference_segment_pos_list)[0].chunk_id);
         Assert(index_data_table_chunk, "Physically deleted chunk should not reach this point, see get_chunk / #1686.");
         const auto& indexes = index_data_table_chunk->get_indexes(index_data_table_column_ids);
+        // const auto& indexes = index_data_table_chunk->get_indexes(index_data_table_column_ids, "",
+        //                                                           (*reference_segment_pos_list)[0].chunk_id);
 
         if (!indexes.empty()) {
           // We assume the first index to be efficient for our join
@@ -210,6 +212,9 @@ std::shared_ptr<const Table> JoinIndex::_on_execute() {
 
       const auto& indexes =
           index_chunk->get_indexes(std::vector<ColumnID>{_adjusted_primary_predicate.column_ids.second});
+      // const auto& indexes =
+      //     index_chunk->get_indexes(std::vector<ColumnID>{_adjusted_primary_predicate.column_ids.second},
+      //                              _index_input_table->_table_name, index_chunk_id);
 
       if (!indexes.empty()) {
         // We assume the first index to be efficient for our join

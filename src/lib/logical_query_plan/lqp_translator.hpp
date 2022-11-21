@@ -9,6 +9,7 @@
 
 namespace hyrise {
 
+class AbstractIndex;
 class AbstractOperator;
 class TransactionContext;
 class AbstractExpression;
@@ -26,6 +27,9 @@ class LQPTranslator {
   virtual ~LQPTranslator() = default;
 
   virtual std::shared_ptr<AbstractOperator> translate_node(const std::shared_ptr<AbstractLQPNode>& node) const;
+
+  std::shared_ptr<AbstractIndex> f1( SegmentIndexType index_type,  std::vector<ColumnID>& column_ids,
+                                         std::string& table_name,  ChunkID& chunk_id)const;
 
  private:
   std::shared_ptr<AbstractOperator> _translate_by_node_type(LQPNodeType type,

@@ -410,13 +410,13 @@ namespace hyrise
             switch (opcode)
             {
             case IBV_WR_SEND:
-                fprintf(stdout, "Send Request was posted\n");
+                // fprintf(stdout, "Send Request was posted\n");
                 break;
             case IBV_WR_RDMA_READ:
-                fprintf(stdout, "RDMA Read Request was posted\n");
+                // fprintf(stdout, "RDMA Read Request was posted\n");
                 break;
             case IBV_WR_RDMA_WRITE:
-                fprintf(stdout, "RDMA Write Request was posted\n");
+                // fprintf(stdout, "RDMA Write Request was posted\n");
                 break;
             default:
                 fprintf(stdout, "Unknown Request was posted\n");
@@ -447,8 +447,8 @@ namespace hyrise
         rc = ibv_post_recv(res->qp, &rr, &bad_wr);
         if (rc)
             fprintf(stderr, "failed to post RR\n");
-        else
-            fprintf(stdout, "Receive Request was posted\n");
+        // else
+            // fprintf(stdout, "Receive Request was posted\n");
         return rc;
     }
 

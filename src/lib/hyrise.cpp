@@ -37,41 +37,54 @@ char* Hyrise::RDMA_Read(char* data1, uint64_t length1) {
   char temp_send[] = "R";
   // fprintf(stdout, "------------------------------------------\nread order solved\n");
   // char* out_chars = const_cast<char*>(data.c_str());
-
+  bool flag = true;
   memcpy(rdma_manager_1.res->buf, data1, length1);
   // fprintf(stdout, "going to send the message: '%s'\n", rdma_manager_1.res->buf);
   if (rdma_manager_1.RDMA_Send()) {
     fprintf(stderr, "failed to rdma_mg_1 RDMA_Send\n");
-    return nullptr;
+    // return nullptr;
+    flag = false;
   }
   if (rdma_manager_1.RDMA_Receive()) {
     fprintf(stderr, "failed to rdma_mg_1 RDMA_Receive\n");
-    return nullptr;
+    flag = false;
+    // return nullptr;
   }
   if (0 == strcmp(rdma_manager_1.res->buf, "already")) {
     // fprintf(stdout, "Message is: '%s', %ld\n", rdma_manager_1.res->buf, strlen(rdma_manager_1.res->buf));
   } else {
-    fprintf(stderr, "failed receive already\n");
-    return nullptr;
+    // fprintf(stdout, "failed receive already\n");
+    flag = false;
+    // return nullptr;
   }
   if (rdma_manager_2.RDMA_Read()) {
     fprintf(stderr, "failed to rdma_mg_2 RDMA_Read\n");
-    return nullptr;
+    flag = false;
+    // return nullptr;
   }
   // fprintf(stdout, "Contents of server's buffer: '%s'\n", rdma_manager_2.res->buf);
   if (rdma_manager_1.sock_sync_data(rdma_manager_1.res->sock, 1, temp_send,
                                     &temp_char)) /* just send a dummy char back and forth */
   {
     fprintf(stderr, "sync error after RDMA ops\n");
-    return nullptr;
+    flag = false;
+    // return nullptr;
   }
   if (rdma_manager_2.sock_sync_data(rdma_manager_2.res->sock, 1, temp_send,
                                     &temp_char)) /* just send a dummy char back and forth */
   {
     fprintf(stderr, "sync error after RDMA ops\n");
+    flag = false;
+    // return nullptr;
+  }
+  if (flag) {
+    // printf("SUCCEED\n");
+    return rdma_manager_2.res->buf;
+  }
+  else{
+    // printf("FAILED\n");
     return nullptr;
   }
-  return rdma_manager_2.res->buf;
 }
 
 void Hyrise::RDMA_Write(char* data1, uint64_t length1, char* data2, uint64_t length2) {

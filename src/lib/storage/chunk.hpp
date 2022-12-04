@@ -93,10 +93,10 @@ class Chunk : private Noncopyable {
 
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(
       const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
-      const std::string& table_name, const ChunkID& chunk_id);
+      const std::string& table_name, const ChunkID& chunk_id)const;
 
   std::vector<std::shared_ptr<AbstractIndex>> get_indexes(const std::vector<ColumnID>& column_ids,
-                                                          const std::string& table_name, const ChunkID& chunk_id);
+                                                          const std::string& table_name, const ChunkID& chunk_id)const;
 
   std::shared_ptr<AbstractIndex> get_index(const SegmentIndexType index_type,
                                            const std::vector<std::shared_ptr<const AbstractSegment>>& segments) const;
@@ -131,7 +131,7 @@ class Chunk : private Noncopyable {
     auto index = std::make_shared<Index>(segments_to_index);
 
     index->send_RDMA(table_name, chunk_id, index_type, column_ids);
-    auto index2 = std::make_shared<Index>(table_name, chunk_id, index_type, column_ids);
+    // auto index2 = std::make_shared<Index>(table_name, chunk_id, index_type, column_ids);
     // _indexes.emplace_back(index2);
     _indexes_serialize.emplace_back(index->_serialize);
     return index;

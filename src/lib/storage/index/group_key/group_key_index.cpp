@@ -489,7 +489,7 @@ void GroupKeyIndex::_serialization() {
 
   memmove(_serialize + sizeof(_serialize_length), _serialize, _serialize_length);
   memcpy(_serialize, &_serialize_length, sizeof(_serialize_length));
-  printf("_serialize_length: %ld\n", _serialize_length);
+  // printf("_serialize_length: %ld\n", _serialize_length);
   _serialize_length += sizeof(_serialize_length);
   // printf("checkpoint1\n");
   // _serialize_length = 0;
@@ -545,6 +545,7 @@ GroupKeyIndex::GroupKeyIndex(const std::string& table_name, const ChunkID& chunk
   export_value(data1, length1, static_cast<uint64_t>(column_ids.size()));
   export_values(data1, length1, column_ids);
   _serialize = Hyrise::get().RDMA_Read(data1, length1);
+  // printf("group key\n");
   if (_serialize != nullptr) {
     _deserialization();
   }

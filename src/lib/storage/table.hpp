@@ -191,6 +191,7 @@ class Table : private Noncopyable {
     SegmentIndexType index_type = get_index_type_of<Index>();
 
     const auto chunk_count = _chunks.size();
+    printf("chunk length:%d\n",chunk_count);
     for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; ++chunk_id) {
       auto chunk = std::atomic_load(&_chunks[chunk_id]);
       Assert(chunk, "Physically deleted chunk should not reach this point, see get_chunk / #1686.");

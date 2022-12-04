@@ -606,8 +606,11 @@ CompositeGroupKeyIndex::CompositeGroupKeyIndex(const std::string& table_name, co
   // memcpy(y.data(), data1 + x, sizeof(uint16_t) * column_ids.size());
   // printf("ydata_: %d %d\n",y[0],y[1]);
   _serialize = Hyrise::get().RDMA_Read(data1, length1);
+  // printf("composite group key\n");
   if (_serialize != nullptr) {
     _deserialization();
+  } else {
+    // printf("null pointer!\n");
   }
   // printf("compare : %d\n",strcmp(pp,_serialize));
 }

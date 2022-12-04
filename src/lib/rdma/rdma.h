@@ -25,7 +25,7 @@
 #define RDMAMSGR "RDMA read operation 36 "
 #define RDMAMSGW "RDMA write operation 36"
 // #define MSG_SIZE (strlen(MSG) + 1)
-#define BUFF_SIZE 1024 * 1024 * 1024
+#define BUFF_SIZE 1024 * 1024 * 8
 // #define MSG_SIZE 6
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 static inline uint64_t htonll(uint64_t x) { return bswap_64(x); }

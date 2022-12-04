@@ -214,8 +214,10 @@ std::shared_ptr<const Table> GetTable::_on_execute() {
         }
 
         *output_segments_iter = stored_chunk->get_segment(stored_column_id);
-        auto indexes = stored_chunk->get_indexes({*output_segments_iter});
-        // auto indexes = stored_chunk->get_indexes({*output_segments_iter},std::vector<ColumnID>{stored_column_id}, _name, stored_chunk_id);
+        // printf("get indexes in \"get_table\"\n");
+        // auto indexes = stored_chunk->get_indexes({*output_segments_iter});
+        auto indexes = stored_chunk->get_indexes({*output_segments_iter}, std::vector<ColumnID>{stored_column_id},
+                                                 _name, stored_chunk_id);
         if (!indexes.empty()) {
           output_indexes.insert(std::end(output_indexes), std::begin(indexes), std::end(indexes));
         }

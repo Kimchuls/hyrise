@@ -329,10 +329,10 @@ void AbstractTableGenerator::generate_and_store() {
         Timer per_index_timer;
 
         if (column_ids.size() == 1) {
-          printf("create group key index\n");
+          // printf("create group key index\n");
           table->create_index<GroupKeyIndex>(column_ids, table_name);
         } else {
-          printf("create composite group key index\n");
+          // printf("create composite group key index\n");
           table->create_index<CompositeGroupKeyIndex>(column_ids, table_name);
         }
         std::cout << "(" << per_index_timer.lap_formatted() << ")" << std::endl;

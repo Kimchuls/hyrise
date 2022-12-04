@@ -104,50 +104,55 @@ std::shared_ptr<MvccData> Chunk::mvcc_data() const {
 
 std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(
     const std::vector<std::shared_ptr<const AbstractSegment>>& segments, const std::vector<ColumnID>& column_ids,
-    const std::string& table_name, const ChunkID& chunk_id) {
+    const std::string& table_name, const ChunkID& chunk_id) const {
   auto result = std::vector<std::shared_ptr<AbstractIndex>>();
   std::copy_if(_indexes.cbegin(), _indexes.cend(), std::back_inserter(result),
                [&](const auto& index) { return index->is_index_for(segments); });
-  //   struct index_info key;
-  //   key.table_name = table_name;
-  //   key.chunk_id = chunk_id;
-  //   key.column_ids.assign(column_ids.begin(), column_ids.end());
-  //   auto& index_hyrise = Hyrise::get().memory_index;
-  //   {  //GroupKeyIndex
-  //     key.index_type = static_cast<uint8_t>(SegmentIndexType::GroupKey);
-  //     auto index_find = index_hyrise.find(key);
-  //     if (index_find != index_hyrise.end()) {
-  //       result.emplace_back(index_find->second);
-  //     } else {
-  //       auto index = std::shared_ptr<GroupKeyIndex>(
-  //           new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
-  //       if (index != nullptr) {
-  //         result.emplace_back(index);
-  //       }
-  //     }
-  //   }
-  //   {
-  //     //CompositeGroupKeyIndex
-  //     key.index_type = static_cast<uint8_t>(SegmentIndexType::CompositeGroupKey);
-  //     auto index_find = index_hyrise.find(key);
-  //     if (index_find != index_hyrise.end()) {
-  //       result.emplace_back(index_find->second);
-  //     } else {
-  //       auto index = std::shared_ptr<CompositeGroupKeyIndex>(
-  //           new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
-  //       if (index != nullptr) {
-  //         result.emplace_back(index);
-  //       }
-  //     }
-  //   }
-  //   {  //ART && BTree
-  //     //TODO: add btree and art tree index
-  //   }
+  struct index_info key;
+  key.table_name = table_name;
+  key.chunk_id = chunk_id;
+  key.column_ids.assign(column_ids.begin(), column_ids.end());
+  auto& index_hyrise = Hyrise::get().memory_index;
+  {  //GroupKeyIndex
+    key.index_type = static_cast<uint8_t>(SegmentIndexType::GroupKey);
+    auto index_find = index_hyrise.find(key);
+    if (index_find != index_hyrise.end()) {
+      result.emplace_back(index_find->second);
+    } else {
+      // printf("checkpoint 0");
+      auto index = std::shared_ptr<GroupKeyIndex>(
+          new GroupKeyIndex(table_name, chunk_id, SegmentIndexType::GroupKey, column_ids));
+      if (index != nullptr) {
+        result.emplace_back(index);
+      }
+    }
+  }
+  {
+    //CompositeGroupKeyIndex
+    key.index_type = static_cast<uint8_t>(SegmentIndexType::CompositeGroupKey);
+    auto index_find = index_hyrise.find(key);
+    if (index_find != index_hyrise.end()) {
+      result.emplace_back(index_find->second);
+    } else {
+      // printf("checkpoint 1");
+      auto index = std::shared_ptr<CompositeGroupKeyIndex>(
+          new CompositeGroupKeyIndex(table_name, chunk_id, SegmentIndexType::CompositeGroupKey, column_ids));
+      if (index != nullptr) {
+        result.emplace_back(index);
+      }
+    }
+  }
+  {  //ART && BTree
+    //TODO: add btree and art tree index
+  }
+  // printf("checkpoint 2");
+
   return result;
 }
 
 std::vector<std::shared_ptr<AbstractIndex>> Chunk::get_indexes(const std::vector<ColumnID>& column_ids,
-                                                               const std::string& table_name, const ChunkID& chunk_id) {
+                                                               const std::string& table_name,
+                                                               const ChunkID& chunk_id) const {
   auto segments = _get_segments_for_ids(column_ids);
   return get_indexes(segments, column_ids, table_name, chunk_id);
 }

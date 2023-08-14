@@ -17,6 +17,7 @@
 #include "storage/index/group_key/composite_group_key_index.hpp"
 #include "storage/index/group_key/group_key_index.hpp"
 #include "storage/index/partial_hash/partial_hash_index.hpp"
+#include "storage/index/hnsw/hnsw_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
@@ -57,13 +58,15 @@ std::shared_ptr<Table> Table::create_dummy_table(const TableColumnDefinitions& c
 
 Table::Table(const TableColumnDefinitions& column_definitions, const TableType type,
              const std::optional<ChunkOffset> target_chunk_size, const UseMvcc use_mvcc,
-             const pmr_vector<std::shared_ptr<PartialHashIndex>>& table_indexes)
+             const pmr_vector<std::shared_ptr<PartialHashIndex>>& table_indexes,
+             const pmr_vector<std::shared_ptr<HNSWIndex>>& table_indexes_vector)
     : _column_definitions(column_definitions),
       _type(type),
       _use_mvcc(use_mvcc),
       _target_chunk_size(type == TableType::Data ? target_chunk_size.value_or(Chunk::DEFAULT_SIZE) : Chunk::MAX_SIZE),
       _append_mutex(std::make_unique<std::mutex>()),
-      _table_indexes(table_indexes) {
+      _table_indexes(table_indexes),
+      _table_indexes_vector(table_indexes_vector) {
   DebugAssert(target_chunk_size <= Chunk::MAX_SIZE, "Chunk size exceeds maximum");
   DebugAssert(type == TableType::Data || !target_chunk_size, "Must not set target_chunk_size for reference tables");
   DebugAssert(!target_chunk_size || *target_chunk_size > 0, "Table must have a chunk size greater than 0.");
@@ -71,9 +74,10 @@ Table::Table(const TableColumnDefinitions& column_definitions, const TableType t
 
 Table::Table(const TableColumnDefinitions& column_definitions, const TableType type,
              std::vector<std::shared_ptr<Chunk>>&& chunks, const UseMvcc use_mvcc,
-             pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes)
+             pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes,
+             const pmr_vector<std::shared_ptr<HNSWIndex>>& table_indexes_vector)
     : Table(column_definitions, type, type == TableType::Data ? std::optional{Chunk::DEFAULT_SIZE} : std::nullopt,
-            use_mvcc, table_indexes) {
+            use_mvcc, table_indexes, table_indexes_vector) {
   _chunks = {chunks.begin(), chunks.end()};
 
   if constexpr (HYRISE_DEBUG) {
@@ -564,6 +568,20 @@ std::vector<std::shared_ptr<PartialHashIndex>> Table::get_table_indexes(const Co
   auto result = std::vector<std::shared_ptr<PartialHashIndex>>();
   std::copy_if(_table_indexes.cbegin(), _table_indexes.cend(), std::back_inserter(result),
                [&](const auto& index) { return index->is_index_for(column_id); });
+  return result;
+}
+
+pmr_vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector() const {
+  return _table_indexes_vector;
+}
+
+std::vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector(const ColumnID column_id) const {
+  auto result = std::vector<std::shared_ptr<HNSWIndex>>();
+  // std::copy_if(_table_indexes_vector.cbegin(), _table_indexes_vector.cend(), std::back_inserter(result),
+  //              [&](const auto& index) { return index->is_index_for(column_id); });
+  if(_table_indexes_vector[0]->is_index_for(column_id)){
+
+  }
   return result;
 }
 

@@ -46,13 +46,13 @@
 	shallow = true
 [submodule "third_party/robin-map"]
 	path = third_party/robin-map
-	url = https://github.com/Tessil/robin-map.git
+	url = https://github.com/Kimchuls/robin-map.git
 [submodule "third_party/sparse-map"]
 	path = third_party/sparse-map
-	url = https://github.com/Tessil/sparse-map.git
+	url = https://github.com/Kimchuls/sparse-map.git
 [submodule "third_party/sql-parser"]
 	path = third_party/sql-parser
-	url = https://github.com/hyrise/sql-parser.git
+	url = https://github.com/Kimchuls/sql-parser.git
 [submodule "third_party/ssb-dbgen"]
 	path = third_party/ssb-dbgen
 	url = https://github.com/hyrise/ssb-dbgen.git
@@ -65,3 +65,12 @@
 [submodule "third_party/hnswlib"]
 	path = third_party/hnswlib
 	url = https://github.com/nmslib/hnswlib.git
+[submodule "robin-map"]
+	path = third_party/robin-map
+	url = https://github.com/Kimchuls/robin-map.git
+[submodule "sparse-map"]
+	path = third_party/sparse-map
+	url = https://github.com/Kimchuls/sparse-map.git
+[submodule "sql-parser"]
+	path = third_party/sql-parser
+	url = https://github.com/Kimchuls/sql-parser.git

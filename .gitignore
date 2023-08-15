@@ -15,6 +15,7 @@ benchmark.json
 *.pyc
 console.log
 .repl_history
+notebook.txt
 
 # Visualization results
 *.dot

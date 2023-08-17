@@ -179,7 +179,7 @@ inline std::function<float_array(const std::string&)> CsvConverter<float_array>:
         while (str[pos] == ' ') {
           pos++;
         }
-        if(str[pos] == ','){
+        if(str[pos] == ','|| str[pos] == ']'){
           pos++;
           result+=number;
         }

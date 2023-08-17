@@ -1552,6 +1552,9 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create_table(const hs
 
       // TODO(anybody) SQLParser is missing support for Hyrise's other types
       switch (parser_column_definition->type.data_type) {
+        case hsql::DataType::VECTOR:
+          column_definition.data_type = DataType::Vector;
+          break;
         case hsql::DataType::SMALLINT:
           std::cout << "WARNING: Implicitly converting SMALLINT to INT\n";
           [[fallthrough]];
@@ -1835,6 +1838,8 @@ std::shared_ptr<AbstractExpression> SQLTranslator::_translate_hsql_expr(
 
       return expression;
     }
+    case hsql::kExprLiteralVector:
+      return value_(expr.fvval);
 
     case hsql::kExprLiteralFloat:
       return value_(expr.fval);

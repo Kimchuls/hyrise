@@ -93,18 +93,31 @@ size_t get_distinct_value_count(const std::shared_ptr<AbstractSegment>& segment)
       distinct_value_count = fs_dictionary_segment->fixed_string_dictionary()->size();
       return;
     }
-
-    auto distinct_values = std::unordered_set<ColumnDataType>{};
-    auto iterable = create_any_segment_iterable<ColumnDataType>(*segment);
-    iterable.with_iterators([&](auto it, const auto end) {
-      for (; it != end; ++it) {
-        const auto segment_item = *it;
-        if (!segment_item.is_null()) {
-          distinct_values.insert(segment_item.value());
+    if constexpr (!std::is_same_v<float_array, ColumnDataType>) {
+      auto distinct_values = std::unordered_set<ColumnDataType>{};
+      auto iterable = create_any_segment_iterable<ColumnDataType>(*segment);
+      iterable.with_iterators([&](auto it, const auto end) {
+        for (; it != end; ++it) {
+          const auto segment_item = *it;
+          if (!segment_item.is_null()) {
+            distinct_values.insert(segment_item.value());
+          }
         }
-      }
-    });
-    distinct_value_count = distinct_values.size();
+      });
+      distinct_value_count = distinct_values.size();
+    } else {
+      auto distinct_values = std::unordered_set<std::string>{};
+      auto iterable = create_any_segment_iterable<ColumnDataType>(*segment);
+      iterable.with_iterators([&](auto it, const auto end) {
+        for (; it != end; ++it) {
+          const auto segment_item = *it;
+          if (!segment_item.is_null()) {
+            distinct_values.insert(get_AllTypeVariant_to_string<std::string>(segment_item.value()));
+          }
+        }
+      });
+      distinct_value_count = distinct_values.size();
+    }
   });
   return distinct_value_count;
 }

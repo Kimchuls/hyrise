@@ -35,6 +35,8 @@ std::optional<Target> lossy_variant_cast(const AllTypeVariant& source) {
 
     if constexpr (std::is_same_v<Target, SourceDataType>) {
       result = boost::get<SourceDataType>(source);
+    } else if constexpr (std::is_same_v<float_array, SourceDataType> || std::is_same_v<float_array, Target>) {
+      return std::nullopt;
     } else {
       if constexpr (std::is_same_v<pmr_string, SourceDataType> == std::is_same_v<pmr_string, Target>) {
         using CommonDataType = std::common_type_t<SourceDataType, Target>;

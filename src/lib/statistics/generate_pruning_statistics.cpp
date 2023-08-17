@@ -47,42 +47,43 @@ void generate_chunk_pruning_statistics(const std::shared_ptr<Chunk>& chunk) {
     // they are up to date and we can skip the recreation.
     return;
   }
+  //TODO: fix std::unordered_set::hash
+  printf("Not fit for this function due to the std::unordered_set::hash");
+  // auto chunk_statistics = ChunkPruningStatistics{chunk->column_count()};
 
-  auto chunk_statistics = ChunkPruningStatistics{chunk->column_count()};
+  // for (auto column_id = ColumnID{0}; column_id < chunk->column_count(); ++column_id) {
+  //   const auto segment = chunk->get_segment(column_id);
 
-  for (auto column_id = ColumnID{0}; column_id < chunk->column_count(); ++column_id) {
-    const auto segment = chunk->get_segment(column_id);
+  //   resolve_data_and_segment_type(*segment, [&](auto type, auto& typed_segment) {
+  //     using SegmentType = std::decay_t<decltype(typed_segment)>;
+  //     using ColumnDataType = typename decltype(type)::type;
 
-    resolve_data_and_segment_type(*segment, [&](auto type, auto& typed_segment) {
-      using SegmentType = std::decay_t<decltype(typed_segment)>;
-      using ColumnDataType = typename decltype(type)::type;
+  //     const auto segment_statistics = std::make_shared<AttributeStatistics<ColumnDataType>>();
 
-      const auto segment_statistics = std::make_shared<AttributeStatistics<ColumnDataType>>();
+  //     if constexpr (std::is_same_v<SegmentType, DictionarySegment<ColumnDataType>>) {
+  //       // we can use the fact that dictionary segments have an accessor for the dictionary
+  //       const auto& dictionary = *typed_segment.dictionary();
+  //       create_pruning_statistics_for_segment(*segment_statistics, dictionary);
+  //     } else {
+  //       // if we have a generic segment we create the dictionary ourselves
+  //       auto iterable = create_iterable_from_segment<ColumnDataType>(typed_segment);
+  //       std::unordered_set<ColumnDataType> values;
+  //       iterable.for_each([&](const auto& value) {
+  //         // we are only interested in non-null values
+  //         if (!value.is_null()) {
+  //           values.insert(value.value());
+  //         }
+  //       });
+  //       pmr_vector<ColumnDataType> dictionary{values.cbegin(), values.cend()};
+  //       std::sort(dictionary.begin(), dictionary.end());
+  //       create_pruning_statistics_for_segment(*segment_statistics, dictionary);
+  //     }
 
-      if constexpr (std::is_same_v<SegmentType, DictionarySegment<ColumnDataType>>) {
-        // we can use the fact that dictionary segments have an accessor for the dictionary
-        const auto& dictionary = *typed_segment.dictionary();
-        create_pruning_statistics_for_segment(*segment_statistics, dictionary);
-      } else {
-        // if we have a generic segment we create the dictionary ourselves
-        auto iterable = create_iterable_from_segment<ColumnDataType>(typed_segment);
-        std::unordered_set<ColumnDataType> values;
-        iterable.for_each([&](const auto& value) {
-          // we are only interested in non-null values
-          if (!value.is_null()) {
-            values.insert(value.value());
-          }
-        });
-        pmr_vector<ColumnDataType> dictionary{values.cbegin(), values.cend()};
-        std::sort(dictionary.begin(), dictionary.end());
-        create_pruning_statistics_for_segment(*segment_statistics, dictionary);
-      }
+  //     chunk_statistics[column_id] = segment_statistics;
+  //   });
+  // }
 
-      chunk_statistics[column_id] = segment_statistics;
-    });
-  }
-
-  chunk->set_pruning_statistics(chunk_statistics);
+  // chunk->set_pruning_statistics(chunk_statistics);
 }
 
 void generate_chunk_pruning_statistics(const std::shared_ptr<Table>& table) {

@@ -2,6 +2,7 @@
 
 #include "expression_result.hpp"
 
+//TODO-kcj: logic fix is needed
 /**
  * ExpressionEvaluator internal functor objects.
  */
@@ -26,7 +27,14 @@ bool to_bool(const NullValue& value) {
 // Cast a value/NULL into another type
 template <typename T, typename V>
 T to_value(const V& v) {
-  return static_cast<T>(v);
+  if constexpr (std::is_same_v<T, float_array> && std::is_same_v<V, float_array>) {
+    return v;
+  } else if constexpr (!std::is_same_v<T, float_array> && std::is_same_v<V, float_array>) {
+    return static_cast<T>(0);
+  } else if constexpr (std::is_same_v<T, float_array> && !std::is_same_v<V, float_array>) {
+    return static_cast<float_array>(0);
+  } else
+    return static_cast<T>(v);
 }
 
 template <typename T>
@@ -93,7 +101,8 @@ struct STLComparisonFunctorWrapper {
         // LeftIsString -> RightIsNullOrString
         // RightIsString -> LeftIsNullOrString
         (!std::is_same_v<pmr_string, ArgA> || (std::is_same_v<NullValue, ArgB> || std::is_same_v<pmr_string, ArgB>)) &&
-        (!std::is_same_v<pmr_string, ArgB> || (std::is_same_v<NullValue, ArgA> || std::is_same_v<pmr_string, ArgA>));
+        (!std::is_same_v<pmr_string, ArgB> || (std::is_same_v<NullValue, ArgA> || std::is_same_v<pmr_string, ArgA>)) &&
+        !std::is_same_v<float_array, ArgA> && !std::is_same_v<float_array, ArgB>;
   };
 
   template <typename Result, typename ArgA, typename ArgB>
@@ -101,7 +110,8 @@ struct STLComparisonFunctorWrapper {
 
   template <typename Result, typename ArgA, typename ArgB>
   void operator()(Result& result, const ArgA& a, const ArgB& b) {
-    if constexpr (std::is_same_v<NullValue, ArgA> || std::is_same_v<NullValue, ArgB>) {
+    if constexpr (std::is_same_v<NullValue, ArgA> || std::is_same_v<NullValue, ArgB> ||
+                  std::is_same_v<float_array, ArgA> || std::is_same_v<float_array, ArgB>) {
       result = Result{};
     } else {
       result = static_cast<Result>(Functor<std::common_type_t<ArgA, ArgB>>{}(
@@ -123,14 +133,16 @@ template <template <typename T> typename Functor>
 struct STLArithmeticFunctorWrapper {
   template <typename Result, typename ArgA, typename ArgB>
   struct supports {
-    static constexpr bool value =
-        !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> && !std::is_same_v<pmr_string, ArgB>;
+    static constexpr bool value = !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> &&
+                                  !std::is_same_v<pmr_string, ArgB> && !std::is_same_v<float_array, Result> &&
+                                  !std::is_same_v<float_array, ArgA> && !std::is_same_v<float_array, ArgB>;
   };
 
   template <typename Result, typename ArgA, typename ArgB>
   void operator()(Result& result, const ArgA& a, const ArgB& b) {
     if constexpr (std::is_same_v<NullValue, Result> || std::is_same_v<NullValue, ArgA> ||
-                  std::is_same_v<NullValue, ArgB>) {
+                  std::is_same_v<NullValue, ArgB> || std::is_same_v<float_array, ArgA> ||
+                  std::is_same_v<float_array, ArgB> || std::is_same_v<float_array, Result>) {
       result = Result{};
     } else {
       result = static_cast<Result>(Functor<std::common_type_t<ArgA, ArgB>>{}(
@@ -148,8 +160,9 @@ using MultiplicationEvaluator = STLArithmeticFunctorWrapper<std::multiplies>;
 struct ModuloEvaluator {
   template <typename Result, typename ArgA, typename ArgB>
   struct supports {
-    static constexpr bool value =
-        !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> && !std::is_same_v<pmr_string, ArgB>;
+    static constexpr bool value = !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> &&
+                                  !std::is_same_v<pmr_string, ArgB> && !std::is_same_v<float_array, Result> &&
+                                  !std::is_same_v<float_array, ArgA> && !std::is_same_v<float_array, ArgB>;
   };
 
   template <typename Result, typename ArgA, typename ArgB>
@@ -161,7 +174,8 @@ struct ModuloEvaluator {
     }
 
     if constexpr (std::is_same_v<NullValue, Result> || std::is_same_v<NullValue, ArgA> ||
-                  std::is_same_v<NullValue, ArgB>) {
+                  std::is_same_v<NullValue, ArgB> || std::is_same_v<float_array, ArgA> ||
+                  std::is_same_v<float_array, ArgB> || std::is_same_v<float_array, Result>) {
       result_value = Result{};
     } else {
       if (b_value == 0) {
@@ -181,8 +195,9 @@ struct ModuloEvaluator {
 struct DivisionEvaluator {
   template <typename Result, typename ArgA, typename ArgB>
   struct supports {
-    static constexpr bool value =
-        !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> && !std::is_same_v<pmr_string, ArgB>;
+    static constexpr bool value = !std::is_same_v<pmr_string, Result> && !std::is_same_v<pmr_string, ArgA> &&
+                                  !std::is_same_v<pmr_string, ArgB> && !std::is_same_v<float_array, Result> &&
+                                  !std::is_same_v<float_array, ArgA> && !std::is_same_v<float_array, ArgB>;
   };
 
   template <typename Result, typename ArgA, typename ArgB>
@@ -191,7 +206,8 @@ struct DivisionEvaluator {
     result_null = a_null || b_null;
 
     if constexpr (std::is_same_v<NullValue, Result> || std::is_same_v<NullValue, ArgA> ||
-                  std::is_same_v<NullValue, ArgB>) {
+                  std::is_same_v<NullValue, ArgB> || std::is_same_v<float_array, ArgA> ||
+                  std::is_same_v<float_array, ArgB> || std::is_same_v<float_array, Result>) {
       result_value = Result{};
     } else {
       if (b_value == 0) {
@@ -207,7 +223,9 @@ struct CaseEvaluator {
   template <typename Result, typename ArgA, typename ArgB>
   struct supports {
     static constexpr bool value = (std::is_same_v<pmr_string, ArgA> == std::is_same_v<pmr_string, ArgB>)&&(
-        std::is_same_v<pmr_string, ArgA> == std::is_same_v<pmr_string, Result>);
+                                      std::is_same_v<pmr_string, ArgA> ==
+                                      std::is_same_v<pmr_string, Result>)&&!std::is_same_v<float_array, Result> &&
+                                  !std::is_same_v<float_array, ArgA> && !std::is_same_v<float_array, ArgB>;
   };
 
   template <typename Result, typename ArgA, typename ArgB>

@@ -189,6 +189,26 @@ std::enable_if_t<std::is_same_v<double, Source> && std::is_same_v<float, Target>
   }
 }
 
+// anything unnull to float_array
+template <typename Target, typename Source>
+std::enable_if_t<std::is_same_v<float_array, Source> &&
+                     (std::is_same_v<pmr_string, Target> || std::is_floating_point_v<Target> ||
+                      std::is_integral_v<Target>),
+                 std::optional<Target>>
+lossless_cast(const Source& source) {
+  return std::nullopt;
+}
+
+// float_array to anything unnull
+template <typename Target, typename Source>
+std::enable_if_t<std::is_same_v<float_array, Target> &&
+                     (std::is_same_v<pmr_string, Source> || std::is_floating_point_v<Source> ||
+                      std::is_integral_v<Source>),
+                 std::optional<Target>>
+lossless_cast(const Source& source) {
+  return std::nullopt;
+}
+
 template <typename Target>
 std::optional<Target> lossless_variant_cast(const AllTypeVariant& variant) {
   std::optional<Target> result;

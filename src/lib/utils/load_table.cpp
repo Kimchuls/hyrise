@@ -70,7 +70,9 @@ std::shared_ptr<Table> load_table(const std::string& file_name, ChunkOffset chun
       } else {
         resolve_data_type(table->column_data_type(column_id), [&](auto data_type_t) {
           using ColumnDataType = typename decltype(data_type_t)::type;
-          variant_values[column_id] = AllTypeVariant{boost::lexical_cast<ColumnDataType>(string_values[column_id])};
+          if constexpr (!std::is_same<ColumnDataType, float_array>::value) {
+            variant_values[column_id] = AllTypeVariant{boost::lexical_cast<ColumnDataType>(string_values[column_id])};
+          }
         });
       }
     }

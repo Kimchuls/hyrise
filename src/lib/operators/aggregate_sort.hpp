@@ -60,73 +60,73 @@ namespace hyrise {
  *   to aggregate on the consecutive input and then sort the output, than sorting the input and then aggregating it.
  */
 class AggregateSort : public AbstractAggregateOperator {
- public:
-  AggregateSort(const std::shared_ptr<AbstractOperator>& input_operator,
-                const std::vector<std::shared_ptr<WindowFunctionExpression>>& aggregates,
-                const std::vector<ColumnID>& groupby_column_ids);
+//  public:
+//   AggregateSort(const std::shared_ptr<AbstractOperator>& input_operator,
+//                 const std::vector<std::shared_ptr<WindowFunctionExpression>>& aggregates,
+//                 const std::vector<ColumnID>& groupby_column_ids);
 
-  const std::string& name() const override;
+//   const std::string& name() const override;
 
-  /**
-   * Creates the aggregate column definitions and appends it to `_output_column_definitions`
-   * We need the input column data type because the aggregate type can depend on it.
-   * For example, MAX on an int column yields ints, while MAX on a string column yield string values.
-   *
-   * @tparam ColumnType the data type of the input column
-   * @tparam aggregate_function the aggregate function used, e.g. WindowFunction::Sum
-   * @param column_index determines for which aggregate column definitions should be created
-   */
-  template <typename ColumnType, WindowFunction aggregate_function>
-  void create_aggregate_column_definitions(ColumnID column_index);
+//   /**
+//    * Creates the aggregate column definitions and appends it to `_output_column_definitions`
+//    * We need the input column data type because the aggregate type can depend on it.
+//    * For example, MAX on an int column yields ints, while MAX on a string column yield string values.
+//    *
+//    * @tparam ColumnType the data type of the input column
+//    * @tparam aggregate_function the aggregate function used, e.g. WindowFunction::Sum
+//    * @param column_index determines for which aggregate column definitions should be created
+//    */
+//   template <typename ColumnType, WindowFunction aggregate_function>
+//   void create_aggregate_column_definitions(ColumnID column_index);
 
- protected:
-  template <WindowFunction aggregate_function, typename AggregateType>
-  using AggregateAccumulator = std::conditional_t<aggregate_function == WindowFunction::StandardDeviationSample,
-                                                  StandardDeviationSampleData, AggregateType>;
+//  protected:
+//   template <WindowFunction aggregate_function, typename AggregateType>
+//   using AggregateAccumulator = std::conditional_t<aggregate_function == WindowFunction::StandardDeviationSample,
+//                                                   StandardDeviationSampleData, AggregateType>;
 
-  std::shared_ptr<const Table> _on_execute() override;
+//   std::shared_ptr<const Table> _on_execute() override;
 
-  std::shared_ptr<AbstractOperator> _on_deep_copy(
-      const std::shared_ptr<AbstractOperator>& copied_left_input,
-      const std::shared_ptr<AbstractOperator>& /*copied_right_input*/,
-      std::unordered_map<const AbstractOperator*, std::shared_ptr<AbstractOperator>>& /*copied_ops*/) const override;
+//   std::shared_ptr<AbstractOperator> _on_deep_copy(
+//       const std::shared_ptr<AbstractOperator>& copied_left_input,
+//       const std::shared_ptr<AbstractOperator>& /*copied_right_input*/,
+//       std::unordered_map<const AbstractOperator*, std::shared_ptr<AbstractOperator>>& /*copied_ops*/) const override;
 
-  void _on_set_parameters(const std::unordered_map<ParameterID, AllTypeVariant>& parameters) override;
+//   void _on_set_parameters(const std::unordered_map<ParameterID, AllTypeVariant>& parameters) override;
 
-  void _on_cleanup() override;
+//   void _on_cleanup() override;
 
-  template <typename ColumnType, typename AggregateType>
-  using AggregateFunctor = std::function<void(const ColumnType&, std::optional<AggregateType>&)>;
+//   template <typename ColumnType, typename AggregateType>
+//   using AggregateFunctor = std::function<void(const ColumnType&, std::optional<AggregateType>&)>;
 
-  template <typename ColumnType, typename AggregateType, WindowFunction aggregate_function>
-  void _aggregate_values(const std::set<RowID>& group_boundaries, const uint64_t aggregate_index,
-                         const std::shared_ptr<const Table>& sorted_table);
+//   template <typename ColumnType, typename AggregateType, WindowFunction aggregate_function>
+//   void _aggregate_values(const std::set<RowID>& group_boundaries, const uint64_t aggregate_index,
+//                          const std::shared_ptr<const Table>& sorted_table);
 
-  template <typename ColumnType>
-  void _create_aggregate_column_definitions(boost::hana::basic_type<ColumnType> /*type*/, ColumnID column_index,
-                                            WindowFunction aggregate_function);
+//   template <typename ColumnType>
+//   void _create_aggregate_column_definitions(boost::hana::basic_type<ColumnType> /*type*/, ColumnID column_index,
+//                                             WindowFunction aggregate_function);
 
-  /*
-   * Some of the parameters are marked as [[maybe_unused]] as their use depends on the `aggregate_function` parameter.
-   */
-  template <typename AggregateType, WindowFunction aggregate_function>
-  void _set_and_write_aggregate_value(pmr_vector<AggregateType>& aggregate_results,
-                                      pmr_vector<bool>& aggregate_null_values, const uint64_t aggregate_group_index,
-                                      [[maybe_unused]] const uint64_t aggregate_index,
-                                      AggregateAccumulator<aggregate_function, AggregateType>& accumulator,
-                                      [[maybe_unused]] const uint64_t value_count,
-                                      [[maybe_unused]] const uint64_t value_count_with_null,
-                                      [[maybe_unused]] const uint64_t unique_value_count) const;
+//   /*
+//    * Some of the parameters are marked as [[maybe_unused]] as their use depends on the `aggregate_function` parameter.
+//    */
+//   template <typename AggregateType, WindowFunction aggregate_function>
+//   void _set_and_write_aggregate_value(pmr_vector<AggregateType>& aggregate_results,
+//                                       pmr_vector<bool>& aggregate_null_values, const uint64_t aggregate_group_index,
+//                                       [[maybe_unused]] const uint64_t aggregate_index,
+//                                       AggregateAccumulator<aggregate_function, AggregateType>& accumulator,
+//                                       [[maybe_unused]] const uint64_t value_count,
+//                                       [[maybe_unused]] const uint64_t value_count_with_null,
+//                                       [[maybe_unused]] const uint64_t unique_value_count) const;
 
- private:
-  /**
-   * Sort the whole input table by sorting each chunk individually. Should only be used if caller can guarantee that
-   * each value in the group by columns does only occur in exactly one chunk (i.e., table is value-clustered).
-   */
-  static std::shared_ptr<Table> _sort_table_chunk_wise(const std::shared_ptr<const Table>& input_table,
-                                                       const std::vector<ColumnID>& groupby_column_ids);
+//  private:
+//   /**
+//    * Sort the whole input table by sorting each chunk individually. Should only be used if caller can guarantee that
+//    * each value in the group by columns does only occur in exactly one chunk (i.e., table is value-clustered).
+//    */
+//   static std::shared_ptr<Table> _sort_table_chunk_wise(const std::shared_ptr<const Table>& input_table,
+//                                                        const std::vector<ColumnID>& groupby_column_ids);
 
-  static Segments _get_segments_of_chunk(const std::shared_ptr<const Table>& input_table, ChunkID chunk_id);
+//   static Segments _get_segments_of_chunk(const std::shared_ptr<const Table>& input_table, ChunkID chunk_id);
 };
 
 }  // namespace hyrise

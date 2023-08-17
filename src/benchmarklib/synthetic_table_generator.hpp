@@ -145,6 +145,8 @@ class SyntheticTableGenerator {
       }
 
       return result;
+    }else{
+      Fail("have not support float-array yet.");
     }
   }
 

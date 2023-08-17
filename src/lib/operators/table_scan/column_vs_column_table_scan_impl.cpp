@@ -109,13 +109,19 @@ std::shared_ptr<RowIDPosList> ColumnVsColumnTableScanImpl::scan_chunk(ChunkID ch
       using RightColumnDataType = typename decltype(right_data_type_t)::type;
 
       // C++ cannot compare strings and non-strings out of the box:
-      if constexpr (std::is_same_v<LeftColumnDataType, pmr_string> == std::is_same_v<RightColumnDataType, pmr_string>) {
-        auto right_iterable = create_any_segment_iterable<RightColumnDataType>(*right_segment);
+      if constexpr (!(std::is_same_v<LeftColumnDataType, float_array> ||
+                      std::is_same_v<RightColumnDataType, float_array>)) {
+        if constexpr (std::is_same_v<LeftColumnDataType, pmr_string> ==
+                      std::is_same_v<RightColumnDataType, pmr_string>) {
+          auto right_iterable = create_any_segment_iterable<RightColumnDataType>(*right_segment);
 
-        PerformanceWarning("ColumnVsColumnTableScan using type-erased iterators");
-        result = _typed_scan_chunk_with_iterables<EraseTypes::Always>(chunk_id, left_iterable, right_iterable);
+          PerformanceWarning("ColumnVsColumnTableScan using type-erased iterators");
+          result = _typed_scan_chunk_with_iterables<EraseTypes::Always>(chunk_id, left_iterable, right_iterable);
+        } else {
+          Fail("Trying to compare strings and non-strings");
+        }
       } else {
-        Fail("Trying to compare strings and non-strings");
+        Fail("Trying to compare float arrays");
       }
     });
   });

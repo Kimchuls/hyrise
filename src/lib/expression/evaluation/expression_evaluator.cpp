@@ -873,7 +873,8 @@ std::shared_ptr<ExpressionResult<Result>> ExpressionEvaluator::_evaluate_unary_m
   _resolve_to_expression_result(*unary_minus_expression.argument(), [&](const auto& argument_result) {
     using ArgumentType = typename std::decay_t<decltype(argument_result)>::Type;
 
-    if constexpr (!std::is_same_v<ArgumentType, pmr_string> && std::is_same_v<Result, ArgumentType>) {
+    if constexpr (!std::is_same_v<ArgumentType, float_array> && !std::is_same_v<ArgumentType, pmr_string> &&
+                  std::is_same_v<Result, ArgumentType>) {
       const auto argument_result_count = static_cast<ChunkOffset>(argument_result.size());
       values.resize(argument_result_count);
       for (auto chunk_offset = ChunkOffset{0}; chunk_offset < argument_result_count; ++chunk_offset) {
@@ -882,7 +883,7 @@ std::shared_ptr<ExpressionResult<Result>> ExpressionEvaluator::_evaluate_unary_m
       }
       nulls = argument_result.nulls;
     } else {
-      Fail("Can't negate a Strings, can't negate an argument to a different type");
+      Fail("Can't negate a Strings/float-array, can't negate an argument to a different type");
     }
   });
 

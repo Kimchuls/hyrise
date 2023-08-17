@@ -25,7 +25,7 @@
 #define TSL_SPARSE_SET_H
 
 #include <cstddef>
-#include <functional>
+// #include <functional>
 #include <initializer_list>
 #include <memory>
 #include <type_traits>

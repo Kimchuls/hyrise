@@ -16,6 +16,7 @@
 #include "storage/base_value_segment.hpp"
 #include "storage/reference_segment.hpp"
 #include "utils/performance_warning.hpp"
+#include "resolve_type.hpp"
 
 namespace {
 
@@ -190,9 +191,10 @@ std::vector<uint16_t> Print::_column_string_widths(uint16_t min, uint16_t max,
     for (auto column_id = ColumnID{0}; column_id < column_count; ++column_id) {
       const auto chunk_size = chunk->size();
       for (auto chunk_offset = ChunkOffset{0}; chunk_offset < chunk_size; ++chunk_offset) {
-        std::ostringstream stream;
-        stream << (*chunk->get_segment(column_id))[chunk_offset];
-        auto cell_length = static_cast<uint16_t>(stream.str().size());
+        // std::ostringstream stream;
+        // stream << (*chunk->get_segment(column_id))[chunk_offset];
+        auto string_value = get_AllTypeVariant_to_string<std::string>((*chunk->get_segment(column_id))[chunk_offset]);
+        auto cell_length = static_cast<uint16_t>(string_value.size());
         widths[column_id] = std::max({min, widths[column_id], std::min(max, cell_length)});
       }
     }
@@ -201,7 +203,8 @@ std::vector<uint16_t> Print::_column_string_widths(uint16_t min, uint16_t max,
 }
 
 std::string Print::_truncate_cell(const AllTypeVariant& cell, uint16_t max_width) {
-  auto cell_string = boost::lexical_cast<std::string>(cell);
+  // auto cell_string = boost::lexical_cast<std::string>(cell);
+  auto cell_string = get_AllTypeVariant_to_string<std::string>(cell);
   DebugAssert(max_width > 3, "Cannot truncate string with '...' at end with max_width <= 3");
   if (cell_string.length() > max_width) {
     return cell_string.substr(0, max_width - 3) + "...";

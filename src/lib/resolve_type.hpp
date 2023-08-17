@@ -9,6 +9,7 @@
 #include <boost/hana/equal.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/size.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "all_type_variant.hpp"
 #include "storage/reference_segment.hpp"
@@ -201,6 +202,33 @@ constexpr DataType data_type_from_type() {
 
     return data_type;
   });
+}
+
+template <typename T>
+T get_AllTypeVariant_to_string(const AllTypeVariant& value) {
+  std::stringstream stream;
+  resolve_data_type(data_type_from_all_type_variant(value), [&](const auto value_data_type_t) {
+    using ValueDataType = typename decltype(value_data_type_t)::type;
+    if constexpr (!std::is_same_v<float_array, ValueDataType>) {
+      const auto value_1 = boost::get<ValueDataType>(value);
+      const auto string_value = boost::lexical_cast<std::string>(value_1);
+      const auto length = static_cast<uint32_t>(string_value.length());
+      stream << string_value;
+
+    } else {
+      float_array value_float_array = boost::get<ValueDataType>(value);
+      std::string string_value("[");
+      for (float_array::size_type iter = 0; iter < value_float_array.size(); iter++) {
+        string_value += std::to_string(value_float_array[iter]);
+        if (iter != value_float_array.size() - 1) {
+          string_value += ", ";
+        }
+      }
+      string_value += "]";
+      stream << string_value;
+    }
+  });
+  return stream.str();
 }
 
 }  // namespace hyrise

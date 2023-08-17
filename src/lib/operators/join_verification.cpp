@@ -184,13 +184,17 @@ bool JoinVerification::_evaluate_predicate(const OperatorJoinPredicate& predicat
     resolve_data_type(data_type_from_all_type_variant(variant_right), [&](const auto data_type_right_t) {
       using ColumnDataTypeRight = typename decltype(data_type_right_t)::type;
 
-      if constexpr (std::is_same_v<ColumnDataTypeLeft, pmr_string> == std::is_same_v<ColumnDataTypeRight, pmr_string>) {
-        with_comparator(predicate.predicate_condition, [&](const auto comparator) {
-          result =
-              comparator(boost::get<ColumnDataTypeLeft>(variant_left), boost::get<ColumnDataTypeRight>(variant_right));
-        });
-      } else {
-        Fail("Cannot compare string with non-string type");
+      if constexpr (!(std::is_same_v<ColumnDataTypeLeft, float_array> ||
+                      std::is_same_v<ColumnDataTypeRight, float_array>)) {
+        if constexpr (std::is_same_v<ColumnDataTypeLeft, pmr_string> ==
+                      std::is_same_v<ColumnDataTypeRight, pmr_string>) {
+          with_comparator(predicate.predicate_condition, [&](const auto comparator) {
+            result = comparator(boost::get<ColumnDataTypeLeft>(variant_left),
+                                boost::get<ColumnDataTypeRight>(variant_right));
+          });
+        } else {
+          Fail("Cannot compare string with non-string type");
+        }
       }
     });
   });

@@ -31,6 +31,7 @@ namespace detail {
 
 // clang-format off
 #define DATA_TYPE_INFO                 \
+  ((float_array,Vector,     "vector"))    \
   ((int32_t,    Int,        "int"))    \
   ((int64_t,    Long,       "long"))   \
   ((float,      Float,      "float"))  \

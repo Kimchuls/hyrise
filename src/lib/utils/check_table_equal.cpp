@@ -75,7 +75,7 @@ std::string matrix_to_string(const Matrix& matrix, const std::vector<std::pair<u
 
     // Highlicht each (applicable) cell with highlight color
     for (auto column_id = ColumnID{0}; column_id < matrix[row_id].size(); ++column_id) {
-      auto cell = boost::lexical_cast<std::string>(matrix[row_id][column_id]);
+      auto cell = get_AllTypeVariant_to_string<std::string>(matrix[row_id][column_id]);
       coloring = "";
       if (highlight && it->second == column_id) {
         coloring = highlight_color;

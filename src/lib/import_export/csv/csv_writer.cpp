@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "types.hpp"
+#include "resolve_type.hpp"
 
 namespace hyrise {
 
@@ -92,7 +93,7 @@ void CsvWriter::_write(const AllTypeVariant& value, std::ofstream& ofstream, con
     return;
   }
 
-  ofstream << value;
+  ofstream << get_AllTypeVariant_to_string<std::string>(value);
 }
 
 void CsvWriter::_write_string_value(const pmr_string& value, std::ofstream& ofstream, const ParseConfig& config) {

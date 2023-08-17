@@ -56,6 +56,18 @@ class HistogramDomain<T, std::enable_if_t<std::is_floating_point_v<T>>> {
 };
 
 template <>
+class HistogramDomain<float_array> {
+ public:
+  float_array next_value_clamped(float_array v) const {
+    return v;
+  }
+
+  float_array previous_value_clamped(float_array v) const {
+    return v;
+  }
+};
+
+template <>
 class HistogramDomain<pmr_string> {
  public:
   using IntegralType = uint64_t;

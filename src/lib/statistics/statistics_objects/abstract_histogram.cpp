@@ -84,9 +84,11 @@ typename AbstractHistogram<T>::HistogramWidthType AbstractHistogram<T>::bin_widt
     return repr_max - repr_min + 1u;
   } else if constexpr (std::is_floating_point_v<T>) {
     return bin_maximum(index) - bin_minimum(index);
-  } else {
+  } else if constexpr (std::is_integral_v<T>) {
     // The width of a integral-histogram bin [4,5] is 5 - 4 + 1 = 2
     return bin_maximum(index) - bin_minimum(index) + 1;
+  } else {
+    return 1;
   }
 }
 
@@ -99,8 +101,9 @@ float AbstractHistogram<T>::bin_ratio_less_than(const BinID bin_id, const T& val
   if (value > bin_maximum(bin_id)) {
     return 1.0f;
   }
-
-  if constexpr (!std::is_same_v<T, pmr_string>) {
+  if constexpr (std::is_same_v<T, float_array>) {
+    return 0.0f;
+  } else if constexpr (!std::is_same_v<T, pmr_string>) {
     return (static_cast<float>(value) - static_cast<float>(bin_minimum(bin_id))) /
            static_cast<float>(bin_width(bin_id));
   } else {

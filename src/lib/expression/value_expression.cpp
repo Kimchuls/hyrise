@@ -20,21 +20,17 @@ std::shared_ptr<AbstractExpression> ValueExpression::_on_deep_copy(
 }
 
 std::string ValueExpression::description(const DescriptionMode /*mode*/) const {
-  std::stringstream stream;
+  std::string value_1 = get_AllTypeVariant_to_string<std::string>(value);
 
   if (value.type() == typeid(pmr_string)) {
-    stream << "'" << value << "'";
-  } else {
-    stream << value;
-  }
-
-  if (value.type() == typeid(int64_t)) {
-    stream << "L";
+    return "'" + value_1 + "'";
+  } else if (value.type() == typeid(int64_t)) {
+    return value_1 + "L";
   } else if (value.type() == typeid(float)) {
-    stream << "F";
+    return value_1 + "F";
   }
 
-  return stream.str();
+  return value_1;
 }
 
 DataType ValueExpression::data_type() const {

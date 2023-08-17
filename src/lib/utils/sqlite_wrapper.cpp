@@ -253,6 +253,7 @@ void SQLiteWrapper::create_sqlite_table(const Table& table, const std::string& t
         column_types.emplace_back("TEXT");
         break;
       case DataType::Null:
+      case DataType::Vector:
         Fail("SQLiteWrapper: column type not supported.");
         break;
     }
@@ -339,6 +340,7 @@ void SQLiteWrapper::create_sqlite_table(const Table& table, const std::string& t
               // clang-format on
             } break;
             case DataType::Null:
+            case DataType::Vector:
               Fail("SQLiteWrapper: column type not supported.");
               break;
           }

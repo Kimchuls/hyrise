@@ -12,6 +12,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "resolve_type.hpp"
 #include "storage/reference_segment.hpp"
 #include "utils/assert.hpp"
 
@@ -164,13 +165,9 @@ std::shared_ptr<const Table> Difference::_on_execute() {
 }
 
 void Difference::_append_string_representation(std::ostream& row_string_buffer, const AllTypeVariant& value) {
-  const auto string_value = boost::lexical_cast<std::string>(value);
-  const auto length = static_cast<uint32_t>(string_value.length());
-
-  // write value as string
+  auto string_value = get_AllTypeVariant_to_string<std::string>(value);
+  auto length = static_cast<uint32_t>(string_value.length());
   row_string_buffer << string_value;
-
-  // write byte representation of length
   row_string_buffer.write(reinterpret_cast<const char*>(&length), sizeof(length));
 }
 

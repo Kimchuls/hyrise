@@ -46,10 +46,19 @@ class MultiPredicateJoinEvaluator {
       // NULL value handling:
       // If either left or right value is NULL, the comparison will evaluate to TRUE for AntiNullAsTrue and to FALSE
       // for all other JoinModes.
-      if (!left_value || !right_value) {
-        return _join_mode == JoinMode::AntiNullAsTrue;
+      //TODO: test/fix join for float_array
+      using LVT = typename std::decay<decltype(left_value.value())>::type;
+      using RVT = typename std::decay<decltype(right_value.value())>::type;
+      if constexpr (!(std::is_same_v<float_array, LVT> || std::is_same_v<float_array, RVT>)) {
+      // if constexpr (!(typeid(float_array) == typeid(left_value.value()) ||
+      //                 typeid(float_array) == typeid(right_value.value()))) {
+        if (!left_value || !right_value) {
+          return _join_mode == JoinMode::AntiNullAsTrue;
+        } else {
+          return _compare_functor(*left_value, *right_value);
+        }
       } else {
-        return _compare_functor(*left_value, *right_value);
+        return true;
       }
     }
 

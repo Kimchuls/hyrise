@@ -151,4 +151,45 @@ inline std::function<pmr_string(const std::string&)> CsvConverter<pmr_string>::_
   return [](const std::string& str) { return pmr_string{str}; };
 }
 
+template <>
+inline std::function<float_array(const std::string&)> CsvConverter<float_array>::_get_conversion_function() {
+  return [](const std::string& str) {
+    std::string::size_type pos = 0, length = str.size();
+    float_array result;
+    while (pos < length) {
+      if (str[pos] == '[' || str[pos] == ']') {
+        pos++;
+      } else {
+        while (str[pos] == ' ') {
+          pos++;
+        }
+        double number = 0.0, t = 1.0;
+        while (str[pos] >= '0' && str[pos] <= '9') {
+          number = number * 10 + 1.0 * (int)(str[pos] - '0');
+          pos++;
+        }
+        if(str[pos]=='.'){
+          pos++;
+        }
+        while (str[pos] >= '0' && str[pos] <= '9') {
+          t*=0.1;
+          number = number + t * (int)(str[pos] - '0');
+          pos++;
+        }
+        while (str[pos] == ' ') {
+          pos++;
+        }
+        if(str[pos] == ','){
+          pos++;
+          result+=number;
+        }
+        else{
+          Fail("data format for float array is wrong");
+        }
+      }
+    }
+    return result;
+  };
+}
+
 }  // namespace hyrise

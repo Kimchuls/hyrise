@@ -47,6 +47,7 @@ void ResultSerializer::send_table_description(
         type_width = -1;
         break;
       case DataType::Null:
+      case DataType::Vector:
         Fail("Bad DataType");
     }
     postgres_protocol_handler->send_row_description(table->column_name(column_id), object_id, type_width);

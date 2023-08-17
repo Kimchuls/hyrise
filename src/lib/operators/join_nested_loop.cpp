@@ -319,14 +319,15 @@ void JoinNestedLoop::_join_two_untyped_segments(const AbstractSegment& abstract_
       constexpr auto NEITHER_IS_STRING_COLUMN = !LEFT_IS_STRING_COLUMN && !RIGHT_IS_STRING_COLUMN;
       constexpr auto BOTH_ARE_STRING_COLUMN = LEFT_IS_STRING_COLUMN && RIGHT_IS_STRING_COLUMN;
 
-      if constexpr (NEITHER_IS_STRING_COLUMN || BOTH_ARE_STRING_COLUMN) {
+      if constexpr(!(std::is_same_v<LeftType, float_array> ||
+                      std::is_same_v<RightType, float_array>)){if constexpr (NEITHER_IS_STRING_COLUMN || BOTH_ARE_STRING_COLUMN) {
         // Erase the `predicate_condition` into a std::function<>
         auto erased_comparator = std::function<bool(const LeftType&, const RightType&)>{};
         with_comparator(params.predicate_condition, [&](auto comparator) { erased_comparator = comparator; });
 
         join_two_typed_segments(erased_comparator, left_it, left_end, right_it, right_end,
                                        chunk_id_left, chunk_id_right, params);
-      }
+      }}
     });
   });
   // clang-format on

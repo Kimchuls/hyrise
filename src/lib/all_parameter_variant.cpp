@@ -15,7 +15,8 @@ std::ostream& operator<<(std::ostream& stream, const AllParameterVariant& varian
   } else if (is_column_id(variant)) {
     stream << "Column #" << boost::get<ColumnID>(variant);
   } else {
-    stream << boost::get<AllTypeVariant>(variant);
+    //TODO: confilct
+    stream << "boost::get<AllTypeVariant>(variant)";
   }
 
   return stream;

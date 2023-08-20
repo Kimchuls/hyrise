@@ -81,7 +81,7 @@ using PolymorphicAllocator = boost::container::pmr::polymorphic_allocator<T>;
 // for debugging, do not need to use PMR. This might sound complicated, but since the Hyrise data type registered in
 // all_type_variant.hpp is pmr_string, the compiler will complain if you use std::string when you should use pmr_string.
 using pmr_string = std::basic_string<char, std::char_traits<char>, PolymorphicAllocator<char>>;
-using float_array = std::basic_string<double, std::char_traits<double>, PolymorphicAllocator<double>>;
+using float_array = std::basic_string<float, std::char_traits<float>, PolymorphicAllocator<float>>;
 
 // A vector that gets its memory from a memory resource. It is is not necessary to replace each and every std::vector
 // with this. It only makes sense to use this if you also supply a memory resource. Otherwise, default memory will be

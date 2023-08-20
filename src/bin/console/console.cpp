@@ -44,13 +44,14 @@
 #include "utils/meta_table_manager.hpp"
 #include "utils/print_utils.hpp"
 #include "utils/string_utils.hpp"
+#include "utils/timer.hpp"
 #include "visualization/join_graph_visualizer.hpp"
 #include "visualization/lqp_visualizer.hpp"
 #include "visualization/pqp_visualizer.hpp"
 
-#define ANSI_COLOR_RED "\x1B[31m"               // NOLINT(cppcoreguidelines-macro-usage)
-#define ANSI_COLOR_GREEN "\x1B[32m"             // NOLINT(cppcoreguidelines-macro-usage)
-#define ANSI_COLOR_RESET "\x1B[0m"              // NOLINT(cppcoreguidelines-macro-usage)
+#define ANSI_COLOR_RED "\x1B[31m"    // NOLINT(cppcoreguidelines-macro-usage)
+#define ANSI_COLOR_GREEN "\x1B[32m"  // NOLINT(cppcoreguidelines-macro-usage)
+#define ANSI_COLOR_RESET "\x1B[0m"   // NOLINT(cppcoreguidelines-macro-usage)
 
 #define ANSI_COLOR_RED_RL "\001\x1B[31m\002"    // NOLINT(cppcoreguidelines-macro-usage)
 #define ANSI_COLOR_GREEN_RL "\001\x1B[32m\002"  // NOLINT(cppcoreguidelines-macro-usage)
@@ -142,6 +143,7 @@ Console::Console()
   register_command("generate_tpcds", std::bind(&Console::_generate_tpcds, this, std::placeholders::_1));
   register_command("generate_ssb", std::bind(&Console::_generate_ssb, this, std::placeholders::_1));
   register_command("load", std::bind(&Console::_load_table, this, std::placeholders::_1));
+  register_command("create_index", std::bind(&Console::_create_index, this, std::placeholders::_1));
   register_command("export", std::bind(&Console::_export_table, this, std::placeholders::_1));
   register_command("script", std::bind(&Console::_exec_script, this, std::placeholders::_1));
   register_command("print", std::bind(&Console::_print_table, this, std::placeholders::_1));
@@ -434,6 +436,7 @@ int Console::_help(const std::string& /*args*/) {
   out("  generate_tpch SCALE_FACTOR [CHUNK_SIZE]   - Generate all TPC-H tables\n");
   out("  generate_tpcds SCALE_FACTOR [CHUNK_SIZE]  - Generate all TPC-DS tables\n");
   out("  generate_ssb SCALE_FACTOR [CHUNK_SIZE]    - Generate all SSB tables\n");
+  out("  create_index TABLENAME ColumnName [test flag]   - Generate all SSB tables\n");
   out("  load FILEPATH [TABLENAME [ENCODING]]      - Load table from disk specified by filepath FILEPATH, store it with name TABLENAME\n");  // NOLINT(whitespace/line_length)
   out("                                                   The import type is chosen by the type of FILEPATH.\n");
   out("                                                     Supported types: '.bin', '.csv', '.tbl'\n");
@@ -580,6 +583,98 @@ int Console::_generate_ssb(const std::string& args) {
   return ReturnCode::Ok;
 }
 
+int Console::_create_index(const std::string& args) {
+  const auto arguments = trim_and_split(args);
+
+  if (arguments.empty() || arguments.size() > 3) {
+    out("Usage:\n");
+    out("  create_index TABLENAME ColumnName [test flag(true)]\n");
+    return ReturnCode::Error;
+  }
+
+  const auto table_name = arguments.at(0);
+  const auto column_name = arguments.at(1);
+  const auto test_flag = arguments.size() == 3 ? (arguments.at(2) == "true" ? true : false) : false;
+  if (!Hyrise::get().storage_manager.has_table(table_name)) {
+    out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
+    return ReturnCode::Error;
+  }
+  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  const auto column_id = table->column_id_by_name(column_name);
+  if (table->column_data_type(column_id) != DataType::Vector) {
+    out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
+    return ReturnCode::Error;
+  }
+  {
+    std::cout << "- Creating table indexes" << std::endl;
+    auto chunk_ids = std::vector<ChunkID>(table->chunk_count());
+    std::iota(chunk_ids.begin(), chunk_ids.end(), ChunkID{0});
+    std::cout << "-  Creating an index on table " << table_name << " (" << column_name << ") covering "
+              << chunk_ids.size() << " (all finalized) chunks]" << std::flush;
+    int float_array_dim = (table->get_value<float_array>(column_name, 0)).value().size();
+
+    std::cout << std::endl << "- start timing" << std::endl;
+    auto per_table_index_timer = Timer{};
+    for (auto chunk_id = ChunkID{0}; chunk_id < table->chunk_count(); ++chunk_id) {
+      const auto& chunk = table->get_chunk(chunk_id);
+      Assert(chunk, "Requested index on deleted chunk.");
+      Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
+    }
+    table->create_float_array_index(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+    std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  }
+  if (test_flag) {
+    printf("test_flag=true\n");
+    int tru = 0, all = 0;
+    const auto& float_array_index = table->get_table_indexes_vector(column_id)[0];
+    const auto ChunkCount = table->chunk_count();
+    auto& search = float_array_index->_alg_hnsw;
+    for (ChunkID cid = ChunkID{0}; cid < ChunkCount; cid++) {
+      const auto chunk = table->get_chunk(cid);
+      const auto& segment = *chunk->get_segment(column_id);
+      for (ChunkOffset cos = ChunkOffset{0}; cos < chunk->size(); cos++) {
+        all++;
+        float_array query = boost::get<float_array>((*chunk->get_segment(column_id))[cos]);
+        // for (int i = 0; i < 16; i++) {
+        //   printf("%f ", query.data()[i]);
+        // }
+        // printf("\n");
+        // float xx[16] = {0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2};
+
+        std::priority_queue<std::pair<float, hnswlib::labeltype>> result = search->searchKnn(query.data(), 1);
+        while (!result.empty()) {
+          hnswlib::labeltype label = result.top().second;
+          auto times = Chunk::DEFAULT_SIZE;
+          ChunkID ans_cid = ChunkID{(unsigned int)(label / times)};
+          ChunkOffset ans_cot = ChunkOffset{(unsigned int)(label % times)};
+          if (ans_cid == cid && ans_cot == cos) {
+            tru++;
+          }
+          // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans_cid
+          //           << " ChunkOffset " << ans_cot << std::endl;
+          // returnResult.push_back(std::pair<ChunkID, ChunkOffset>(cid, cot));
+          result.pop();
+        }
+        // std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
+        // std::cout << "ans0 length: " << ans0.size() << std::endl;
+        // if (ans0.size() > 0) {
+        //   auto ans = ans0[0];
+        //   if (ans.first == cid && ans.second == cos) {
+        //     tru++;
+        //   }
+        //   std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
+        //             << " ChunkOffset " << ans.second << std::endl;
+        // }
+        // if (all > 10) {
+        //   return ReturnCode::Ok;
+        // }
+      }
+    }
+    printf("recall: %lf\n", 1.0 * tru / all);
+  }
+  return ReturnCode::Ok;
+}
+
 int Console::_load_table(const std::string& args) {
   const auto arguments = trim_and_split(args);
 
@@ -636,6 +731,13 @@ int Console::_load_table(const std::string& args) {
     ChunkEncoder::encode_chunks(table, immutable_chunks, SegmentEncodingSpec{*encoding_type});
   }
 
+  // auto t0 = Timer{};
+  // for (auto chunk_id = ChunkID{0}; chunk_id <table->chunk_count() ; ++chunk_id) {
+  //   const auto& chunk = table->get_chunk(chunk_id);
+  //   Assert(chunk, "Requested index on deleted chunk.");
+  //   Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
+  // }
+  // std::cout << "(" << t0.lap_formatted() << ")" << std::endl;
   return ReturnCode::Ok;
 }
 

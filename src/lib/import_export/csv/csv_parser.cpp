@@ -23,6 +23,7 @@ namespace hyrise {
 std::shared_ptr<Table> CsvParser::parse(const std::string& filename, const ChunkOffset chunk_size,
                                         const std::optional<CsvMeta>& csv_meta) {
   // If no meta info is given as a parameter, look for a json file
+  printf("CsvParser::parse\n");
   auto meta = CsvMeta{};
   if (csv_meta) {
     meta = *csv_meta;
@@ -90,7 +91,7 @@ std::shared_ptr<Table> CsvParser::parse(const std::string& filename, const Chunk
   }
 
   Hyrise::get().scheduler()->wait_for_tasks(tasks);
-
+  printf("CsvParser::parse waiting for append chunks\n");
   for (auto& segments : segments_by_chunks) {
     DebugAssert(!segments.empty(), "Empty chunks shouldn't occur when importing CSV");
     const auto mvcc_data = std::make_shared<MvccData>(segments.front()->size(), CommitID{0});
@@ -137,6 +138,8 @@ bool CsvParser::_find_fields_in_chunk(std::string_view csv_content, const Table&
   auto rows = uint64_t{0};
   auto field_count = uint16_t{1};
   auto in_quotes = false;
+  printf("CsvParser::_find_fields_in_chunk\n");
+  // std::cout<< "table.target_chunk_size()" << table.target_chunk_size()<< std::endl;
   while (rows < table.target_chunk_size()) {
     // Find either of row separator, column delimiter, quote identifier
     auto pos = csv_content.find_first_of(search_for, from);
@@ -158,6 +161,7 @@ bool CsvParser::_find_fields_in_chunk(std::string_view csv_content, const Table&
     }
 
     // Determine if delimiter marks end of row or is part of the (string) value
+    // printf("pos: %ld, table.column_count(): %ld\n",pos,static_cast<size_t>(table.column_count()));
     if (elem == meta.config.delimiter && !in_quotes) {
       Assert(field_count == static_cast<size_t>(table.column_count()),
              "Number of CSV fields does not match number of columns.");

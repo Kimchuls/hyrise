@@ -48,7 +48,7 @@ void generate_chunk_pruning_statistics(const std::shared_ptr<Chunk>& chunk) {
     return;
   }
   //TODO: fix std::unordered_set::hash
-  printf("Not fit for this function due to the std::unordered_set::hash");
+  printf("Not fit for this function \"generate_chunk_pruning_statistics\" due to the std::unordered_set::hash\n");
   // auto chunk_statistics = ChunkPruningStatistics{chunk->column_count()};
 
   // for (auto column_id = ColumnID{0}; column_id < chunk->column_count(); ++column_id) {

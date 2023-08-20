@@ -45,7 +45,7 @@ class BenchmarkConfig {
   uint32_t clients = 1;
   bool enable_visualization = false;
   bool verify = false;
-  bool cache_binary_tables = false;  // Defaults to false for internal use, but the CLI sets it to true by default
+  bool cache_binary_tables = true;  // Defaults to false for internal use, but the CLI sets it to true by default
   bool metrics = false;
   std::vector<std::string> plugins{};
 

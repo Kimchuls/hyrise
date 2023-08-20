@@ -504,6 +504,14 @@ set(
     storage/index/partial_hash/partial_hash_index.hpp
     storage/index/partial_hash/partial_hash_index_impl.cpp
     storage/index/partial_hash/partial_hash_index_impl.hpp
+    storage/index/hnsw/hnsw_index.cpp
+    storage/index/hnsw/hnsw_index.hpp
+    storage/index/hnsw/bruteforce.h
+    storage/index/hnsw/hnswlib.h
+    storage/index/hnsw/hnswalg.h 
+    storage/index/hnsw/space_ip.h 
+    storage/index/hnsw/space_l2.h 
+    storage/index/hnsw/visited_list_pool.h
     storage/index/chunk_index_type.hpp
     storage/lqp_view.cpp
     storage/lqp_view.hpp

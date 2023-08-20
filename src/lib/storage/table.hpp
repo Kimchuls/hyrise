@@ -15,12 +15,13 @@
 #include "storage/constraints/table_key_constraint.hpp"
 #include "storage/constraints/table_order_constraint.hpp"
 #include "storage/index/chunk_index_statistics.hpp"
+#include "storage/index/hnsw/hnsw_index.hpp"
 #include "storage/index/table_index_statistics.hpp"
 #include "storage/table_column_definition.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
 #include "utils/performance_warning.hpp"
-#include "storage/index/hnsw/hnsw_index.hpp"
+#include "utils/timer.hpp"
 
 namespace hyrise {
 
@@ -198,6 +199,8 @@ class Table : private Noncopyable {
    * table's index statistics. Table indexes can only be created on a set of immutable chunks.
    */
   void create_partial_hash_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids);
+  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
+                                int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200);
 
   template <typename Index>
   void create_chunk_index(const std::vector<ColumnID>& column_ids, const std::string& name = "");
@@ -228,7 +231,7 @@ class Table : private Noncopyable {
    */
   std::vector<std::shared_ptr<PartialHashIndex>> get_table_indexes(const ColumnID column_id) const;
 
-   /**
+  /**
    * Returns all table vector indexes created for this table.
    */
   pmr_vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector() const;
@@ -237,6 +240,7 @@ class Table : private Noncopyable {
    * Returns all table vector indexes created for this table that index a specific ColumnID.
    */
   std::vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector(const ColumnID column_id) const;
+  // std::vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector(const std::string& name) const;
 
   /**
    * For debugging purposes, makes an estimation about the memory used by this Table (including Chunk and Segments)
@@ -289,6 +293,7 @@ class Table : private Noncopyable {
   std::unique_ptr<std::mutex> _append_mutex;
   std::vector<ChunkIndexStatistics> _chunk_indexes_statistics;
   std::vector<TableIndexStatistics> _table_indexes_statistics;
+  std::vector<TableIndexStatistics> _table_indexes_vector_statistics;
   pmr_vector<std::shared_ptr<PartialHashIndex>> _table_indexes;
   pmr_vector<std::shared_ptr<HNSWIndex>> _table_indexes_vector;
 

@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "types.hpp"
 #include "resolve_type.hpp"
+#include "types.hpp"
 
 namespace hyrise {
 
@@ -90,6 +90,9 @@ void CsvWriter::_write(const AllTypeVariant& value, std::ofstream& ofstream, con
 
   if (value.type() == typeid(pmr_string)) {
     _write_string_value(boost::get<pmr_string>(value), ofstream, config);
+    return;
+  } else if (value.type() == typeid(float_array)) {
+    ofstream << "\"" << get_AllTypeVariant_to_string<std::string>(value) << "\"";
     return;
   }
 

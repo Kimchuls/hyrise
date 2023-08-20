@@ -119,6 +119,9 @@ class Console : public Singleton<Console> {
   int _generate_tpcds(const std::string& args);
   int _generate_ssb(const std::string& args);
   int _load_table(const std::string& args);
+  int _create_index(const std::string& args);
+  // using IndexesByTable = std::map<std::string, std::vector<std::vector<std::string>>>;
+  // IndexesByTable _indexes_by_table() const;
   int _export_table(const std::string& args);
   int _exec_script(const std::string& script_file);
   int _print_table(const std::string& args);

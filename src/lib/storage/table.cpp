@@ -16,8 +16,8 @@
 #include "storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "storage/index/group_key/composite_group_key_index.hpp"
 #include "storage/index/group_key/group_key_index.hpp"
-#include "storage/index/partial_hash/partial_hash_index.hpp"
 #include "storage/index/hnsw/hnsw_index.hpp"
+#include "storage/index/partial_hash/partial_hash_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
@@ -577,11 +577,8 @@ pmr_vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector() const {
 
 std::vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector(const ColumnID column_id) const {
   auto result = std::vector<std::shared_ptr<HNSWIndex>>();
-  // std::copy_if(_table_indexes_vector.cbegin(), _table_indexes_vector.cend(), std::back_inserter(result),
-  //              [&](const auto& index) { return index->is_index_for(column_id); });
-  if(_table_indexes_vector[0]->is_index_for(column_id)){
-
-  }
+  std::copy_if(_table_indexes_vector.cbegin(), _table_indexes_vector.cend(), std::back_inserter(result),
+               [&](const auto& index) { return index->is_index_for(column_id); });
   return result;
 }
 
@@ -629,6 +626,28 @@ void Table::create_partial_hash_index(const ColumnID column_id, const std::vecto
   _table_indexes.emplace_back(table_index);
 
   _table_indexes_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
+}
+
+void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
+                                     int max_elements, int M, int ef_construction, int ef) {
+  if (chunk_ids.empty()) {
+    Fail("Creating a partial hash index with no chunks being indexed is not supported.");
+  }
+
+  auto table_indexes_vector = std::shared_ptr<HNSWIndex>{};
+  auto chunks_to_index = std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>{};
+
+  chunks_to_index.reserve(chunk_ids.size());
+  for (const auto chunk_id : chunk_ids) {
+    const auto& chunk = get_chunk(chunk_id);
+    Assert(chunk, "Requested index on deleted chunk.");
+    Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
+    chunks_to_index.emplace_back(chunk_id, chunk);
+  }
+  table_indexes_vector =
+      std::make_shared<HNSWIndex>(chunks_to_index, column_id, dim, max_elements, M, ef_construction, ef);
+  _table_indexes_vector.emplace_back(table_indexes_vector);
+  _table_indexes_vector_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
 }
 
 template void Table::create_chunk_index<GroupKeyIndex>(const std::vector<ColumnID>& column_ids,

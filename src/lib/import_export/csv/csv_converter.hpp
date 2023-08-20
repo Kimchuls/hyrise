@@ -71,7 +71,9 @@ class CsvConverter : public BaseCsvConverter {
     // clang-format off
     if constexpr(std::is_same_v<T, pmr_string>) {
       unescape(value, _config);
-    } else {  // NOLINT
+    } else  if constexpr(std::is_same_v<T, float_array>) {
+      unescape(value, _config);
+    }else {  // NOLINT
       // clang-format on
       if (_config.reject_quoted_nonstrings) {
         Assert(value == unescape_copy(value, _config),
@@ -168,23 +170,22 @@ inline std::function<float_array(const std::string&)> CsvConverter<float_array>:
           number = number * 10 + 1.0 * (int)(str[pos] - '0');
           pos++;
         }
-        if(str[pos]=='.'){
+        if (str[pos] == '.') {
           pos++;
         }
         while (str[pos] >= '0' && str[pos] <= '9') {
-          t*=0.1;
+          t *= 0.1;
           number = number + t * (int)(str[pos] - '0');
           pos++;
         }
         while (str[pos] == ' ') {
           pos++;
         }
-        if(str[pos] == ','|| str[pos] == ']'){
+        if (str[pos] == ',' || str[pos] == ']') {
           pos++;
-          result+=number;
-        }
-        else{
-          Fail("data format for float array is wrong");
+          result += number;
+        } else {
+          Fail("data format for float array is wrong\n");
         }
       }
     }

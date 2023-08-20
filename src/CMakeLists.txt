@@ -45,7 +45,7 @@ set(CMAKE_CXX_STANDARD 20)
 # Hotfix for boost bug (https://github.com/boostorg/asio/issues/312):
 add_compile_options(-DBOOST_ASIO_DISABLE_CONCEPTS)
 
-add_compile_options(-pthread -Wno-unknown-warning-option -Wno-unused-function -Wno-unused-variable)
+add_compile_options(-pthread -Wno-unknown-warning-option -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-type-limits)
 
 # Use HYRISE_RELAXED_BUILD to disable strict warnings (e.g., when testing an unsupported compiler or an unsupported system)
 if (NOT "${HYRISE_RELAXED_BUILD}")

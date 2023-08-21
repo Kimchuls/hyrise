@@ -11,6 +11,8 @@
 #include <filesystem>
 #include <iomanip>
 #include <regex>
+#include <stdio.h>
+#include <iostream>
 
 #include <boost/algorithm/string/join.hpp>
 
@@ -144,6 +146,7 @@ Console::Console()
   register_command("generate_ssb", std::bind(&Console::_generate_ssb, this, std::placeholders::_1));
   register_command("load", std::bind(&Console::_load_table, this, std::placeholders::_1));
   register_command("create_index", std::bind(&Console::_create_index, this, std::placeholders::_1));
+  register_command("similar_vector", std::bind(&Console::_similar_vector, this, std::placeholders::_1));
   register_command("export", std::bind(&Console::_export_table, this, std::placeholders::_1));
   register_command("script", std::bind(&Console::_exec_script, this, std::placeholders::_1));
   register_command("print", std::bind(&Console::_print_table, this, std::placeholders::_1));
@@ -206,7 +209,8 @@ int Console::_eval(const std::string& input) {
 
   // Dump command to logfile, and to the Console if input comes from a script file. Also remove Readline specific
   // escape sequences ('\001' and '\002') to make it look normal.
-  out(remove_coloring(_prompt + input + "\n", true), _verbose);
+  //TODO: out
+  // out(remove_coloring(_prompt + input + "\n", true), _verbose);
 
   // Check if we already are in multiline input.
   if (_multiline_input.empty()) {
@@ -309,14 +313,14 @@ int Console::_eval_sql(const std::string& sql) {
   if (table) {
     out(table);
   }
-
-  out("===\n");
-  out(std::to_string(row_count) + " rows total\n");
+  //TODO: out
+  // out("===\n");
+  // out(std::to_string(row_count) + " rows total\n");
 
   auto stream = std::ostringstream{};
   stream << _sql_pipeline->metrics();
 
-  out(stream.str());
+  // out(stream.str());
 
   return ReturnCode::Ok;
 }
@@ -626,7 +630,7 @@ int Console::_create_index(const std::string& args) {
   if (test_flag) {
     printf("test_flag=true\n");
     int tru = 0, all = 0;
-    const auto& float_array_index = table->get_table_indexes_vector(column_id)[0];
+    const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
     const auto ChunkCount = table->chunk_count();
     auto& search = float_array_index->_alg_hnsw;
     for (ChunkID cid = ChunkID{0}; cid < ChunkCount; cid++) {
@@ -635,43 +639,114 @@ int Console::_create_index(const std::string& args) {
       for (ChunkOffset cos = ChunkOffset{0}; cos < chunk->size(); cos++) {
         all++;
         float_array query = boost::get<float_array>((*chunk->get_segment(column_id))[cos]);
-        // for (int i = 0; i < 16; i++) {
-        //   printf("%f ", query.data()[i]);
-        // }
-        // printf("\n");
-        // float xx[16] = {0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2};
-
-        std::priority_queue<std::pair<float, hnswlib::labeltype>> result = search->searchKnn(query.data(), 1);
-        while (!result.empty()) {
-          hnswlib::labeltype label = result.top().second;
-          auto times = Chunk::DEFAULT_SIZE;
-          ChunkID ans_cid = ChunkID{(unsigned int)(label / times)};
-          ChunkOffset ans_cot = ChunkOffset{(unsigned int)(label % times)};
-          if (ans_cid == cid && ans_cot == cos) {
+        std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
+        if (ans0.size() > 0) {
+          auto ans = ans0[0];
+          if (ans.first == cid && ans.second == cos) {
             tru++;
           }
-          // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans_cid
-          //           << " ChunkOffset " << ans_cot << std::endl;
-          // returnResult.push_back(std::pair<ChunkID, ChunkOffset>(cid, cot));
-          result.pop();
+          // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
+          //           << " ChunkOffset " << ans.second << std::endl;
         }
-        // std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
-        // std::cout << "ans0 length: " << ans0.size() << std::endl;
-        // if (ans0.size() > 0) {
-        //   auto ans = ans0[0];
-        //   if (ans.first == cid && ans.second == cos) {
-        //     tru++;
-        //   }
-        //   std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
-        //             << " ChunkOffset " << ans.second << std::endl;
-        // }
-        // if (all > 10) {
-        //   return ReturnCode::Ok;
-        // }
       }
     }
     printf("recall: %lf\n", 1.0 * tru / all);
   }
+  return ReturnCode::Ok;
+}
+
+int Console::_similar_vector(const std::string& args) {
+  const auto arguments = trim_and_split(args);
+
+  if (arguments.size() != 4) {
+    out("Usage:\n");
+    out("  similar_vector FILEPATH GTFILEPATH TABLENAME ColumnName\n");
+    return ReturnCode::Error;
+  }
+
+  const auto filepath = arguments.at(0);
+  auto script = std::ifstream{filepath};
+  out("loading query data file: " + filepath + "\n");
+  auto command = std::string{};
+  std::vector<float_array> queryList;
+  while (std::getline(script, command)) {
+    float_array strList;
+    std::istringstream iss(command);
+    std::string token;
+    while (std::getline(iss, token, ',')) {
+      strList += std::stof(token);
+    }
+    queryList.push_back(strList);
+  }
+  // auto value_float_array = queryList[0];
+  // std::string string_value("[");
+  // for (float_array::size_type iter = 0; iter < value_float_array.size(); iter++) {
+  //   string_value += std::to_string(value_float_array[iter]);
+  //   if (iter != value_float_array.size() - 1) {
+  //     string_value += ", ";
+  //   }
+  // }
+  // string_value += "]";
+  // out(string_value + "\n");
+
+  const auto gtfilepath = arguments.at(1);
+  auto gtscript = std::ifstream{gtfilepath};
+  out("loading groundtruth data file: " + filepath + "\n");
+  // auto command = std::string{};
+  std::vector<std::vector<int>> GTList;
+  while (std::getline(gtscript, command)) {
+    std::vector<int> strList;
+    std::istringstream iss(command);
+    std::string token;
+    // out(command + "\n");
+    while (std::getline(iss, token, ',')) {
+      strList.push_back(std::stoi(token));
+    }
+    GTList.push_back(strList);
+  }
+  // auto t = GTList[0];
+  // for (size_t i = 0; i < t.size(); i++)
+  //   printf("%d ",t[i]);
+  // out("\n");
+  // return ReturnCode::Ok;
+  // exit(0);
+
+  const auto table_name = arguments.at(2);
+  const auto column_name = arguments.at(3);
+  if (!Hyrise::get().storage_manager.has_table(table_name)) {
+    out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
+    return ReturnCode::Error;
+  }
+  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  const auto column_id = table->column_id_by_name(column_name);
+  if (table->column_data_type(column_id) != DataType::Vector) {
+    out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
+    return ReturnCode::Error;
+  }
+
+  int tru = 0, all = 0;
+  const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  auto& search = float_array_index->_alg_hnsw;
+  auto per_table_index_timer = Timer{};
+  std::vector<std::vector<int>> ansList;
+  std::string output="";
+  for (std::vector<float_array>::size_type idex = 0; idex < queryList.size(); idex++) {
+    all++;
+    std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(queryList[idex], 100));
+    for(std::vector<std::pair<ChunkID, ChunkOffset>>::size_type s=0;s<ans0.size();s++){
+      ChunkID aaa=ans0[s].first;
+      ChunkOffset bbb=ans0[s].second;
+      output+=std::to_string(aaa*Chunk::DEFAULT_SIZE+bbb);
+      output+=",";
+    }
+    output+="\n";
+  }
+  std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // printf("recall: %lf\n", 1.0 * tru / all);
+  FILE* ot = fopen("output.sh","w");
+  fprintf(ot,"%s",output.c_str());
+  // std::puts()
+
   return ReturnCode::Ok;
 }
 
@@ -689,6 +764,7 @@ int Console::_load_table(const std::string& args) {
 
   out("Loading " + filepath.string() + " into table \"" + tablename + "\"\n");
 
+  auto per_table_index_timer = Timer{};
   if (Hyrise::get().storage_manager.has_table(tablename)) {
     out("Table \"" + tablename + "\" already existed. Replacing it.\n");
   }
@@ -701,6 +777,7 @@ int Console::_load_table(const std::string& args) {
     return ReturnCode::Error;
   }
 
+  std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   const auto encoding = arguments.size() == 3 ? arguments.at(2) : "Unencoded";
 
   const auto encoding_type = magic_enum::enum_cast<EncodingType>(encoding);
@@ -1000,10 +1077,15 @@ int Console::_exec_script(const std::string& script_file) {
   auto command = std::string{};
   // TODO(anyone): Use std::to_underlying(ReturnCode::Ok) once we use C++23.
   auto return_code = magic_enum::enum_underlying(ReturnCode::Ok);
+  int number = 0;
   while (std::getline(script, command)) {
     return_code = _eval(command);
     if (return_code == ReturnCode::Error || return_code == ReturnCode::Quit) {
       break;
+    }
+    number++;
+    if (number % 1000 == 0) {
+      printf("Now it is executing the %dth command\n", number);
     }
   }
   out("Executing script file done\n");

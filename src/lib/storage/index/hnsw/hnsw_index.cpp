@@ -60,31 +60,17 @@ size_t HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Ch
   return indexed_chunks;
 }
 
-// SimilarKPair HNSWIndex::similar_k(const AllTypeVariant& query, int k = 1) {
 SimilarKPair HNSWIndex::similar_k(float_array& query, int k = 1) {
-  printf("data: ");
-  // std::cout << query.length() << std::endl;
-  // std::cout << (&q) << std::endl;
-  // std::cout << (q.data()[0]) << std::endl;
-  // std::cout << _dim << std::endl;
-  // for (int i = 0; i < _dim; i++) {
-  //   printf("%f ", query.data()[i]);
-  // }
-  // printf("\n");
-  float xx[16]={0.1,0.2,0.1,0.2,0.1,0.2,0.1,0.2,0.1,0.2,0.1,0.2,0.1,0.2,0.1,0.2};
-  // for (int x = 0; x < 100; x++) {
-    std::priority_queue<std::pair<float, hnswlib::labeltype>> result = _alg_hnsw->searchKnn(xx, k);
-  // }
+  std::priority_queue<std::pair<float, hnswlib::labeltype>> result = _alg_hnsw->searchKnn(query.data(), k);
   SimilarKPair returnResult;
-  // while (!result.empty()) {
-  //   hnswlib::labeltype label = result.top().second;
-  //   auto times = Chunk::DEFAULT_SIZE;
-  //   ChunkID cid = ChunkID{(unsigned int)(label / times)};
-  //   ChunkOffset cot = ChunkOffset{(unsigned int)(label % times)};
-  //   returnResult.push_back(std::pair<ChunkID, ChunkOffset>(cid, cot));
-  //   result.pop();
-  // }
-  printf("HNSWIndex::similar_k\n");
+  while (!result.empty()) {
+    hnswlib::labeltype label = result.top().second;
+    auto times = Chunk::DEFAULT_SIZE;
+    ChunkID cid = ChunkID{(unsigned int)(label / times)};
+    ChunkOffset cot = ChunkOffset{(unsigned int)(label % times)};
+    returnResult.push_back(std::pair<ChunkID, ChunkOffset>(cid, cot));
+    result.pop();
+  }
   return returnResult;
 }
 

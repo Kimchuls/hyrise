@@ -16,7 +16,7 @@ benchmark.json
 console.log
 .repl_history
 notebook.txt
-script/*
+scripts/vector_test/*
 
 # Visualization results
 *.dot

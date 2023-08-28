@@ -240,7 +240,7 @@ class Table : private Noncopyable {
    * Returns all table vector indexes created for this table that index a specific ColumnID.
    */
   std::vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector(const ColumnID column_id) const;
-  // std::vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector(const std::string& name) const;
+  
 
   /**
    * For debugging purposes, makes an estimation about the memory used by this Table (including Chunk and Segments)

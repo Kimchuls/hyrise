@@ -627,36 +627,36 @@ int Console::_create_index(const std::string& args) {
     table->create_float_array_index(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
     std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
-  if (test_flag) {
-    printf("test_flag=true\n");
-    int tru = 0, all = 0;
-    const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-    const auto ChunkCount = table->chunk_count();
-    auto& search = float_array_index->_alg_hnsw;
-    for (ChunkID cid = ChunkID{0}; cid < ChunkCount; cid++) {
-      const auto chunk = table->get_chunk(cid);
-      const auto& segment = *chunk->get_segment(column_id);
-      for (ChunkOffset cos = ChunkOffset{0}; cos < chunk->size(); cos++) {
-        all++;
-        float_array query = boost::get<float_array>((*chunk->get_segment(column_id))[cos]);
-        std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
-        if (ans0.size() > 0) {
-          auto ans = ans0[0];
-          if (ans.first == cid && ans.second == cos) {
-            tru++;
-          }
-          // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
-          //           << " ChunkOffset " << ans.second << std::endl;
-        }
-      }
-    }
-    printf("recall: %lf\n", 1.0 * tru / all);
-  }
+  // if (test_flag) {
+  //   printf("test_flag=true\n");
+  //   int tru = 0, all = 0;
+  //   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  //   const auto ChunkCount = table->chunk_count();
+  //   auto& search = float_array_index->_alg_hnsw;
+  //   for (ChunkID cid = ChunkID{0}; cid < ChunkCount; cid++) {
+  //     const auto chunk = table->get_chunk(cid);
+  //     const auto& segment = *chunk->get_segment(column_id);
+  //     for (ChunkOffset cos = ChunkOffset{0}; cos < chunk->size(); cos++) {
+  //       all++;
+  //       float_array query = boost::get<float_array>((*chunk->get_segment(column_id))[cos]);
+  //       std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
+  //       if (ans0.size() > 0) {
+  //         auto ans = ans0[0];
+  //         if (ans.first == cid && ans.second == cos) {
+  //           tru++;
+  //         }
+  //         // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
+  //         //           << " ChunkOffset " << ans.second << std::endl;
+  //       }
+  //     }
+  //   }
+  //   printf("recall: %lf\n", 1.0 * tru / all);
+  // }
   return ReturnCode::Ok;
 }
 
 int Console::_similar_vector(const std::string& args) {
-  const auto arguments = trim_and_split(args);
+const auto arguments = trim_and_split(args);
 
   if (arguments.size() != 4) {
     out("Usage:\n");
@@ -668,26 +668,18 @@ int Console::_similar_vector(const std::string& args) {
   auto script = std::ifstream{filepath};
   out("loading query data file: " + filepath + "\n");
   auto command = std::string{};
-  std::vector<float_array> queryList;
+  // std::vector<float_array> queryList;
+  int nn = 10000, dim = 128, id = 0, k = 100;
+  float* queries = new float[nn * dim];
   while (std::getline(script, command)) {
-    float_array strList;
+    // float_array strList;
     std::istringstream iss(command);
     std::string token;
     while (std::getline(iss, token, ',')) {
-      strList += std::stof(token);
+      queries[id++] = std::stof(token);
     }
-    queryList.push_back(strList);
+    // queryList.push_back(strList);
   }
-  // auto value_float_array = queryList[0];
-  // std::string string_value("[");
-  // for (float_array::size_type iter = 0; iter < value_float_array.size(); iter++) {
-  //   string_value += std::to_string(value_float_array[iter]);
-  //   if (iter != value_float_array.size() - 1) {
-  //     string_value += ", ";
-  //   }
-  // }
-  // string_value += "]";
-  // out(string_value + "\n");
 
   const auto gtfilepath = arguments.at(1);
   auto gtscript = std::ifstream{gtfilepath};
@@ -704,12 +696,6 @@ int Console::_similar_vector(const std::string& args) {
     }
     GTList.push_back(strList);
   }
-  // auto t = GTList[0];
-  // for (size_t i = 0; i < t.size(); i++)
-  //   printf("%d ",t[i]);
-  // out("\n");
-  // return ReturnCode::Ok;
-  // exit(0);
 
   const auto table_name = arguments.at(2);
   const auto column_name = arguments.at(3);
@@ -726,26 +712,33 @@ int Console::_similar_vector(const std::string& args) {
 
   int tru = 0, all = 0;
   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  auto& search = float_array_index->_alg_hnsw;
+  // auto& search = float_array_index->_alg_hnsw;
+  int64_t* I = new int64_t[k * nn];
+  float* D = new float[k * nn];
   auto per_table_index_timer = Timer{};
-  std::vector<std::vector<int>> ansList;
-  std::string output="";
-  for (std::vector<float_array>::size_type idex = 0; idex < queryList.size(); idex++) {
-    all++;
-    std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(queryList[idex], 100));
-    for(std::vector<std::pair<ChunkID, ChunkOffset>>::size_type s=0;s<ans0.size();s++){
-      ChunkID aaa=ans0[s].first;
-      ChunkOffset bbb=ans0[s].second;
-      output+=std::to_string(aaa*Chunk::DEFAULT_SIZE+bbb);
-      output+=",";
-    }
-    output+="\n";
-  }
+  float_array_index->range_similar_k(nn, queries, I, D, k);
+  // std::vector<std::vector<int>> ansList;
+  // std::string output = "";
+  // for (std::vector<float_array>::size_type idex = 0; idex < queryList.size(); idex++) {
+  //   all++;
+  //   std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(queryList[idex], 100));
+  //   for (std::vector<std::pair<ChunkID, ChunkOffset>>::size_type s = 0; s < ans0.size(); s++) {
+  //     ChunkID aaa = ans0[s].first;
+  //     ChunkOffset bbb = ans0[s].second;
+  //     output += std::to_string(aaa * Chunk::DEFAULT_SIZE + bbb);
+  //     output += ",";
+  //   }
+  //   output += "\n";
+  // }
   std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // printf("recall: %lf\n", 1.0 * tru / all);
-  FILE* ot = fopen("output.sh","w");
-  fprintf(ot,"%s",output.c_str());
-  // std::puts()
+  FILE* ot = fopen("output.sh", "w");
+  for (int i = 0; i < nn * k; i++) {
+    if ((i + 1) % k == 0)
+      fprintf(ot, "%d\n",I[i]);
+    else
+      fprintf(ot, "%d ",I[i]);
+  }
 
   return ReturnCode::Ok;
 }

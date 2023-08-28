@@ -18,6 +18,8 @@ console.log
 notebook.txt
 scripts/vector_test/gist/*
 scripts/vector_test/sift/*
+scripts/vector_test/*.txt
+scripts/vector_test/*.exe
 
 # Visualization results
 *.dot

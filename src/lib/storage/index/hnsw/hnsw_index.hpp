@@ -3,15 +3,16 @@
 #include <tsl/sparse_map.h>
 #include <tsl/sparse_set.h>
 #include "hnswlib.h"
+#include "storage/index/abstract_vector_index.hpp"
 #include "types.hpp"
 #define MAX_ELES_LONGLONG 1ll << 62
 // #define MAX_ELES_UINT (int)((1ll << 31) - 1)
 #define MAX_ELES_UINT (1ll << 23)
 
 namespace hyrise {
-using SimilarKPair = std::vector<std::pair<ChunkID, ChunkOffset>>;
+using SimilarKPair = std::priority_queue<std::pair<float, size_t>>;
 
-class HNSWIndex {
+class HNSWIndex : public AbstractVectorIndex {
  public:
   HNSWIndex() = delete;
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
@@ -23,7 +24,8 @@ class HNSWIndex {
   size_t remove(const std::vector<ChunkID>&);
 
   // SimilarKPair similar_k(const AllTypeVariant& query, int k);
-  SimilarKPair similar_k(float_array& query, int k);
+  void similar_k(const float* query, int64_t* I, float* D, int k);
+  void range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k);
 
   bool is_index_for(const ColumnID) const;
 

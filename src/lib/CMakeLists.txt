@@ -472,6 +472,8 @@ set(
     storage/frame_of_reference_segment/frame_of_reference_segment_iterable.hpp
     storage/index/abstract_chunk_index.cpp
     storage/index/abstract_chunk_index.hpp
+    storage/index/abstract_vector_index.cpp
+    storage/index/abstract_vector_index.hpp
     storage/index/adaptive_radix_tree/adaptive_radix_tree_index.cpp
     storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp
     storage/index/adaptive_radix_tree/adaptive_radix_tree_nodes.cpp
@@ -513,6 +515,7 @@ set(
     storage/index/hnsw/space_l2.h 
     storage/index/hnsw/visited_list_pool.h
     storage/index/chunk_index_type.hpp
+    storage/index/vector_index_type.hpp
     storage/lqp_view.cpp
     storage/lqp_view.hpp
     storage/lz4_segment.cpp

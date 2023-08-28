@@ -1,6 +1,7 @@
 #include "hnsw_index.hpp"
 #include <boost/lexical_cast.hpp>
 #include "storage/chunk.hpp"
+#include "storage/index/abstract_vector_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
 #include "utils/timer.hpp"
@@ -9,12 +10,14 @@ namespace hyrise {
 
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
                      int dim, long long max_elements = MAX_ELES_LONGLONG, int M = 16, int ef_construction = 40,
-                     int ef = 200) {
+                     int ef = 200)
+    : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
 }
 
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-                     int dim, int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200) {
+                     int dim, int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200)
+    : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;
   _dim = dim;
@@ -30,6 +33,10 @@ HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>
 
 bool HNSWIndex::is_index_for(const ColumnID column_id) const {
   return column_id == _column_id;
+}
+
+ColumnID HNSWIndex::get_indexed_column_id() const {
+  return _column_id;
 }
 
 size_t HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
@@ -60,18 +67,21 @@ size_t HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Ch
   return indexed_chunks;
 }
 
-SimilarKPair HNSWIndex::similar_k(float_array& query, int k = 1) {
-  std::priority_queue<std::pair<float, hnswlib::labeltype>> result = _alg_hnsw->searchKnn(query.data(), k);
-  SimilarKPair returnResult;
-  while (!result.empty()) {
-    hnswlib::labeltype label = result.top().second;
-    auto times = Chunk::DEFAULT_SIZE;
-    ChunkID cid = ChunkID{(unsigned int)(label / times)};
-    ChunkOffset cot = ChunkOffset{(unsigned int)(label % times)};
-    returnResult.push_back(std::pair<ChunkID, ChunkOffset>(cid, cot));
-    result.pop();
-  }
-  return returnResult;
+void HNSWIndex::similar_k(const float* query, int64_t* I, float* D, int k = 1) {
+  range_similar_k(1, query, I, D, k);
+  return;
 }
 
+void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k = 1) {
+  for (size_t i = 0; i < n; i++) {
+    SimilarKPair result = _alg_hnsw->searchKnn(queries + i * _dim, k);
+    int iter = result.size() - 1;
+    while (!result.empty()) {
+      I[i * k + iter] = (int64_t)(result.top().second);
+      D[i * k + iter] = result.top().first;
+      iter--;
+      result.pop();
+    }
+  }
+}
 }  // namespace hyrise

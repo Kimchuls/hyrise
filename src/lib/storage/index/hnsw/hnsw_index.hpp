@@ -15,13 +15,20 @@ using SimilarKPair = std::priority_queue<std::pair<float, size_t>>;
 class HNSWIndex : public AbstractVectorIndex {
  public:
   HNSWIndex() = delete;
-  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
-            long long max_elements, int M, int ef_construction, int ef);
+
+  HNSWIndex(const HNSWIndex&) = delete;
+  HNSWIndex& operator=(const HNSWIndex&) = delete;
+  // HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
+  //           long long max_elements, int M, int ef_construction, int ef);
+  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
+            int dim);
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
             int max_elements, int M, int ef_construction, int ef);
 
-  size_t insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
+  void insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
   size_t remove(const std::vector<ChunkID>&);
+  void train(int64_t n, const float* data);
+  void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
 
   // SimilarKPair similar_k(const AllTypeVariant& query, int k);
   void similar_k(const float* query, int64_t* I, float* D, int k);

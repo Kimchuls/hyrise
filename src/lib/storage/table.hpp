@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <string>
 #include <utility>
 #include <vector>
@@ -14,14 +15,16 @@
 #include "storage/constraints/foreign_key_constraint.hpp"
 #include "storage/constraints/table_key_constraint.hpp"
 #include "storage/constraints/table_order_constraint.hpp"
+#include "storage/index/abstract_vector_index.hpp"
 #include "storage/index/chunk_index_statistics.hpp"
-#include "storage/index/hnsw/hnsw_index.hpp"
 #include "storage/index/table_index_statistics.hpp"
 #include "storage/table_column_definition.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
 #include "utils/performance_warning.hpp"
 #include "utils/timer.hpp"
+
+#define MAX_ELES_UINT (1ll << 23)
 
 namespace hyrise {
 
@@ -42,12 +45,12 @@ class Table : private Noncopyable {
   Table(const TableColumnDefinitions& column_definitions, const TableType type,
         const std::optional<ChunkOffset> target_chunk_size = std::nullopt, const UseMvcc use_mvcc = UseMvcc::No,
         pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes = {},
-        pmr_vector<std::shared_ptr<HNSWIndex>> const& table_indexes_vector = {});
+        pmr_vector<std::shared_ptr<AbstractVectorIndex>> const& table_indexes_vector = {});
 
   Table(const TableColumnDefinitions& column_definitions, const TableType type,
         std::vector<std::shared_ptr<Chunk>>&& chunks, const UseMvcc use_mvcc = UseMvcc::No,
         pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes = {},
-        pmr_vector<std::shared_ptr<HNSWIndex>> const& table_indexes_vector = {});
+        pmr_vector<std::shared_ptr<AbstractVectorIndex>> const& table_indexes_vector = {});
 
   /**
    * @defgroup Getter and convenience functions for the column definitions
@@ -199,8 +202,9 @@ class Table : private Noncopyable {
    * table's index statistics. Table indexes can only be created on a set of immutable chunks.
    */
   void create_partial_hash_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids);
-  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
-                                int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200);
+
+  template <typename Index>
+  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim);
 
   template <typename Index>
   void create_chunk_index(const std::vector<ColumnID>& column_ids, const std::string& name = "");
@@ -234,13 +238,12 @@ class Table : private Noncopyable {
   /**
    * Returns all table vector indexes created for this table.
    */
-  pmr_vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector() const;
+  pmr_vector<std::shared_ptr<AbstractVectorIndex>> get_table_indexes_vector() const;
 
   /**
    * Returns all table vector indexes created for this table that index a specific ColumnID.
    */
-  std::vector<std::shared_ptr<HNSWIndex>> get_table_indexes_vector(const ColumnID column_id) const;
-  
+  std::vector<std::shared_ptr<AbstractVectorIndex>> get_table_indexes_vector(const ColumnID column_id) const;
 
   /**
    * For debugging purposes, makes an estimation about the memory used by this Table (including Chunk and Segments)
@@ -295,7 +298,7 @@ class Table : private Noncopyable {
   std::vector<TableIndexStatistics> _table_indexes_statistics;
   std::vector<TableIndexStatistics> _table_indexes_vector_statistics;
   pmr_vector<std::shared_ptr<PartialHashIndex>> _table_indexes;
-  pmr_vector<std::shared_ptr<HNSWIndex>> _table_indexes_vector;
+  pmr_vector<std::shared_ptr<AbstractVectorIndex>> _table_indexes_vector;
 
   // For tables with _type==Reference, the row count will not vary. As such, there is no need to iterate over all
   // chunks more than once.

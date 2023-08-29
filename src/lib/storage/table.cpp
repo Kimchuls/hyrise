@@ -13,10 +13,12 @@
 #include "resolve_type.hpp"
 #include "statistics/attribute_statistics.hpp"
 #include "statistics/table_statistics.hpp"
+#include "storage/index/abstract_vector_index.hpp"
 #include "storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "storage/index/group_key/composite_group_key_index.hpp"
 #include "storage/index/group_key/group_key_index.hpp"
 #include "storage/index/hnsw/hnsw_index.hpp"
+#include "storage/index/IVF_Flat/ivf_flat_index.hpp"
 #include "storage/index/partial_hash/partial_hash_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
@@ -59,7 +61,7 @@ std::shared_ptr<Table> Table::create_dummy_table(const TableColumnDefinitions& c
 Table::Table(const TableColumnDefinitions& column_definitions, const TableType type,
              const std::optional<ChunkOffset> target_chunk_size, const UseMvcc use_mvcc,
              const pmr_vector<std::shared_ptr<PartialHashIndex>>& table_indexes,
-             const pmr_vector<std::shared_ptr<HNSWIndex>>& table_indexes_vector)
+             const pmr_vector<std::shared_ptr<AbstractVectorIndex>>& table_indexes_vector)
     : _column_definitions(column_definitions),
       _type(type),
       _use_mvcc(use_mvcc),
@@ -75,7 +77,7 @@ Table::Table(const TableColumnDefinitions& column_definitions, const TableType t
 Table::Table(const TableColumnDefinitions& column_definitions, const TableType type,
              std::vector<std::shared_ptr<Chunk>>&& chunks, const UseMvcc use_mvcc,
              pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes,
-             const pmr_vector<std::shared_ptr<HNSWIndex>>& table_indexes_vector)
+             const pmr_vector<std::shared_ptr<AbstractVectorIndex>>& table_indexes_vector)
     : Table(column_definitions, type, type == TableType::Data ? std::optional{Chunk::DEFAULT_SIZE} : std::nullopt,
             use_mvcc, table_indexes, table_indexes_vector) {
   _chunks = {chunks.begin(), chunks.end()};
@@ -571,12 +573,12 @@ std::vector<std::shared_ptr<PartialHashIndex>> Table::get_table_indexes(const Co
   return result;
 }
 
-pmr_vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector() const {
+pmr_vector<std::shared_ptr<AbstractVectorIndex>> Table::get_table_indexes_vector() const {
   return _table_indexes_vector;
 }
 
-std::vector<std::shared_ptr<HNSWIndex>> Table::get_table_indexes_vector(const ColumnID column_id) const {
-  auto result = std::vector<std::shared_ptr<HNSWIndex>>();
+std::vector<std::shared_ptr<AbstractVectorIndex>> Table::get_table_indexes_vector(const ColumnID column_id) const {
+  auto result = std::vector<std::shared_ptr<AbstractVectorIndex>>();
   std::copy_if(_table_indexes_vector.cbegin(), _table_indexes_vector.cend(), std::back_inserter(result),
                [&](const auto& index) { return index->is_index_for(column_id); });
   return result;
@@ -628,13 +630,13 @@ void Table::create_partial_hash_index(const ColumnID column_id, const std::vecto
   _table_indexes_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
 }
 
-void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
-                                     int max_elements, int M, int ef_construction, int ef) {
+template <typename Index>
+void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim) {
   if (chunk_ids.empty()) {
     Fail("Creating a partial hash index with no chunks being indexed is not supported.");
   }
 
-  auto table_indexes_vector = std::shared_ptr<HNSWIndex>{};
+  // auto table_indexes_vector = std::shared_ptr<AbstractVectorIndex>{};
   auto chunks_to_index = std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>{};
 
   chunks_to_index.reserve(chunk_ids.size());
@@ -644,11 +646,15 @@ void Table::create_float_array_index(const ColumnID column_id, const std::vector
     Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
     chunks_to_index.emplace_back(chunk_id, chunk);
   }
-  table_indexes_vector =
-      std::make_shared<HNSWIndex>(chunks_to_index, column_id, dim, max_elements, M, ef_construction, ef);
+  auto table_indexes_vector = std::make_shared<Index>(chunks_to_index, column_id, dim);
   _table_indexes_vector.emplace_back(table_indexes_vector);
   _table_indexes_vector_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
 }
+
+template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
+                                                         const std::vector<ChunkID>& chunk_ids, int dim);
+template void Table::create_float_array_index<IVFFlatIndex>(const ColumnID column_id,
+                                                            const std::vector<ChunkID>& chunk_ids, int dim);
 
 template void Table::create_chunk_index<GroupKeyIndex>(const std::vector<ColumnID>& column_ids,
                                                        const std::string& name);

@@ -3,6 +3,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
+#include <stdio.h>
 #include <chrono>
 #include <csetjmp>
 #include <csignal>
@@ -10,11 +11,12 @@
 #include <ctime>
 #include <filesystem>
 #include <iomanip>
-#include <regex>
-#include <stdio.h>
 #include <iostream>
+#include <regex>
 
+#include <sys/stat.h>
 #include <boost/algorithm/string/join.hpp>
+#include <fstream>
 
 #include "SQLParser.h"
 #include "concurrency/transaction_context.hpp"
@@ -37,6 +39,8 @@
 #include "sql/sql_translator.hpp"
 #include "ssb/ssb_table_generator.hpp"
 #include "storage/chunk_encoder.hpp"
+#include "storage/index/IVF_Flat/ivf_flat_index.hpp"
+#include "storage/index/hnsw/hnsw_index.hpp"
 #include "tpcc/tpcc_table_generator.hpp"
 #include "tpcds/tpcds_table_generator.hpp"
 #include "tpch/tpch_constants.hpp"
@@ -587,18 +591,72 @@ int Console::_generate_ssb(const std::string& args) {
   return ReturnCode::Ok;
 }
 
+float* fvecs_read(const char* fname, size_t* d_out, size_t* n_out) {
+  FILE* f = fopen(fname, "r");
+  if (!f) {
+    fprintf(stderr, "could not open %s\n", fname);
+    perror("");
+    abort();
+  }
+  int d;
+  fread(&d, 1, sizeof(int), f);
+  assert((d > 0 && d < 1000000) || !"unreasonable dimension");
+  fseek(f, 0, SEEK_SET);
+  struct stat st;
+  fstat(fileno(f), &st);
+  size_t sz = st.st_size;
+  assert(sz % ((d + 1) * 4) == 0 || !"weird file size");
+  size_t n = sz / ((d + 1) * 4);
+
+  *d_out = d;
+  *n_out = n;
+  float* x = new float[n * (d + 1)];
+  size_t nr = fread(x, sizeof(float), n * (d + 1), f);
+  assert(nr == n * (d + 1) || !"could not read whole file");
+
+  // shift array to remove row headers
+  for (size_t i = 0; i < n; i++)
+    memmove(x + i * d, x + 1 + i * (d + 1), d * sizeof(*x));
+
+  fclose(f);
+  return x;
+}
+
+int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
+  return (int*)fvecs_read(fname, d_out, n_out);
+}
+
+void load_data(char* filename, float*& data, int num, int dim) {
+  std::ifstream in(filename, std::ios::binary);  //open file in binary
+  if (!in.is_open()) {
+    std::cout << "open file error" << std::endl;
+    exit(-1);
+  }
+  data = new float[(size_t)num * (size_t)dim];
+  in.seekg(0, std::ios::beg);  //shift to start
+                               //       printf("shift successfully\n");
+  for (size_t i = 0; i < num; i++) {
+    in.seekg(4, std::ios::cur);  //right shift 4 bytes
+
+    for (int j = 0; j < dim; j++)
+      in.read((char*)(data + i * dim + j), 4);  //load data
+                                                //in.read((char*)(data + i*dim), dim );
+  }
+}
+
 int Console::_create_index(const std::string& args) {
   const auto arguments = trim_and_split(args);
 
-  if (arguments.empty() || arguments.size() > 3) {
+  if (arguments.empty() || arguments.size() > 4) {
     out("Usage:\n");
-    out("  create_index TABLENAME ColumnName [test flag(true)]\n");
+    out("  create_index TABLENAME ColumnName [index type(ivfflat/hnsw)] [self_train(ivfflat):default::false]\n");
     return ReturnCode::Error;
   }
 
   const auto table_name = arguments.at(0);
   const auto column_name = arguments.at(1);
-  const auto test_flag = arguments.size() == 3 ? (arguments.at(2) == "true" ? true : false) : false;
+  const auto index_type = arguments.at(2);
+  const auto self_train_flag = arguments.size() == 4 ? (arguments.at(3) == "true" ? true : false) : false;
   if (!Hyrise::get().storage_manager.has_table(table_name)) {
     out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
     return ReturnCode::Error;
@@ -624,39 +682,41 @@ int Console::_create_index(const std::string& args) {
       Assert(chunk, "Requested index on deleted chunk.");
       Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
     }
-    table->create_float_array_index(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+    // table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+    if (index_type == "hnsw") {
+      table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+    } else if (index_type == "ivfflat") {
+      table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+    } else {
+      std::cout << "other index type is not supported." << std::endl;
+    }
     std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
-  // if (test_flag) {
-  //   printf("test_flag=true\n");
-  //   int tru = 0, all = 0;
-  //   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  //   const auto ChunkCount = table->chunk_count();
-  //   auto& search = float_array_index->_alg_hnsw;
-  //   for (ChunkID cid = ChunkID{0}; cid < ChunkCount; cid++) {
-  //     const auto chunk = table->get_chunk(cid);
-  //     const auto& segment = *chunk->get_segment(column_id);
-  //     for (ChunkOffset cos = ChunkOffset{0}; cos < chunk->size(); cos++) {
-  //       all++;
-  //       float_array query = boost::get<float_array>((*chunk->get_segment(column_id))[cos]);
-  //       std::vector<std::pair<ChunkID, ChunkOffset>> ans0 = (float_array_index->similar_k(query, 1));
-  //       if (ans0.size() > 0) {
-  //         auto ans = ans0[0];
-  //         if (ans.first == cid && ans.second == cos) {
-  //           tru++;
-  //         }
-  //         // std::cout << "now for ChunkID " << cid << ", ChunkOffset " << cos << ", ans is ChunkID " << ans.first
-  //         //           << " ChunkOffset " << ans.second << std::endl;
-  //       }
-  //     }
-  //   }
-  //   printf("recall: %lf\n", 1.0 * tru / all);
-  // }
+  if (self_train_flag) {
+    printf("self_train_flag=true\n");
+    int nb = 1000000, d = 128;
+    char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
+    float* xb = new float[d * nb];
+    load_data(base_filepath, xb, nb, d);
+    srand((int)time(0));
+    std::vector<float> trainvecs(nb / 100 * d);
+    for (int i = 0; i < nb / 100; i++) {
+      int rng = (rand() % (nb + 1));
+      for (int j = 0; j < d; j++) {
+        trainvecs[d * i + j] = xb[rng * d + j];
+      }
+    }
+    const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+    auto per_table_index_timer = Timer{};
+    float_array_index->train(nb / 100, trainvecs.data());
+    std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+    delete[] xb;
+  }
   return ReturnCode::Ok;
 }
 
 int Console::_similar_vector(const std::string& args) {
-const auto arguments = trim_and_split(args);
+  const auto arguments = trim_and_split(args);
 
   if (arguments.size() != 4) {
     out("Usage:\n");
@@ -735,9 +795,9 @@ const auto arguments = trim_and_split(args);
   FILE* ot = fopen("output.sh", "w");
   for (int i = 0; i < nn * k; i++) {
     if ((i + 1) % k == 0)
-      fprintf(ot, "%d\n",I[i]);
+      fprintf(ot, "%ld\n", I[i]);
     else
-      fprintf(ot, "%d ",I[i]);
+      fprintf(ot, "%ld ", I[i]);
   }
 
   return ReturnCode::Ok;

@@ -8,11 +8,26 @@
 
 namespace hyrise {
 
+// HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
+//                      int dim, long long max_elements = MAX_ELES_LONGLONG, int M = 16, int ef_construction = 40,
+//                      int ef = 200)
+//     : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
+//   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
+// }
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-                     int dim, long long max_elements = MAX_ELES_LONGLONG, int M = 16, int ef_construction = 40,
-                     int ef = 200)
+                     int dim)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
+  _column_id = column_id;
+  _dim = dim;
+  _max_elements = MAX_ELES_UINT;
+  _M = 16;
+  _ef_construction = 40;
+  _space = new hnswlib::L2Space(_dim);
+  _alg_hnsw = new hnswlib::HierarchicalNSW<float>(_space, _max_elements, _M, _ef_construction);
+  _alg_hnsw->setEf(200);
+  _indexed_chunk_ids = {};
+  insert(chunks_to_index);
 }
 
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
@@ -39,7 +54,7 @@ ColumnID HNSWIndex::get_indexed_column_id() const {
   return _column_id;
 }
 
-size_t HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
+void HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
   std::cout << "insert into HNSWIndex: " << std::endl;
   auto per_table_index_timer = Timer{};
   auto indexed_chunks = size_t{0};
@@ -64,7 +79,7 @@ size_t HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Ch
     }
   }
   std::cout << per_table_index_timer.lap_formatted() << std::endl;
-  return indexed_chunks;
+  // return indexed_chunks;
 }
 
 void HNSWIndex::similar_k(const float* query, int64_t* I, float* D, int k = 1) {
@@ -83,5 +98,13 @@ void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, floa
       result.pop();
     }
   }
+}
+
+void HNSWIndex::train(int64_t n, const float* data) {
+  Assert(true, "This index is not support training.\n");
+}
+
+void HNSWIndex::train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
+  Assert(true, "This index is not support training.\n");
 }
 }  // namespace hyrise

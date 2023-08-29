@@ -498,6 +498,53 @@ set(
     storage/index/chunk_index_statistics.hpp
     storage/index/table_index_statistics.cpp
     storage/index/table_index_statistics.hpp
+    storage/index/IVF_Flat/DirectMap.cpp
+    storage/index/IVF_Flat/IndexIVFFlat.cpp
+    storage/index/IVF_Flat/IndexFlat.cpp
+    storage/index/IVF_Flat/distances.cpp
+    storage/index/IVF_Flat/utils.cpp
+    storage/index/IVF_Flat/IndexIVF.cpp
+    storage/index/IVF_Flat/Heap.cpp
+    storage/index/IVF_Flat/random.cpp
+    storage/index/IVF_Flat/CodePacker.cpp
+    storage/index/IVF_Flat/IDSelector.cpp
+    storage/index/IVF_Flat/Index.cpp
+    storage/index/IVF_Flat/Clustering.cpp
+    storage/index/IVF_Flat/extra_distances.cpp
+    storage/index/IVF_Flat/IndexFlatCodes.cpp
+    storage/index/IVF_Flat/distances_simd.cpp
+    storage/index/IVF_Flat/AuxIndexStructures.cpp
+    storage/index/IVF_Flat/InvertedLists.cpp
+    storage/index/IVF_Flat/VIndexException.cpp
+    storage/index/IVF_Flat/partitioning.cpp
+    storage/index/IVF_Flat/IndexIVFFlat.hpp
+    storage/index/IVF_Flat/extra_distances.hpp
+    storage/index/IVF_Flat/ordered_key_value.hpp
+    storage/index/IVF_Flat/Index.hpp
+    storage/index/IVF_Flat/IndexIVF.hpp
+    storage/index/IVF_Flat/VIndexAssert.hpp
+    storage/index/IVF_Flat/IDSelector.hpp
+    storage/index/IVF_Flat/extra_distances-inl.hpp
+    storage/index/IVF_Flat/CodePacker.hpp
+    storage/index/IVF_Flat/partitioning.hpp
+    storage/index/IVF_Flat/AlignedTable.hpp
+    storage/index/IVF_Flat/IndexFlatCodes.hpp
+    storage/index/IVF_Flat/AuxIndexStructures.hpp
+    storage/index/IVF_Flat/VIndexException.hpp
+    storage/index/IVF_Flat/InvertedLists.hpp
+    storage/index/IVF_Flat/DirectMap.hpp
+    storage/index/IVF_Flat/platform_macros.hpp
+    storage/index/IVF_Flat/distances.hpp
+    storage/index/IVF_Flat/Clustering.hpp
+    storage/index/IVF_Flat/random.hpp
+    storage/index/IVF_Flat/DistanceComputer.hpp
+    storage/index/IVF_Flat/MetricType.hpp
+    storage/index/IVF_Flat/ResultHandler.hpp
+    storage/index/IVF_Flat/utils.hpp
+    storage/index/IVF_Flat/IndexFlat.hpp
+    storage/index/IVF_Flat/Heap.hpp
+    storage/index/IVF_Flat/ivf_flat_index.cpp
+    storage/index/IVF_Flat/ivf_flat_index.hpp
     storage/index/partial_hash/flat_map_iterator.cpp
     storage/index/partial_hash/flat_map_iterator.hpp
     storage/index/partial_hash/flat_map_iterator_impl.cpp
@@ -768,6 +815,19 @@ endif()
 
 target_include_directories(hyrise_impl PUBLIC ${CMAKE_BINARY_DIR})
 
+find_package(OpenMP REQUIRED)
+target_link_libraries(hyrise_impl PUBLIC OpenMP::OpenMP_CXX)
+find_package(MKL)
+if(MKL_FOUND)
+  target_link_libraries(hyrise_impl PUBLIC ${MKL_LIBRARIES})
+else()
+  find_package(BLAS REQUIRED)
+  target_link_libraries(hyrise_impl PUBLIC ${BLAS_LIBRARIES})
+
+  find_package(LAPACK REQUIRED)
+  target_link_libraries(hyrise_impl PUBLIC ${LAPACK_LIBRARIES})
+endif()
+
 # Precompile the most expensive headers. Only add headers here if you know what you are doing, as this has the potential
 # of negatively affecting the build time.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -810,3 +870,16 @@ add_custom_target(resourceLink
 )
 
 add_dependencies(hyrise resourceLink)
+# find_package(OpenMP REQUIRED)
+# target_link_libraries(hyrise INTERFACE OpenMP::OpenMP_CXX)
+
+# find_package(MKL)
+# if(MKL_FOUND)
+#   target_link_libraries(hyrise INTERFACE ${MKL_LIBRARIES})
+# else()
+#   find_package(BLAS REQUIRED)
+#   target_link_libraries(hyrise INTERFACE ${BLAS_LIBRARIES})
+
+#   find_package(LAPACK REQUIRED)
+#   target_link_libraries(hyrise INTERFACE ${LAPACK_LIBRARIES})
+# endif()

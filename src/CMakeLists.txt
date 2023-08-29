@@ -45,7 +45,7 @@ set(CMAKE_CXX_STANDARD 20)
 # Hotfix for boost bug (https://github.com/boostorg/asio/issues/312):
 add_compile_options(-DBOOST_ASIO_DISABLE_CONCEPTS)
 
-add_compile_options(-pthread -Wno-unknown-warning-option -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-type-limits)
+add_compile_options(-pthread -Wno-unknown-warning-option -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-type-limits -Wno-reorder -Wno-sign-compare -Wno-write-strings -Wno-unused-result)
 
 # Use HYRISE_RELAXED_BUILD to disable strict warnings (e.g., when testing an unsupported compiler or an unsupported system)
 if (NOT "${HYRISE_RELAXED_BUILD}")
@@ -86,6 +86,7 @@ if (ENABLE_CLANG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "${CMAKE_SOURCE_DIR}/scripts/clang_tidy_wrapper.sh;${CMAKE_SOURCE_DIR}")
 endif()
 
+# add_compile_options(-fopenmp -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lm -ldl -lblas)
 add_subdirectory(benchmarklib)
 add_subdirectory(bin)
 add_subdirectory(lib)

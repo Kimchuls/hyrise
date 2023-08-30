@@ -31,6 +31,22 @@ HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>
 }
 
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
+                     int dim, int testing_data=200)
+    : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
+  Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
+  _column_id = column_id;
+  _dim = dim;
+  _max_elements = MAX_ELES_UINT;
+  _M = 16;
+  _ef_construction = 40;
+  _space = new hnswlib::L2Space(_dim);
+  _alg_hnsw = new hnswlib::HierarchicalNSW<float>(_space, _max_elements, _M, _ef_construction);
+  _alg_hnsw->setEf(testing_data);
+  _indexed_chunk_ids = {};
+  insert(chunks_to_index);
+}
+
+HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
                      int dim, int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
@@ -88,6 +104,8 @@ void HNSWIndex::similar_k(const float* query, int64_t* I, float* D, int k = 1) {
 }
 
 void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k = 1) {
+  std::cout << "HNSWIndex::range_similar_k: " << std::endl;
+  auto per_table_index_timer = Timer{};
   for (size_t i = 0; i < n; i++) {
     SimilarKPair result = _alg_hnsw->searchKnn(queries + i * _dim, k);
     int iter = result.size() - 1;
@@ -98,6 +116,7 @@ void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, floa
       result.pop();
     }
   }
+  std::cout << per_table_index_timer.lap_formatted() << std::endl;
 }
 
 void HNSWIndex::train(int64_t n, const float* data) {
@@ -106,5 +125,9 @@ void HNSWIndex::train(int64_t n, const float* data) {
 
 void HNSWIndex::train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
   Assert(true, "This index is not support training.\n");
+}
+
+void HNSWIndex::save_index(const std::string& save_path ) {
+  _alg_hnsw->saveIndex(save_path);
 }
 }  // namespace hyrise

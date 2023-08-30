@@ -543,6 +543,9 @@ set(
     storage/index/IVF_Flat/utils.hpp
     storage/index/IVF_Flat/IndexFlat.hpp
     storage/index/IVF_Flat/Heap.hpp
+    storage/index/IVF_Flat/index_io.h
+    storage/index/IVF_Flat/index_read.cpp
+    storage/index/IVF_Flat/index_write.cpp
     storage/index/IVF_Flat/ivf_flat_index.cpp
     storage/index/IVF_Flat/ivf_flat_index.hpp
     storage/index/partial_hash/flat_map_iterator.cpp

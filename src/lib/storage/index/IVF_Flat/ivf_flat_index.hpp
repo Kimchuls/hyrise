@@ -28,9 +28,11 @@ class IVFFlatIndex : public AbstractVectorIndex {
   IVFFlatIndex() = delete;
   IVFFlatIndex(const IVFFlatIndex&) = delete;
   IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-               int d );
+               int d);
   IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-               int d , int nlist, size_t nprobe);
+               int dim, int testing_data);
+  IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
+               int d, int nlist, size_t nprobe);
   void train(int64_t n, const float* data);
   void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
   void insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&, const int64_t* = nullptr);
@@ -39,6 +41,8 @@ class IVFFlatIndex : public AbstractVectorIndex {
 
   void similar_k(const float* query, int64_t* I, float* D, int k = 1);
   void range_similar_k(size_t n, const float* query, int64_t* I, float* D, int k = 1);
+
+  void save_index(const std::string& save_path);
   bool is_index_for(const ColumnID) const;
   ColumnID get_indexed_column_id() const;
 

@@ -647,16 +647,17 @@ void load_data(char* filename, float*& data, int num, int dim) {
 int Console::_create_index(const std::string& args) {
   const auto arguments = trim_and_split(args);
 
-  if (arguments.empty() || arguments.size() > 4) {
+  if (arguments.empty() || arguments.size() > 5) {
     out("Usage:\n");
-    out("  create_index TABLENAME ColumnName [index type(ivfflat/hnsw)] [self_train(ivfflat):default::false]\n");
+    out("  create_index TABLENAME ColumnName [index type(ivfflat/hnsw)] [testing_value] [self_train(ivfflat):default::true]\n");
     return ReturnCode::Error;
   }
 
   const auto table_name = arguments.at(0);
   const auto column_name = arguments.at(1);
   const auto index_type = arguments.at(2);
-  const auto self_train_flag = arguments.size() == 4 ? (arguments.at(3) == "true" ? true : false) : false;
+  const auto testing_value = arguments.at(3);
+  const auto self_train_flag = arguments.size() == 5 ? (arguments.at(4) == "true" ? true : false) : true;
   if (!Hyrise::get().storage_manager.has_table(table_name)) {
     out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
     return ReturnCode::Error;
@@ -675,8 +676,8 @@ int Console::_create_index(const std::string& args) {
               << chunk_ids.size() << " (all finalized) chunks]" << std::flush;
     int float_array_dim = (table->get_value<float_array>(column_name, 0)).value().size();
 
-    std::cout << std::endl << "- start timing" << std::endl;
-    auto per_table_index_timer = Timer{};
+    // std::cout << std::endl << "- start timing" << std::endl;
+    // auto per_table_index_timer = Timer{};
     for (auto chunk_id = ChunkID{0}; chunk_id < table->chunk_count(); ++chunk_id) {
       const auto& chunk = table->get_chunk(chunk_id);
       Assert(chunk, "Requested index on deleted chunk.");
@@ -690,28 +691,31 @@ int Console::_create_index(const std::string& args) {
     } else {
       std::cout << "other index type is not supported." << std::endl;
     }
-    std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+    // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
-  if (self_train_flag) {
-    printf("self_train_flag=true\n");
-    int nb = 1000000, d = 128;
-    char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
-    float* xb = new float[d * nb];
-    load_data(base_filepath, xb, nb, d);
-    srand((int)time(0));
-    std::vector<float> trainvecs(nb / 100 * d);
-    for (int i = 0; i < nb / 100; i++) {
-      int rng = (rand() % (nb + 1));
-      for (int j = 0; j < d; j++) {
-        trainvecs[d * i + j] = xb[rng * d + j];
-      }
-    }
-    const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-    auto per_table_index_timer = Timer{};
-    float_array_index->train(nb / 100, trainvecs.data());
-    std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-    delete[] xb;
-  }
+  const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  std::string index_save_path = index_type+".bin";
+  float_array_index->save_index(index_save_path);
+  // if (self_train_flag) {
+  //   printf("self_train_flag=true\n");
+  //   int nb = 1000000, d = 128;
+  //   char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
+  //   float* xb = new float[d * nb];
+  //   load_data(base_filepath, xb, nb, d);
+  //   srand((int)time(0));
+  //   std::vector<float> trainvecs(nb / 100 * d);
+  //   for (int i = 0; i < nb / 100; i++) {
+  //     int rng = (rand() % (nb + 1));
+  //     for (int j = 0; j < d; j++) {
+  //       trainvecs[d * i + j] = xb[rng * d + j];
+  //     }
+  //   }
+  //   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  //   auto per_table_index_timer = Timer{};
+  //   float_array_index->train(nb / 100, trainvecs.data());
+  //   std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  //   delete[] xb;
+  // }
   return ReturnCode::Ok;
 }
 

@@ -13,12 +13,12 @@
 #include "resolve_type.hpp"
 #include "statistics/attribute_statistics.hpp"
 #include "statistics/table_statistics.hpp"
+#include "storage/index/IVF_Flat/ivf_flat_index.hpp"
 #include "storage/index/abstract_vector_index.hpp"
 #include "storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "storage/index/group_key/composite_group_key_index.hpp"
 #include "storage/index/group_key/group_key_index.hpp"
 #include "storage/index/hnsw/hnsw_index.hpp"
-#include "storage/index/IVF_Flat/ivf_flat_index.hpp"
 #include "storage/index/partial_hash/partial_hash_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
@@ -631,7 +631,8 @@ void Table::create_partial_hash_index(const ColumnID column_id, const std::vecto
 }
 
 template <typename Index>
-void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim) {
+void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
+                                     int testing_data) {
   if (chunk_ids.empty()) {
     Fail("Creating a partial hash index with no chunks being indexed is not supported.");
   }
@@ -646,15 +647,33 @@ void Table::create_float_array_index(const ColumnID column_id, const std::vector
     Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
     chunks_to_index.emplace_back(chunk_id, chunk);
   }
-  auto table_indexes_vector = std::make_shared<Index>(chunks_to_index, column_id, dim);
+  auto table_indexes_vector = std::make_shared<Index>(chunks_to_index, column_id, dim, testing_data);
   _table_indexes_vector.emplace_back(table_indexes_vector);
   _table_indexes_vector_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
 }
 
+int Table::drop_index_vector(const int index_id) {
+  if (index_id > _table_indexes_vector.size() - 1) {
+    std::cout << "index id is larger than index number." << std::endl;
+    return 0;
+  }
+  int id = 0;
+  for (auto it = _table_indexes_vector.begin(); it != _table_indexes_vector.end(); it++, id++) {
+    if (id == index_id) {
+      _table_indexes_vector.erase(it);
+      printf("size of index vector:%ld\n",_table_indexes_vector.size());
+      return 1;
+    }
+  }
+  return 0;
+}
+
 template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
-                                                         const std::vector<ChunkID>& chunk_ids, int dim);
+                                                         const std::vector<ChunkID>& chunk_ids, int dim,
+                                                         int testing_data);
 template void Table::create_float_array_index<IVFFlatIndex>(const ColumnID column_id,
-                                                            const std::vector<ChunkID>& chunk_ids, int dim);
+                                                            const std::vector<ChunkID>& chunk_ids, int dim,
+                                                            int testing_data);
 
 template void Table::create_chunk_index<GroupKeyIndex>(const std::vector<ColumnID>& column_ids,
                                                        const std::string& name);

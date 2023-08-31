@@ -1,7 +1,6 @@
 #ifndef VINDEX_INDEX_IVF_FLAT_HPP
 #define VINDEX_INDEX_IVF_FLAT_HPP
 #include "IndexIVF.hpp"
-
 namespace vindex
 {
   struct IndexIVFFlat : public IndexIVF

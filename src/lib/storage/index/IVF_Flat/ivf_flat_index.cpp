@@ -1,7 +1,7 @@
 #include "ivf_flat_index.hpp"
 #include <boost/lexical_cast.hpp>
 #include <memory>
-#include "index_io.h"
+#include "index_io.hpp"
 #include "storage/chunk.hpp"
 #include "storage/index/abstract_vector_index.hpp"
 #include "storage/segment_iterate.hpp"
@@ -69,6 +69,7 @@ char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/s
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
                            ColumnID column_id, int d = 128, int testing_data=20)
     : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>()} {
+  
   Assert(!chunks_to_index.empty(), "IVFFlatIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;
   _d = d;
@@ -76,7 +77,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   _quantizer = new vindex::IndexFlatL2(_d);
   _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
   _index->nprobe = testing_data;
-  _is_trained = &(_index->is_trained);
+  // _is_trained = &(_index->is_trained);
 
   float* xb = new float[d * nb];
   load_data(base_filepath, xb, nb, d);
@@ -88,7 +89,8 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
       trainvecs[d * i + j] = xb[rng * d + j];
     }
   }
-  _index->train(nb / 100, trainvecs.data());
+  printf("IVFFLAT\n");
+  train(nb / 100, trainvecs.data());
   delete[] xb;
   insert(chunks_to_index);
 }
@@ -103,7 +105,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   _quantizer = new vindex::IndexFlatL2(_d);
   _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
   _index->nprobe = 20;
-  _is_trained = &(_index->is_trained);
+  // _is_trained = &(_index->is_trained);
 
   int nb = 1000000;
   char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
@@ -117,7 +119,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
       trainvecs[d * i + j] = xb[rng * d + j];
     }
   }
-  _index->train(nb / 100, trainvecs.data());
+  train(nb / 100, trainvecs.data());
   delete[] xb;
   insert(chunks_to_index);
 }
@@ -132,7 +134,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   _quantizer = new vindex::IndexFlatL2(_d);
   _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
   _index->nprobe = nprobe;
-  _is_trained = &(_index->is_trained);
+  // _is_trained = &(_index->is_trained);
 
   //TODO: training and inserting
 }
@@ -146,8 +148,8 @@ ColumnID IVFFlatIndex::get_indexed_column_id() const {
 }
 
 void IVFFlatIndex::train(int64_t n, const float* data) {
-  std::cout << "train IVFFlatIndex: const float* data" << std::endl;
-  if (_is_trained) {
+  // std::cout << "train IVFFlatIndex: const float* data" << std::endl;
+  if (_index->is_trained) {
     std::cout << "is_trained = true" << std::endl;
     return;
   }
@@ -158,7 +160,7 @@ void IVFFlatIndex::train(int64_t n, const float* data) {
 }
 
 void IVFFlatIndex::train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
-  if (_is_trained) {
+  if (_index->is_trained) {
     std::cout << "is_trained = true" << std::endl;
     return;
   }
@@ -184,7 +186,7 @@ void IVFFlatIndex::train(const std::vector<std::pair<ChunkID, std::shared_ptr<Ch
 
 void IVFFlatIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
                           const int64_t* labels) {
-  std::cout << "insert IVFFlatIndex: chunks_to_index" << std::endl;
+  // std::cout << "insert IVFFlatIndex: chunks_to_index" << std::endl;
   auto indexed_chunks = size_t{0};
   float* data = new float[chunks_to_index.size() * Chunk::DEFAULT_SIZE * _d];
   int iter = 0;
@@ -238,7 +240,7 @@ void IVFFlatIndex::range_similar_k(size_t n, const float* query, int64_t* I, flo
 }
 
 void IVFFlatIndex::save_index(const std::string& save_path) {
-  std::cout<<"not supported"<<std::endl;
-  // vindex::write_index(_index, save_path.c_str());
+  // std::cout<<"not supported"<<std::endl;
+  vindex::write_index(_index, save_path.c_str());
 }
 }  // namespace hyrise

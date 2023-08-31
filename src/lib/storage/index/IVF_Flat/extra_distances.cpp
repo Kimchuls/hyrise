@@ -1,15 +1,47 @@
 #include "extra_distances.hpp"
 
 #include <omp.h>
+#include <algorithm>
+#include <cmath>
 
 #include "AuxIndexStructures.hpp"
+#include "DistanceComputer.hpp"
 #include "VIndexAssert.hpp"
+#include "utils.hpp"
 
 namespace vindex
 {
 
   namespace
   {
+
+    template <class VD>
+    void pairwise_extra_distances_template(
+        VD vd,
+        int64_t nq,
+        const float *xq,
+        int64_t nb,
+        const float *xb,
+        float *dis,
+        int64_t ldq,
+        int64_t ldb,
+        int64_t ldd)
+    {
+#pragma omp parallel for if (nq > 10)
+      for (int64_t i = 0; i < nq; i++)
+      {
+        const float *xqi = xq + i * ldq;
+        const float *xbj = xb;
+        float *disi = dis + ldd * i;
+
+        for (int64_t j = 0; j < nb; j++)
+        {
+          disi[j] = vd(xqi, xbj);
+          xbj += ldb;
+        }
+      }
+    }
+
     template <class VD, class C>
     void knn_extra_metrics_template(
         VD vd,
@@ -58,7 +90,89 @@ namespace vindex
         InterruptCallback::check();
       }
     }
+
+    template <class VD>
+    struct ExtraDistanceComputer : FlatCodesDistanceComputer
+    {
+      VD vd;
+      int64_t nb;
+      const float *q;
+      const float *b;
+
+      float symmetric_dis(int64_t i, int64_t j) final
+      {
+        return vd(b + j * vd.d, b + i * vd.d);
+      }
+
+      float distance_to_code(const uint8_t *code) final
+      {
+        return vd(q, (float *)code);
+      }
+
+      ExtraDistanceComputer(
+          const VD &vd,
+          const float *xb,
+          size_t nb,
+          const float *q = nullptr)
+          : FlatCodesDistanceComputer((uint8_t *)xb, vd.d * sizeof(float)),
+            vd(vd),
+            nb(nb),
+            q(q),
+            b(xb) {}
+
+      void set_query(const float *x) override
+      {
+        q = x;
+      }
+    };
+
   } // anonymous namespace
+
+  void pairwise_extra_distances(
+      int64_t d,
+      int64_t nq,
+      const float *xq,
+      int64_t nb,
+      const float *xb,
+      MetricType mt,
+      float metric_arg,
+      float *dis,
+      int64_t ldq,
+      int64_t ldb,
+      int64_t ldd)
+  {
+    if (nq == 0 || nb == 0)
+      return;
+    if (ldq == -1)
+      ldq = d;
+    if (ldb == -1)
+      ldb = d;
+    if (ldd == -1)
+      ldd = nb;
+
+    switch (mt)
+    {
+#define HANDLE_VAR(kw)                                        \
+  case METRIC_##kw:                                           \
+  {                                                           \
+    VectorDistance<METRIC_##kw> vd = {(size_t)d, metric_arg}; \
+    pairwise_extra_distances_template(                        \
+        vd, nq, xq, nb, xb, dis, ldq, ldb, ldd);              \
+    break;                                                    \
+  }
+      HANDLE_VAR(L2);
+      HANDLE_VAR(L1);
+      HANDLE_VAR(Linf);
+      HANDLE_VAR(Canberra);
+      HANDLE_VAR(BrayCurtis);
+      HANDLE_VAR(JensenShannon);
+      HANDLE_VAR(Lp);
+      HANDLE_VAR(Jaccard);
+#undef HANDLE_VAR
+    default:
+      VINDEX_THROW_MSG("metric type not implemented");
+    }
+  }
 
   template <class C>
   void knn_extra_metrics(
@@ -113,4 +227,35 @@ namespace vindex
       MetricType mt,
       float metric_arg,
       HeapArray<CMin<float, int64_t>> *res);
+
+  FlatCodesDistanceComputer *get_extra_distance_computer(
+      size_t d,
+      MetricType mt,
+      float metric_arg,
+      size_t nb,
+      const float *xb)
+  {
+    switch (mt)
+    {
+#define HANDLE_VAR(kw)                                             \
+  case METRIC_##kw:                                                \
+  {                                                                \
+    VectorDistance<METRIC_##kw> vd = {(size_t)d, metric_arg};      \
+    return new ExtraDistanceComputer<VectorDistance<METRIC_##kw>>( \
+        vd, xb, nb);                                               \
+  }
+      HANDLE_VAR(L2);
+      HANDLE_VAR(L1);
+      HANDLE_VAR(Linf);
+      HANDLE_VAR(Canberra);
+      HANDLE_VAR(BrayCurtis);
+      HANDLE_VAR(JensenShannon);
+      HANDLE_VAR(Lp);
+      HANDLE_VAR(Jaccard);
+#undef HANDLE_VAR
+    default:
+      VINDEX_THROW_MSG("metric type not implemented");
+    }
+  }
+
 } // namespace vindex

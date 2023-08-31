@@ -207,6 +207,9 @@ class Table : private Noncopyable {
   void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim);
 
   template <typename Index>
+  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim, int testing_data);
+
+  template <typename Index>
   void create_chunk_index(const std::vector<ColumnID>& column_ids, const std::string& name = "");
 
   /**
@@ -244,6 +247,7 @@ class Table : private Noncopyable {
    * Returns all table vector indexes created for this table that index a specific ColumnID.
    */
   std::vector<std::shared_ptr<AbstractVectorIndex>> get_table_indexes_vector(const ColumnID column_id) const;
+  int drop_index_vector(const int index_id);
 
   /**
    * For debugging purposes, makes an estimation about the memory used by this Table (including Chunk and Segments)

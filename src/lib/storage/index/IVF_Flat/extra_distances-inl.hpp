@@ -2,7 +2,6 @@
 
 #include "distances.hpp"
 #include "MetricType.hpp"
-// #include "ordered_key_value.hpp"
 
 namespace vindex
 {
@@ -21,6 +20,7 @@ namespace vindex
         CMin<float, int64_t>,
         CMax<float, int64_t>>::type;
   };
+
   template <>
   inline float VectorDistance<METRIC_L2>::operator()(
       const float *x,

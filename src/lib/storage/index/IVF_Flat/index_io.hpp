@@ -9,8 +9,8 @@
 
 // I/O code for indexes
 
-#ifndef VINDEX_INDEX_IO_H
-#define VINDEX_INDEX_IO_H
+#ifndef VINDEX_INDEX_IO_HPP
+#define VINDEX_INDEX_IO_HPP
 
 #include <cstdio>
 #include <string>
@@ -27,34 +27,34 @@
 
 namespace vindex {
 
-// struct Index;
-// struct IndexBinary;
+struct Index;
+struct IndexBinary;
 // struct VectorTransform;
 // struct ProductQuantizer;
-// struct IOReader;
-// struct IOWriter;
-// struct InvertedLists;
+struct IOReader;
+struct IOWriter;
+struct InvertedLists;
 
-// void write_index(const Index* idx, const char* fname);
-// void write_index(const Index* idx, FILE* f);
-// void write_index(const Index* idx, IOWriter* writer);
+void write_index(const Index* idx, const char* fname);
+void write_index(const Index* idx, FILE* f);
+void write_index(const Index* idx, IOWriter* writer);
 
 // void write_index_binary(const IndexBinary* idx, const char* fname);
 // void write_index_binary(const IndexBinary* idx, FILE* f);
 // void write_index_binary(const IndexBinary* idx, IOWriter* writer);
 
-// // The read_index flags are implemented only for a subset of index types.
-// const int IO_FLAG_READ_ONLY = 2;
-// // strip directory component from ondisk filename, and assume it's in
-// // the same directory as the index file
-// const int IO_FLAG_ONDISK_SAME_DIR = 4;
-// // don't load IVF data to RAM, only list sizes
-// const int IO_FLAG_SKIP_IVF_DATA = 8;
-// // don't initialize precomputed table after loading
-// const int IO_FLAG_SKIP_PRECOMPUTE_TABLE = 16;
-// // try to memmap data (useful to load an ArrayInvertedLists as an
-// // OnDiskInvertedLists)
-// const int IO_FLAG_MMAP = IO_FLAG_SKIP_IVF_DATA | 0x646f0000;
+// The read_index flags are implemented only for a subset of index types.
+const int IO_FLAG_READ_ONLY = 2;
+// strip directory component from ondisk filename, and assume it's in
+// the same directory as the index file
+const int IO_FLAG_ONDISK_SAME_DIR = 4;
+// don't load IVF data to RAM, only list sizes
+const int IO_FLAG_SKIP_IVF_DATA = 8;
+// don't initialize precomputed table after loading
+const int IO_FLAG_SKIP_PRECOMPUTE_TABLE = 16;
+// try to memmap data (useful to load an ArrayInvertedLists as an
+// OnDiskInvertedLists)
+const int IO_FLAG_MMAP = IO_FLAG_SKIP_IVF_DATA | 0x646f0000;
 
 // Index* read_index(const char* fname, int io_flags = 0);
 // Index* read_index(FILE* f, int io_flags = 0);
@@ -76,7 +76,7 @@ namespace vindex {
 // void write_ProductQuantizer(const ProductQuantizer* pq, const char* fname);
 // void write_ProductQuantizer(const ProductQuantizer* pq, IOWriter* f);
 
-// void write_InvertedLists(const InvertedLists* ils, IOWriter* f);
+void write_InvertedLists(const InvertedLists* ils, IOWriter* f);
 // InvertedLists* read_InvertedLists(IOReader* reader, int io_flags = 0);
 
 } // namespace vindex

@@ -63,8 +63,7 @@ void load_data(char* filename, float*& data, int num, int dim) {
   }
 }
 
-int nb = 1000000;
-char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
+
 
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
                            ColumnID column_id, int d = 128, int testing_data=20)
@@ -92,6 +91,8 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   printf("IVFFLAT\n");
   train(nb / 100, trainvecs.data());
   delete[] xb;
+
+  std::cout<<"_d: "<<_d<<std::endl;
   insert(chunks_to_index);
 }
 

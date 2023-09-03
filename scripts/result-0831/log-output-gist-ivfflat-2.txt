@@ -1,0 +1,95 @@
+Executing script file: workload-gist-ivfflat.sh
+Loading gist_base.csv into table "gist_base"
+CsvParser::parse
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::_find_fields_in_chunk
+CsvParser::parse waiting for append chunks
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(1 min 47 s)
+Encoding "gist_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+-  Creating an index on table gist_base (data) covering 16 (all finalized) chunks]IVFFLAT
+training
+2 s 18 ms
+_d: 960
+insert IVFFlatIndex: const float* data
+14 s 973 ms
+loading query data file: ../scripts/vector_test/gist/gist_query_load_data.sh
+IVFFlatIndex::range_similar_k
+51 s 982 ms
+(51 s 982 ms)
+Intersection R@100 = 0.9630
+size of index vector:0
+- Creating table indexes
+-  Creating an index on table gist_base (data) covering 16 (all finalized) chunks]IVFFLAT
+training
+1 s 470 ms
+_d: 960
+insert IVFFlatIndex: const float* data
+16 s 895 ms
+loading query data file: ../scripts/vector_test/gist/gist_query_load_data.sh
+IVFFlatIndex::range_similar_k
+55 s 678 ms
+(55 s 679 ms)
+Intersection R@100 = 0.9642
+size of index vector:0
+- Creating table indexes
+-  Creating an index on table gist_base (data) covering 16 (all finalized) chunks]IVFFLAT
+training
+1 s 490 ms
+_d: 960
+insert IVFFlatIndex: const float* data
+17 s 177 ms
+loading query data file: ../scripts/vector_test/gist/gist_query_load_data.sh
+IVFFlatIndex::range_similar_k
+50 s 961 ms
+(50 s 961 ms)
+Intersection R@100 = 0.9613
+size of index vector:0
+Executing script file done
+Bye.

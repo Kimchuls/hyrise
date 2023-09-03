@@ -28,7 +28,9 @@ class AbstractVectorIndex : private Noncopyable {
   virtual void train(int64_t, const float*) = 0;
   virtual void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&) = 0;
 
-  virtual void save_index(const std::string& save_path)=0;
+  virtual void save_index(const std::string& save_path) = 0;
+  virtual void change_param(const int param) = 0;
+  char* base_filepath;
 
   VectorIndexType type() const {
     return _type;

@@ -93,6 +93,25 @@ void export_compact_vector(std::ofstream& ofstream, const pmr_compact_vector& va
   ofstream.write(reinterpret_cast<const char*>(values.get()), static_cast<int64_t>(values.bytes()));
 }
 
+template <>
+void export_values(std::ofstream& ofstream, const pmr_vector<float_array>& values) {
+  export_value(ofstream, values[0].size());
+  // printf("%ld %ld\n",values.size(),values[0].size());
+  // Write all string contents into to buffer.
+  auto buffer = pmr_vector<float>((values.size()) * (values[0].size()));
+  auto start = size_t{0};
+  for (const auto& str : values) {
+    std::memcpy(buffer.data() + start , str.data(), str.size() * sizeof(float));
+    start += str.size();
+    // break;
+  }
+  // printf("%ld\n",start);
+  // printf("%f\n",buffer.data());
+  // for (size_t i = 0; i < 20; i++)
+  //   printf("%f\n", buffer[i]);
+
+  export_values(ofstream, buffer);
+}
 }  // namespace
 
 namespace hyrise {

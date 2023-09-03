@@ -20,6 +20,7 @@
 namespace hyrise {
 
 std::shared_ptr<Table> BinaryParser::parse(const std::string& filename) {
+  printf("BinaryParser::parse\n");
   std::ifstream file;
   file.open(filename, std::ios::binary);
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -51,6 +52,21 @@ pmr_vector<T> BinaryParser::_read_values(std::ifstream& file, const size_t count
 template <>
 pmr_vector<pmr_string> BinaryParser::_read_values(std::ifstream& file, const size_t count) {
   return _read_string_values(file, count);
+}
+
+template <>
+pmr_vector<float_array> BinaryParser::_read_values(std::ifstream& file, const size_t count) {
+  const auto dim = _read_value<size_t>(file);
+  const auto total_length = count * dim;
+  const auto buffer = _read_values<float>(file, total_length);
+
+  auto values = pmr_vector<float_array>{count};
+  auto start = size_t{0};
+  for (auto index = size_t{0}; index < count; ++index) {
+    values[index] = float_array{buffer.data() + start, buffer.data() + start + dim};
+    start += dim;
+  }
+  return values;
 }
 
 // specialized implementation for bool values

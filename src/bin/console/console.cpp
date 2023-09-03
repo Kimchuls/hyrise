@@ -163,6 +163,7 @@ Console::Console()
   register_command("load_plugin", std::bind(&Console::_load_plugin, this, std::placeholders::_1));
   register_command("unload_plugin", std::bind(&Console::_unload_plugin, this, std::placeholders::_1));
   register_command("reset", std::bind(&Console::_reset, this));
+  register_command("reset_para", std::bind(&Console::_reset_para, this, std::placeholders::_1));
 }
 
 Console::~Console() {
@@ -646,6 +647,17 @@ void load_data(char* filename, float*& data, int num, int dim) {
   }
 }
 
+int Console::_reset_para(const std::string& args) {
+  const auto arguments = trim_and_split(args);
+  const auto table_name = arguments.at(0);
+  const auto index_type = arguments.at(1);
+  const auto number = std::stoi(arguments.at(2));
+  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  const auto float_array_index = table->get_table_indexes_vector()[0];
+  float_array_index->change_param(number);
+  return ReturnCode::Ok;
+}
+
 int Console::_create_index(const std::string& args) {
   const auto arguments = trim_and_split(args);
 
@@ -694,13 +706,21 @@ int Console::_create_index(const std::string& args) {
     } else if (index_type == "ivfflat") {
       table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
                                                     testing_value);
+ 
     } else {
       std::cout << "other index type is not supported." << std::endl;
     }
     // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  std::string index_save_path = index_type + ".bin";
+  char* sift_path = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
+  char* gist_path = "/home/jin467/github_download/hyrise/scripts/vector_test/gist/gist_base.fvecs";
+  if (index_type == "ivfflat") {
+    float_array_index->base_filepath =
+        (table_name == "sift_base") ? sift_path
+                                    : gist_path;
+  }
+  std::string index_save_path = index_type + "_" + table_name + ".bin";
   float_array_index->save_index(index_save_path);
   // if (self_train_flag) {
   //   printf("self_train_flag=true\n");
@@ -735,12 +755,29 @@ int Console::_similar_vector(const std::string& args) {
   }
 
   const auto filepath = arguments.at(0);
+  const auto gtfilepath = arguments.at(1);
+  const auto table_name = arguments.at(2);
+  const auto column_name = arguments.at(3);
   auto script = std::ifstream{filepath};
   out("loading query data file: " + filepath + "\n");
   auto command = std::string{};
   // std::vector<float_array> queryList;
   // int nn = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
-  int nn = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  // int nn = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  int nn = 0, dim = 0, id = 0, k = 0;
+  if (table_name == "sift_base") {
+    nn = 10000;
+    dim = 128;
+    id = 0;
+    k = 100;
+  } else if (table_name == "gist_base") {
+    nn = 1000;
+    dim = 960;
+    id = 0;
+    k = 100;
+  } else {
+    std::cout << "not setting searching parameters" << std::endl;
+  }
   float* queries = new float[nn * dim];
   while (std::getline(script, command)) {
     std::istringstream iss(command);
@@ -750,7 +787,6 @@ int Console::_similar_vector(const std::string& args) {
     }
   }
 
-  const auto gtfilepath = arguments.at(1);
   int64_t* gt = new int64_t[nn * k];
   size_t kk, nq;
   int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nq);
@@ -759,8 +795,6 @@ int Console::_similar_vector(const std::string& args) {
     gt[i] = gt_int[i];
   }
 
-  const auto table_name = arguments.at(2);
-  const auto column_name = arguments.at(3);
   if (!Hyrise::get().storage_manager.has_table(table_name)) {
     out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
     return ReturnCode::Error;

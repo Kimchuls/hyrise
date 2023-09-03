@@ -22,8 +22,8 @@ class HNSWIndex : public AbstractVectorIndex {
   //           long long max_elements, int M, int ef_construction, int ef);
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
             int dim);
-  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-            int dim,int testing_data);
+  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
+            int testing_data);
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
             int max_elements, int M, int ef_construction, int ef);
 
@@ -36,6 +36,11 @@ class HNSWIndex : public AbstractVectorIndex {
   void similar_k(const float* query, int64_t* I, float* D, int k);
   void range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k);
   void save_index(const std::string& save_path);
+
+  void change_param(const int param) {
+    _alg_hnsw->setEf(param);
+    std::cout<<"hnsw ef: "<<_alg_hnsw->ef_<<std::endl;
+  }
 
   bool is_index_for(const ColumnID) const;
 

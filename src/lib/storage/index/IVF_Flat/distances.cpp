@@ -584,6 +584,9 @@ void knn_L2sqr_select(
         const IDSelector* sel) {
     if (sel) {
         exhaustive_L2sqr_seq<ResultHandler, true>(x, y, d, nx, ny, res, sel);
+    // } else {
+    //     exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
+    // } 
     } else if (nx < distance_compute_blas_threshold) {
         exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
     } else {
@@ -630,6 +633,9 @@ void knn_inner_product(
         RH res(nx, val, ids, k);
         if (sel) {
             exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, res, sel);
+        // } else {
+        //     exhaustive_inner_product_seq(x, y, d, nx, ny, res);
+        // } 
         } else if (nx < distance_compute_blas_threshold) {
             exhaustive_inner_product_seq(x, y, d, nx, ny, res);
         } else {
@@ -640,6 +646,9 @@ void knn_inner_product(
         RH res(nx, val, ids, k);
         if (sel) {
             exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, res, sel);
+        // } else {
+        //     exhaustive_inner_product_seq(x, y, d, nx, ny, res, nullptr);
+        // } 
         } else if (nx < distance_compute_blas_threshold) {
             exhaustive_inner_product_seq(x, y, d, nx, ny, res, nullptr);
         } else {
@@ -739,6 +748,9 @@ void range_search_L2sqr(
     RH resh(res, radius);
     if (sel) {
         exhaustive_L2sqr_seq<RH, true>(x, y, d, nx, ny, resh, sel);
+    // } else {
+    //     exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
+    // } 
     } else if (nx < distance_compute_blas_threshold) {
         exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
     } else {
@@ -759,6 +771,9 @@ void range_search_inner_product(
     RH resh(res, radius);
     if (sel) {
         exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, resh, sel);
+    // } else {
+    //     exhaustive_inner_product_seq(x, y, d, nx, ny, resh);
+    // } 
     } else if (nx < distance_compute_blas_threshold) {
         exhaustive_inner_product_seq(x, y, d, nx, ny, resh);
     } else {

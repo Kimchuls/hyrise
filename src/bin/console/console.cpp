@@ -787,7 +787,12 @@ int Console::_similar_vector(const std::string& args) {
     dim = 960;
     id = 0;
     k = 100;
-  } else {
+  } else if (table_name == "deep10m") {
+    nn = 10000;
+    dim = 96;
+    id = 0;
+    k = 100;
+  }else {
     std::cout << "not setting searching parameters" << std::endl;
   }
   float* queries = new float[nn * dim];
@@ -800,6 +805,7 @@ int Console::_similar_vector(const std::string& args) {
   // }
   size_t dout, nout;
   queries = bvecs_read(filepath.c_str(), nn, &dout, &nout);
+  // queries = fvecs_read(filepath.c_str(), &dout, &nout);
   // k=1000;
 
   int64_t* gt = new int64_t[nn * k];

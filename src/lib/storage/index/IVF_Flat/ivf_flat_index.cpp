@@ -131,6 +131,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
 
   nb = 10'000'000;
   base_filepath = "/home/jin467/dataset/bigann_10m_base.bvecs";
+  // base_filepath = "/home/jin467/dataset/deep10M/deep1b_gt/deep1b/deep10M_base.fvecs";
   float* xb = new float[d * nb];
   size_t dout, nout;
   xb = bvecs_read(base_filepath, nb, &dout, &nout);

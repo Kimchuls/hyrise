@@ -165,7 +165,11 @@ inline std::function<float_array(const std::string&)> CsvConverter<float_array>:
         while (str[pos] == ' ') {
           pos++;
         }
-        double number = 0.0, t = 1.0;
+        double number = 0.0, t = 1.0, syb = 1.0;
+        if (str[pos] == '-') {
+          syb = -1.0;
+          pos++;
+        }
         while (str[pos] >= '0' && str[pos] <= '9') {
           number = number * 10 + 1.0 * (int)(str[pos] - '0');
           pos++;
@@ -183,7 +187,7 @@ inline std::function<float_array(const std::string&)> CsvConverter<float_array>:
         }
         if (str[pos] == ',' || str[pos] == ']') {
           pos++;
-          result += number;
+          result += number * syb;
         } else {
           Fail("data format for float array is wrong\n");
         }

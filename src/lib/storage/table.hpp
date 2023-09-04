@@ -24,7 +24,7 @@
 #include "utils/performance_warning.hpp"
 #include "utils/timer.hpp"
 
-#define MAX_ELES_UINT (1ll << 23)
+#define MAX_ELES_UINT (1ll << 25)
 
 namespace hyrise {
 

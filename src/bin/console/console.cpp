@@ -629,6 +629,44 @@ int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
   return (int*)fvecs_read(fname, d_out, n_out);
 }
 
+float* bvecs_read(const char* input_file, int num_vectors_to_read, size_t* d_out, size_t* n_out) {
+  float* result = nullptr;
+  unsigned char* tmp = nullptr;
+
+  FILE* file = fopen(input_file, "r");  // Open the file in binary read mode
+  if (!file) {
+    std::cerr << "Error: Unable to open file " << input_file << std::endl;
+    return result;
+  }
+
+  int32_t d;
+  int32_t n;
+  fread(&d, sizeof(int32_t), 1, file);
+  *d_out = d;
+  fseek(file, 0, SEEK_END);
+  long file_size = ftell(file);
+  long total_n = file_size / (d + 4);
+
+  num_vectors_to_read = std::min(num_vectors_to_read, (int)total_n);
+  *n_out = total_n;
+  n = num_vectors_to_read;
+  int64_t tmp_elements = (int64_t)n * (d + 4);
+  int64_t num_elements = (int64_t)num_vectors_to_read * d;
+
+  std::cout << "num elements " << num_elements << std::endl;
+  result = new float[num_elements];
+  tmp = new unsigned char[tmp_elements];
+  fseek(file, 0, SEEK_SET);
+  fread(tmp, n * (d + 4), 1, file);
+
+  for (int64_t i = 0; i < num_vectors_to_read; ++i)
+    for (int j = 0; j < d; ++j)
+      result[i * d + j] = static_cast<float>(tmp[i * (d + 4) + 4 + j]);
+  fclose(file);
+  delete[] tmp;
+  return result;
+}
+
 void load_data(char* filename, float*& data, int num, int dim) {
   std::ifstream in(filename, std::ios::binary);  //open file in binary
   if (!in.is_open()) {
@@ -648,6 +686,7 @@ void load_data(char* filename, float*& data, int num, int dim) {
 }
 
 int Console::_reset_para(const std::string& args) {
+  printf("*************************reset parameter**************************\n");
   const auto arguments = trim_and_split(args);
   const auto table_name = arguments.at(0);
   const auto index_type = arguments.at(1);
@@ -706,42 +745,15 @@ int Console::_create_index(const std::string& args) {
     } else if (index_type == "ivfflat") {
       table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
                                                     testing_value);
- 
+
     } else {
       std::cout << "other index type is not supported." << std::endl;
     }
     // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  char* sift_path = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
-  char* gist_path = "/home/jin467/github_download/hyrise/scripts/vector_test/gist/gist_base.fvecs";
-  if (index_type == "ivfflat") {
-    float_array_index->base_filepath =
-        (table_name == "sift_base") ? sift_path
-                                    : gist_path;
-  }
   std::string index_save_path = index_type + "_" + table_name + ".bin";
   float_array_index->save_index(index_save_path);
-  // if (self_train_flag) {
-  //   printf("self_train_flag=true\n");
-  //   int nb = 1000000, d = 128;
-  //   char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs";
-  //   float* xb = new float[d * nb];
-  //   load_data(base_filepath, xb, nb, d);
-  //   srand((int)time(0));
-  //   std::vector<float> trainvecs(nb / 100 * d);
-  //   for (int i = 0; i < nb / 100; i++) {
-  //     int rng = (rand() % (nb + 1));
-  //     for (int j = 0; j < d; j++) {
-  //       trainvecs[d * i + j] = xb[rng * d + j];
-  //     }
-  //   }
-  //   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  //   auto per_table_index_timer = Timer{};
-  //   float_array_index->train(nb / 100, trainvecs.data());
-  //   std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  //   delete[] xb;
-  // }
   return ReturnCode::Ok;
 }
 
@@ -765,7 +777,7 @@ int Console::_similar_vector(const std::string& args) {
   // int nn = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
   // int nn = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
   int nn = 0, dim = 0, id = 0, k = 0;
-  if (table_name == "sift_base") {
+  if (table_name == "sift_base" || table_name == "bigann_10m") {
     nn = 10000;
     dim = 128;
     id = 0;
@@ -779,20 +791,25 @@ int Console::_similar_vector(const std::string& args) {
     std::cout << "not setting searching parameters" << std::endl;
   }
   float* queries = new float[nn * dim];
-  while (std::getline(script, command)) {
-    std::istringstream iss(command);
-    std::string token;
-    while (std::getline(iss, token, ',')) {
-      queries[id++] = std::stof(token);
-    }
-  }
+  // while (std::getline(script, command)) {
+  //   std::istringstream iss(command);
+  //   std::string token;
+  //   while (std::getline(iss, token, ',')) {
+  //     queries[id++] = std::stof(token);
+  //   }
+  // }
+  size_t dout, nout;
+  queries = bvecs_read(filepath.c_str(), nn, &dout, &nout);
+  // k=1000;
 
   int64_t* gt = new int64_t[nn * k];
   size_t kk, nq;
   int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nq);
   gt = new int64_t[kk * nq];
-  for (int i = 0; i < kk * nq; i++) {
-    gt[i] = gt_int[i];
+  for (int i = 0; i < nq; i++) {
+    for (int j = 0; j < k; j++) {
+      gt[i * k + j] = gt_int[i * kk + j];
+    }
   }
 
   if (!Hyrise::get().storage_manager.has_table(table_name)) {
@@ -814,7 +831,19 @@ int Console::_similar_vector(const std::string& args) {
   auto per_table_index_timer = Timer{};
   float_array_index->range_similar_k(nn, queries, I, D, k);
   std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // FILE* xxx=fopen("result.txt","w");
+  // for (int i = 0; i < nn; i++) {
+  //   for (int j = 0; j < k; j++) {
+  //     fprintf(xxx,"%d ", I[i * k + j]);
+  //   }fprintf(xxx,"\n");
+  // }
 
+  // FILE* yyy=fopen("gt.txt","w");
+  // for (int i = 0; i < nn; i++) {
+  //   for (int j = 0; j < k; j++) {
+  //     fprintf(yyy,"%d ", gt[i * k + j]);
+  //   }fprintf(yyy,"\n");
+  // }
   int n2_100 = 0;
   for (int i = 0; i < nq; i++) {
     std::map<float, int> umap;

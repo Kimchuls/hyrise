@@ -7,7 +7,7 @@
 #include "types.hpp"
 #define MAX_ELES_LONGLONG 1ll << 62
 // #define MAX_ELES_UINT (int)((1ll << 31) - 1)
-#define MAX_ELES_UINT (1ll << 23)
+#define MAX_ELES_UINT (1ll << 25)
 
 namespace hyrise {
 using SimilarKPair = std::priority_queue<std::pair<float, size_t>>;

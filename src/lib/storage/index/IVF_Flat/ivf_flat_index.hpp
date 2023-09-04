@@ -45,10 +45,13 @@ class IVFFlatIndex : public AbstractVectorIndex {
   void save_index(const std::string& save_path);
   bool is_index_for(const ColumnID) const;
   ColumnID get_indexed_column_id() const;
-  int nb = 1000000;
-  // char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs"; //TODO:change when sift/gist
+  int nb;
   char* base_filepath;
-      // "/home/jin467/github_download/hyrise/scripts/vector_test/gist/gist_base.fvecs";  //TODO:change when sift/gist
+  // int nb = 1000000;
+  // char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs"; //TODO:change when sift/gist
+  // char* base_filepath;
+  // "/home/jin467/github_download/hyrise/scripts/vector_test/gist/gist_base.fvecs";  //TODO:change when sift/gist
+
 
   void change_param(const int param) {
     _index->nprobe = param;
@@ -62,6 +65,8 @@ class IVFFlatIndex : public AbstractVectorIndex {
   int get_nlist() const {
     return _nlist;
   }
+
+  VectorTestBase _test_base;
 
  private:
   ColumnID _column_id;

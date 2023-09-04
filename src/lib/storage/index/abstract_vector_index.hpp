@@ -31,10 +31,13 @@ class AbstractVectorIndex : private Noncopyable {
   virtual void save_index(const std::string& save_path) = 0;
   virtual void change_param(const int param) = 0;
   char* base_filepath;
+  int nb;
 
   VectorIndexType type() const {
     return _type;
   }
+
+  VectorTestBase _test_base;
 
  private:
   const VectorIndexType _type;

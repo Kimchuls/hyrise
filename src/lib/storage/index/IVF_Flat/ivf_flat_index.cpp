@@ -41,6 +41,43 @@ float* fvecs_read(const char* fname, size_t* d_out, size_t* n_out) {
   return x;
 }
 
+float* bvecs_read(const char* input_file, int num_vectors_to_read, size_t* d_out, size_t* n_out) {
+  float* result = nullptr;
+  unsigned char* tmp = nullptr;
+  FILE* file = fopen(input_file, "r");  // Open the file in binary read mode
+  if (!file) {
+    std::cerr << "Error: Unable to open file " << input_file << std::endl;
+    return result;
+  }
+
+  int32_t d;
+  int32_t n;
+  fread(&d, sizeof(int32_t), 1, file);
+  *d_out = d;
+  fseek(file, 0, SEEK_END);
+  long file_size = ftell(file);
+  long total_n = file_size / (d + 4);
+
+  num_vectors_to_read = std::min(num_vectors_to_read, (int)total_n);
+  *n_out = total_n;
+  n = num_vectors_to_read;
+  int64_t tmp_elements = (int64_t)n * (d + 4);
+  int64_t num_elements = (int64_t)num_vectors_to_read * d;
+  result = new float[num_elements];
+  tmp = new unsigned char[tmp_elements];
+
+  fseek(file, 0, SEEK_SET);
+  fread(tmp, n * (d + 4), 1, file);
+
+  for (int64_t i = 0; i < num_vectors_to_read; ++i)
+    for (int j = 0; j < d; ++j)
+      result[i * d + j] = static_cast<float>(tmp[i * (d + 4) + 4 + j]);
+
+  fclose(file);
+  delete[] tmp;
+  return result;
+}
+
 int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
   return (int*)fvecs_read(fname, d_out, n_out);
 }
@@ -63,23 +100,40 @@ void load_data(char* filename, float*& data, int num, int dim) {
   }
 }
 
-
-
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
-                           ColumnID column_id, int d = 128, int testing_data=20)
+                           ColumnID column_id, int d = 128, int testing_data = 20)
     : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>()} {
-  
   Assert(!chunks_to_index.empty(), "IVFFlatIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;
   _d = d;
-  _nlist = 1000;
+  // _nlist = 1000;
+  _nlist = 3162;
   _quantizer = new vindex::IndexFlatL2(_d);
   _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
   _index->nprobe = testing_data;
   // _is_trained = &(_index->is_trained);
 
+  // float* xb = new float[d * nb];
+  // load_data(base_filepath, xb, nb, d);
+  // srand((int)time(0));
+  // std::vector<float> trainvecs(nb / 100 * d);
+  // for (int i = 0; i < nb / 100; i++) {
+  //   int rng = (rand() % (nb + 1));
+  //   for (int j = 0; j < d; j++) {
+  //     trainvecs[d * i + j] = xb[rng * d + j];
+  //   }
+  // }
+  // printf("IVFFLAT\n");
+  // train(nb / 100, trainvecs.data());
+  // delete[] xb;
+
+  // std::cout<<"_d: "<<_d<<std::endl;
+
+  nb = 10'000'000;
+  base_filepath = "/home/jin467/dataset/bigann_10m_base.bvecs";
   float* xb = new float[d * nb];
-  load_data(base_filepath, xb, nb, d);
+  size_t dout, nout;
+  xb = bvecs_read(base_filepath, nb, &dout, &nout);
   srand((int)time(0));
   std::vector<float> trainvecs(nb / 100 * d);
   for (int i = 0; i < nb / 100; i++) {
@@ -92,7 +146,7 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   train(nb / 100, trainvecs.data());
   delete[] xb;
 
-  std::cout<<"_d: "<<_d<<std::endl;
+  std::cout << "_d: " << _d << std::endl;
   insert(chunks_to_index);
 }
 

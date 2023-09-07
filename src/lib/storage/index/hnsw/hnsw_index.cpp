@@ -21,7 +21,7 @@ HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>
   _column_id = column_id;
   _dim = dim;
   _max_elements = MAX_ELES_UINT;
-  _M = 32;
+  _M = 16;
   _ef_construction = 40;
   _space = new hnswlib::L2Space(_dim);
   _alg_hnsw = new hnswlib::HierarchicalNSW<float>(_space, _max_elements, _M, _ef_construction);
@@ -37,7 +37,7 @@ HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>
   _column_id = column_id;
   _dim = dim;
   _max_elements = MAX_ELES_UINT;
-  _M = 32;
+  _M = 16;
   _ef_construction = 40;
   _space = new hnswlib::L2Space(_dim);
   _alg_hnsw = new hnswlib::HierarchicalNSW<float>(_space, _max_elements, _M, _ef_construction);
@@ -47,7 +47,7 @@ HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>
 }
 
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-                     int dim, int max_elements = MAX_ELES_UINT, int M = 32, int ef_construction = 40, int ef = 200)
+                     int dim, int max_elements = MAX_ELES_UINT, int M = 16, int ef_construction = 40, int ef = 200)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>()} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;

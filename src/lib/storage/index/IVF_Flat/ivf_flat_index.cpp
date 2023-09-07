@@ -78,10 +78,6 @@ float* bvecs_read(const char* input_file, int num_vectors_to_read, size_t* d_out
   return result;
 }
 
-int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
-  return (int*)fvecs_read(fname, d_out, n_out);
-}
-
 void load_data(char* filename, float*& data, int num, int dim) {
   std::ifstream in(filename, std::ios::binary);  //open file in binary
   if (!in.is_open()) {
@@ -100,19 +96,73 @@ void load_data(char* filename, float*& data, int num, int dim) {
   }
 }
 
+void fbin_load_data(const char* filename, float*& data, int num, int dim) {
+  std::ifstream in(filename, std::ios::binary);  // open file in binary
+  if (!in.is_open()) {
+    std::cout << "open file error" << std::endl;
+    exit(-1);
+  }
+  data = new float[(size_t)num * (size_t)dim];
+  in.seekg(0, std::ios::beg);  // shift to start
+  in.seekg(4, std::ios::cur);
+  in.seekg(4, std::ios::cur);
+  for (size_t i = 0; i < num; i++) {
+    for (int j = 0; j < dim; j++)
+      in.read((char*)(data + i * dim + j), 4);  // load data
+    // in.read((char*)(data + i*dim), dim );
+  }
+}
+
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
                            ColumnID column_id, int d = 128, int testing_data = 20)
     : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>()} {
   Assert(!chunks_to_index.empty(), "IVFFlatIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;
   _d = d;
-  // _nlist = 1000;
-  _nlist = 3162;
+  _nlist = 1000;
+  // _nlist = 3162;
   _quantizer = new vindex::IndexFlatL2(_d);
   _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
   _index->nprobe = testing_data;
   // _is_trained = &(_index->is_trained);
 
+  nb = 1'000'000;
+  base_filepath = "/ssd_root/dataset/sift1m/sift_base.fvecs";
+  // base_filepath = "/ssd_root/dataset/gist1m/gist_base.fvecs";
+  float* xb = new float[d * nb];
+  load_data(base_filepath, xb, nb, d);
+  srand((int)time(0));
+  std::vector<float> trainvecs(nb / 100 * d);
+  for (int i = 0; i < nb / 100; i++) {
+    int rng = (rand() % (nb + 1));
+    for (int j = 0; j < d; j++) {
+      trainvecs[d * i + j] = xb[rng * d + j];
+    }
+  }
+  printf("IVFFLAT\n");
+  train(nb / 100, trainvecs.data());
+  delete[] xb;
+  std::cout << "_d: " << _d << std::endl;
+
+  // nb = 10'000'000;
+  // base_filepath = "/ssd_root/dataset/turing10m/msturing-10M-clustered.fbin.crop_nb_10000000";
+  // float* xb = new float[d * nb];
+  // fbin_load_data(base_filepath, xb, nb, d);
+  // srand((int)time(0));
+  // std::vector<float> trainvecs(nb / 100 * d);
+  // for (int i = 0; i < nb / 100; i++) {
+  //   int rng = (rand() % (nb + 1));
+  //   for (int j = 0; j < d; j++) {
+  //     trainvecs[d * i + j] = xb[rng * d + j];
+  //   }
+  // }
+  // printf("IVFFLAT\n");
+  // train(nb / 100, trainvecs.data());
+  // delete[] xb;
+  // std::cout << "_d: " << _d << std::endl;
+
+  // nb = 10'000'000;
+  // base_filepath = "/ssd_root/dataset/deep1b/deep1b_gt/deep10M_base.fvecs";
   // float* xb = new float[d * nb];
   // load_data(base_filepath, xb, nb, d);
   // srand((int)time(0));
@@ -126,28 +176,27 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
   // printf("IVFFLAT\n");
   // train(nb / 100, trainvecs.data());
   // delete[] xb;
+  // std::cout << "_d: " << _d << std::endl;
 
-  // std::cout<<"_d: "<<_d<<std::endl;
+  // nb = 10'000'000;
+  // base_filepath = "/home/jin467/dataset/bigann_10m_base.bvecs";
+  // // base_filepath = "/home/jin467/dataset/deep10M/deep1b_gt/deep1b/deep10M_base.fvecs";
+  // float* xb = new float[d * nb];
+  // size_t dout, nout;
+  // xb = bvecs_read(base_filepath, nb, &dout, &nout);
+  // srand((int)time(0));
+  // std::vector<float> trainvecs(nb / 100 * d);
+  // for (int i = 0; i < nb / 100; i++) {
+  //   int rng = (rand() % (nb + 1));
+  //   for (int j = 0; j < d; j++) {
+  //     trainvecs[d * i + j] = xb[rng * d + j];
+  //   }
+  // }
+  // printf("IVFFLAT\n");
+  // train(nb / 100, trainvecs.data());
+  // delete[] xb;
 
-  nb = 10'000'000;
-  base_filepath = "/home/jin467/dataset/bigann_10m_base.bvecs";
-  // base_filepath = "/home/jin467/dataset/deep10M/deep1b_gt/deep1b/deep10M_base.fvecs";
-  float* xb = new float[d * nb];
-  size_t dout, nout;
-  xb = bvecs_read(base_filepath, nb, &dout, &nout);
-  srand((int)time(0));
-  std::vector<float> trainvecs(nb / 100 * d);
-  for (int i = 0; i < nb / 100; i++) {
-    int rng = (rand() % (nb + 1));
-    for (int j = 0; j < d; j++) {
-      trainvecs[d * i + j] = xb[rng * d + j];
-    }
-  }
-  printf("IVFFLAT\n");
-  train(nb / 100, trainvecs.data());
-  delete[] xb;
-
-  std::cout << "_d: " << _d << std::endl;
+  // std::cout << "_d: " << _d << std::endl;
   insert(chunks_to_index);
 }
 

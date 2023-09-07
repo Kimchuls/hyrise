@@ -685,6 +685,40 @@ void load_data(char* filename, float*& data, int num, int dim) {
   }
 }
 
+void fbin_load_data(const char* filename, float*& data, int num, int dim) {
+  std::ifstream in(filename, std::ios::binary);  // open file in binary
+  if (!in.is_open()) {
+    std::cout << "open file error" << std::endl;
+    exit(-1);
+  }
+  data = new float[(size_t)num * (size_t)dim];
+  in.seekg(0, std::ios::beg);  // shift to start
+  in.seekg(4, std::ios::cur);
+  in.seekg(4, std::ios::cur);
+  for (size_t i = 0; i < num; i++) {
+    for (int j = 0; j < dim; j++)
+      in.read((char*)(data + i * dim + j), 4);  // load data
+    // in.read((char*)(data + i*dim), dim );
+  }
+}
+
+void fbin_load_data_int(const char* filename, int64_t*& data, int num, int dim) {
+  std::ifstream in(filename, std::ios::binary);  // open file in binary
+  if (!in.is_open()) {
+    std::cout << "open file error" << std::endl;
+    exit(-1);
+  }
+  data = new int64_t[(size_t)num * (size_t)dim];
+  in.seekg(0, std::ios::beg);  // shift to start
+  in.seekg(4, std::ios::cur);
+  in.seekg(4, std::ios::cur);
+  for (size_t i = 0; i < num; i++) {
+    for (int j = 0; j < dim; j++)
+      in.read((char*)(data + i * dim + j), 4);  // load data
+  }
+  in.close();
+}
+
 int Console::_reset_para(const std::string& args) {
   printf("*************************reset parameter**************************\n");
   const auto arguments = trim_and_split(args);
@@ -774,28 +808,33 @@ int Console::_similar_vector(const std::string& args) {
   out("loading query data file: " + filepath + "\n");
   auto command = std::string{};
   // std::vector<float_array> queryList;
-  // int nn = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
-  // int nn = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
-  int nn = 0, dim = 0, id = 0, k = 0;
+  // int nq = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  // int nq = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  int nq = 0, dim = 0, id = 0, k = 0;
   if (table_name == "sift_base" || table_name == "bigann_10m") {
-    nn = 10000;
+    nq = 10000;
     dim = 128;
     id = 0;
     k = 100;
   } else if (table_name == "gist_base") {
-    nn = 1000;
+    nq = 1000;
     dim = 960;
     id = 0;
     k = 100;
   } else if (table_name == "deep10m") {
-    nn = 10000;
+    nq = 10000;
     dim = 96;
     id = 0;
     k = 100;
-  }else {
+  } else if (table_name == "turing10m") {
+    nq = 10000;
+    dim = 100;
+    id = 0;
+    k = 100;
+  } else {
     std::cout << "not setting searching parameters" << std::endl;
   }
-  float* queries = new float[nn * dim];
+  float* queries = new float[nq * dim];
   // while (std::getline(script, command)) {
   //   std::istringstream iss(command);
   //   std::string token;
@@ -804,15 +843,17 @@ int Console::_similar_vector(const std::string& args) {
   //   }
   // }
   size_t dout, nout;
-  queries = bvecs_read(filepath.c_str(), nn, &dout, &nout);
-  // queries = fvecs_read(filepath.c_str(), &dout, &nout);
+  // queries = bvecs_read(filepath.c_str(), nq, &dout, &nout);
+  queries = fvecs_read(filepath.c_str(), &dout, &nout);
+  // fbin_load_data(filepath.c_str(), queries, nq, dim);
   // k=1000;
 
-  int64_t* gt = new int64_t[nn * k];
-  size_t kk, nq;
-  int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nq);
-  gt = new int64_t[kk * nq];
-  for (int i = 0; i < nq; i++) {
+  int64_t* gt = new int64_t[nq * k];
+  size_t kk, nnq;
+  int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nnq);
+  // fbin_load_data_int(gtfilepath.c_str(), gt, nq, k);
+  // gt = new int64_t[kk * nq];
+  for (int i = 0; i < nnq; i++) {
     for (int j = 0; j < k; j++) {
       gt[i * k + j] = gt_int[i * kk + j];
     }
@@ -832,23 +873,25 @@ int Console::_similar_vector(const std::string& args) {
   int tru = 0, all = 0;
   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
   // auto& search = float_array_index->_alg_hnsw;
-  int64_t* I = new int64_t[k * nn];
-  float* D = new float[k * nn];
+  int64_t* I = new int64_t[k * nq];
+  float* D = new float[k * nq];
   auto per_table_index_timer = Timer{};
-  float_array_index->range_similar_k(nn, queries, I, D, k);
+  float_array_index->range_similar_k(nq, queries, I, D, k);
   std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  // FILE* xxx=fopen("result.txt","w");
-  // for (int i = 0; i < nn; i++) {
+  // FILE* xxx = fopen("result.txt", "w");
+  // for (int i = 0; i < nq; i++) {
   //   for (int j = 0; j < k; j++) {
-  //     fprintf(xxx,"%d ", I[i * k + j]);
-  //   }fprintf(xxx,"\n");
+  //     fprintf(xxx, "%d ", I[i * k + j]);
+  //   }
+  //   fprintf(xxx, "\n");
   // }
 
-  // FILE* yyy=fopen("gt.txt","w");
-  // for (int i = 0; i < nn; i++) {
+  // FILE* yyy = fopen("gt.txt", "w");
+  // for (int i = 0; i < nq; i++) {
   //   for (int j = 0; j < k; j++) {
-  //     fprintf(yyy,"%d ", gt[i * k + j]);
-  //   }fprintf(yyy,"\n");
+  //     fprintf(yyy, "%d ", gt[i * k + j]);
+  //   }
+  //   fprintf(yyy, "\n");
   // }
   int n2_100 = 0;
   for (int i = 0; i < nq; i++) {
@@ -1220,12 +1263,13 @@ int Console::_exec_script(const std::string& script_file) {
   auto return_code = magic_enum::enum_underlying(ReturnCode::Ok);
   int number = 0;
   while (std::getline(script, command)) {
+    // printf("command: %s\n",command.c_str());
     return_code = _eval(command);
     if (return_code == ReturnCode::Error || return_code == ReturnCode::Quit) {
       break;
     }
     number++;
-    if (number % 1000 == 0) {
+    if (number % 50000 == 0) {
       printf("Now it is executing the %dth command\n", number);
     }
   }

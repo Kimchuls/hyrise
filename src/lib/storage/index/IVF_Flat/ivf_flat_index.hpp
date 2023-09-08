@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <unordered_map>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <tsl/sparse_map.h>
@@ -17,7 +18,7 @@
 #include "storage/index/abstract_vector_index.hpp"
 #include "types.hpp"
 
-#define TRAIN_SIZE 6000000
+// #define TRAIN_SIZE 6000000
 #define ADD_SIZE
 
 namespace hyrise {
@@ -28,16 +29,8 @@ class IVFFlatIndex : public AbstractVectorIndex {
   IVFFlatIndex() = delete;
   IVFFlatIndex(const IVFFlatIndex&) = delete;
   IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-               int d);
-  IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-               int dim, int testing_data);
-  IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-               int d, int nlist, size_t nprobe);
-  void train(int64_t n, const float* data);
-  void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
-  void insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&, const int64_t* = nullptr);
-  void insert(int64_t n, const float* data, const int64_t* = nullptr);
-  size_t remove(const std::vector<ChunkID>&);
+            std::unordered_map<std::string, int> parameters);
+  void train_and_insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
 
   void similar_k(const float* query, int64_t* I, float* D, int k = 1);
   void range_similar_k(size_t n, const float* query, int64_t* I, float* D, int k = 1);
@@ -45,13 +38,6 @@ class IVFFlatIndex : public AbstractVectorIndex {
   void save_index(const std::string& save_path);
   bool is_index_for(const ColumnID) const;
   ColumnID get_indexed_column_id() const;
-  int nb;
-  char* base_filepath;
-  // int nb = 1000000;
-  // char* base_filepath = "/home/jin467/github_download/hyrise/scripts/vector_test/sift/sift_base.fvecs"; //TODO:change when sift/gist
-  // char* base_filepath;
-  // "/home/jin467/github_download/hyrise/scripts/vector_test/gist/gist_base.fvecs";  //TODO:change when sift/gist
-
 
   void change_param(const int param) {
     _index->nprobe = param;
@@ -66,13 +52,11 @@ class IVFFlatIndex : public AbstractVectorIndex {
     return _nlist;
   }
 
-  VectorTestBase _test_base;
 
  private:
   ColumnID _column_id;
   int _d;
   int _nlist;
-  bool* _is_trained;
   vindex::IndexFlatL2* _quantizer;
   vindex::IndexIVFFlat* _index;
   tsl::sparse_set<ChunkID> _indexed_chunk_ids = {};

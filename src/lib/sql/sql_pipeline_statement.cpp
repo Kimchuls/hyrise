@@ -58,7 +58,9 @@ const std::string& SQLPipelineStatement::get_sql_string() {
 }
 
 const std::shared_ptr<hsql::SQLParserResult>& SQLPipelineStatement::get_parsed_sql_statement() {
+  // printf("enter SQLPipelineStatement::get_parsed_sql_statement\n");
   if (_parsed_sql_statement) {
+    // printf("exit SQLPipelineStatement::get_parsed_sql_statement\n");
     return _parsed_sql_statement;
   }
 
@@ -73,12 +75,14 @@ const std::shared_ptr<hsql::SQLParserResult>& SQLPipelineStatement::get_parsed_s
   Assert(_parsed_sql_statement->size() == 1,
          "SQLPipelineStatement must hold exactly one statement. "
          "Use SQLPipeline when you have multiple statements.");
-
+  // printf("exit SQLPipelineStatement::get_parsed_sql_statement\n");
   return _parsed_sql_statement;
 }
 
 const std::shared_ptr<AbstractLQPNode>& SQLPipelineStatement::get_unoptimized_logical_plan() {
+  // printf("enter SQLPipelineStatement::get_unoptimized_logical_plan\n");
   if (_unoptimized_logical_plan) {
+    // printf("exit SQLPipelineStatement::get_unoptimized_logical_plan\n");
     return _unoptimized_logical_plan;
   }
 
@@ -98,7 +102,7 @@ const std::shared_ptr<AbstractLQPNode>& SQLPipelineStatement::get_unoptimized_lo
 
   const auto done = std::chrono::steady_clock::now();
   _metrics->sql_translation_duration = done - started;
-
+  // printf("exit SQLPipelineStatement::get_unoptimized_logical_plan\n");
   return _unoptimized_logical_plan;
 }
 
@@ -110,7 +114,9 @@ const SQLTranslationInfo& SQLPipelineStatement::get_sql_translation_info() {
 }
 
 const std::shared_ptr<AbstractLQPNode>& SQLPipelineStatement::get_optimized_logical_plan() {
+  // printf("enter SQLPipelineStatement::get_optimized_logical_plan\n");
   if (_optimized_logical_plan) {
+    // printf("exit SQLPipelineStatement::get_optimized_logical_plan\n");
     return _optimized_logical_plan;
   }
 
@@ -151,11 +157,14 @@ const std::shared_ptr<AbstractLQPNode>& SQLPipelineStatement::get_optimized_logi
     lqp_cache->set(_sql_string, _optimized_logical_plan);
   }
 
+  // printf("exit SQLPipelineStatement::get_optimized_logical_plan\n");
   return _optimized_logical_plan;
 }
 
 const std::shared_ptr<AbstractOperator>& SQLPipelineStatement::get_physical_plan() {
+  // printf("enter SQLPipelineStatement::get_physical_plan\n");
   if (_physical_plan) {
+    // printf("exit SQLPipelineStatement::get_physical_plan\n");
     return _physical_plan;
   }
 
@@ -203,12 +212,14 @@ const std::shared_ptr<AbstractOperator>& SQLPipelineStatement::get_physical_plan
   }
 
   _metrics->lqp_translation_duration = done - started;
-
+  // printf("exit SQLPipelineStatement::get_physical_plan\n");
   return _physical_plan;
 }
 
 const std::vector<std::shared_ptr<AbstractTask>>& SQLPipelineStatement::get_tasks() {
+  // printf("enter SQLPipelineStatement::get_tasks\n");
   if (!_tasks.empty()) {
+    // printf("exit SQLPipelineStatement::get_tasks\n");
     return _tasks;
   }
 
@@ -218,6 +229,7 @@ const std::vector<std::shared_ptr<AbstractTask>>& SQLPipelineStatement::get_task
     _precheck_ddl_operators(get_physical_plan());
     std::tie(_tasks, _root_operator_task) = OperatorTask::make_tasks_from_operator(get_physical_plan());
   }
+  // printf("exit SQLPipelineStatement::get_tasks\n");
   return _tasks;
 }
 
@@ -247,6 +259,7 @@ std::vector<std::shared_ptr<AbstractTask>> SQLPipelineStatement::_get_transactio
 }
 
 std::pair<SQLPipelineStatus, const std::shared_ptr<const Table>&> SQLPipelineStatement::get_result_table() {
+  // printf("enter SQLPipelineStatement::get_result_table\n");
   // Returns true if a transaction was set and that transaction was rolled back.
   const auto has_failed = [&]() {
     if (_transaction_context) {
@@ -271,9 +284,9 @@ std::pair<SQLPipelineStatus, const std::shared_ptr<const Table>&> SQLPipelineSta
   const auto& tasks = get_tasks();
 
   const auto started = std::chrono::steady_clock::now();
-
+  // printf("checkpoint1\n");
   Hyrise::get().scheduler()->schedule_and_wait_for_tasks(tasks);
-
+  // printf("checkpoint2\n");
   if (has_failed()) {
     return {SQLPipelineStatus::Failure, _result_table};
   }
@@ -281,17 +294,17 @@ std::pair<SQLPipelineStatus, const std::shared_ptr<const Table>&> SQLPipelineSta
   if (_use_mvcc == UseMvcc::Yes && _transaction_context->is_auto_commit()) {
     _transaction_context->commit();
   }
-
+  // printf("checkpoint3\n");
   if (_transaction_context) {
     Assert(_transaction_context->phase() == TransactionPhase::Active ||
                _transaction_context->phase() == TransactionPhase::Committed ||
                _transaction_context->phase() == TransactionPhase::RolledBackByUser,
            "Transaction should either be still active or have been auto-committed by now");
   }
-
+  // printf("checkpoint4\n");
   const auto done = std::chrono::steady_clock::now();
   _metrics->plan_execution_duration = done - started;
-
+  // printf("checkpoint5\n");
   // Get result table, if it was not a transaction statement
   if (!_is_transaction_statement()) {
     // After execution, the root operator should be the only operator in OperatorState::ExecutedAndAvailable. All
@@ -311,11 +324,11 @@ std::pair<SQLPipelineStatus, const std::shared_ptr<const Table>&> SQLPipelineSta
     _result_table = _root_operator_task->get_operator()->get_output();
     _root_operator_task->get_operator()->clear_output();
   }
-
+  // printf("checkpoint6\n");
   if (!_result_table) {
     _query_has_output = false;
   }
-
+  // printf("exit SQLPipelineStatement::get_result_table\n");
   return {SQLPipelineStatus::Success, _result_table};
 }
 

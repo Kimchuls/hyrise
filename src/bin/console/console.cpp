@@ -229,7 +229,9 @@ int Console::_eval(const std::string& input) {
 
     // Regard query as complete if input is valid and not already in multiline.
     auto parse_result = hsql::SQLParserResult{};
+    auto per_table_index_timer = Timer{};
     hsql::SQLParser::parse(input, &parse_result);
+    std::cout << "parser time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
     if (parse_result.isValid()) {
       return _eval_sql(input);
     }
@@ -288,6 +290,7 @@ bool Console::_initialize_pipeline(const std::string& sql) {
 }
 
 int Console::_eval_sql(const std::string& sql) {
+  auto per_table_index_timer = Timer{};
   if (!_initialize_pipeline(sql)) {
     return ReturnCode::Error;
   }
@@ -329,6 +332,7 @@ int Console::_eval_sql(const std::string& sql) {
 
   // out(stream.str());
 
+  std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   return ReturnCode::Ok;
 }
 
@@ -720,193 +724,193 @@ void fbin_load_data_int(const char* filename, int64_t*& data, int num, int dim) 
 }
 
 int Console::_reset_para(const std::string& args) {
-  printf("*************************reset parameter**************************\n");
-  const auto arguments = trim_and_split(args);
-  const auto table_name = arguments.at(0);
-  const auto index_type = arguments.at(1);
-  const auto number = std::stoi(arguments.at(2));
-  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
-  const auto float_array_index = table->get_table_indexes_vector()[0];
-  float_array_index->change_param(number);
+  // printf("*************************reset parameter**************************\n");
+  // const auto arguments = trim_and_split(args);
+  // const auto table_name = arguments.at(0);
+  // const auto index_type = arguments.at(1);
+  // const auto number = std::stoi(arguments.at(2));
+  // const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  // const auto float_array_index = table->get_table_indexes_vector()[0];
+  // float_array_index->change_param(number);
   return ReturnCode::Ok;
 }
 
 int Console::_create_index(const std::string& args) {
-  const auto arguments = trim_and_split(args);
+  // const auto arguments = trim_and_split(args);
 
-  if (arguments.empty() || arguments.size() > 5) {
-    out("Usage:\n");
-    out("  create_index TABLENAME ColumnName [index type(ivfflat/hnsw)] [testing_value] "
-        "[self_train(ivfflat):default::true]\n");
-    return ReturnCode::Error;
-  }
+  // if (arguments.empty() || arguments.size() > 5) {
+  //   out("Usage:\n");
+  //   out("  create_index TABLENAME ColumnName [index type(ivfflat/hnsw)] [testing_value] "
+  //       "[self_train(ivfflat):default::true]\n");
+  //   return ReturnCode::Error;
+  // }
 
-  const auto table_name = arguments.at(0);
-  const auto column_name = arguments.at(1);
-  const auto index_type = arguments.at(2);
-  const auto testing_value = std::stoi(arguments.at(3));
-  const auto self_train_flag = arguments.size() == 5 ? (arguments.at(4) == "true" ? true : false) : true;
-  if (!Hyrise::get().storage_manager.has_table(table_name)) {
-    out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
-    return ReturnCode::Error;
-  }
-  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
-  const auto column_id = table->column_id_by_name(column_name);
-  if (table->column_data_type(column_id) != DataType::Vector) {
-    out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
-    return ReturnCode::Error;
-  }
-  {
-    std::cout << "- Creating table indexes" << std::endl;
-    auto chunk_ids = std::vector<ChunkID>(table->chunk_count());
-    std::iota(chunk_ids.begin(), chunk_ids.end(), ChunkID{0});
-    std::cout << "-  Creating an index on table " << table_name << " (" << column_name << ") covering "
-              << chunk_ids.size() << " (all finalized) chunks]" << std::flush;
-    int float_array_dim = (table->get_value<float_array>(column_name, 0)).value().size();
-    // std::cout<<float_array_dim<<std::endl;
+  // const auto table_name = arguments.at(0);
+  // const auto column_name = arguments.at(1);
+  // const auto index_type = arguments.at(2);
+  // const auto testing_value = std::stoi(arguments.at(3));
+  // const auto self_train_flag = arguments.size() == 5 ? (arguments.at(4) == "true" ? true : false) : true;
+  // if (!Hyrise::get().storage_manager.has_table(table_name)) {
+  //   out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
+  //   return ReturnCode::Error;
+  // }
+  // const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  // const auto column_id = table->column_id_by_name(column_name);
+  // if (table->column_data_type(column_id) != DataType::Vector) {
+  //   out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
+  //   return ReturnCode::Error;
+  // }
+  // {
+  //   std::cout << "- Creating table indexes" << std::endl;
+  //   auto chunk_ids = std::vector<ChunkID>(table->chunk_count());
+  //   std::iota(chunk_ids.begin(), chunk_ids.end(), ChunkID{0});
+  //   std::cout << "-  Creating an index on table " << table_name << " (" << column_name << ") covering "
+  //             << chunk_ids.size() << " (all finalized) chunks]" << std::flush;
+  //   int float_array_dim = (table->get_value<float_array>(column_name, 0)).value().size();
+  //   // std::cout<<float_array_dim<<std::endl;
 
-    // std::cout << std::endl << "- start timing" << std::endl;
-    // auto per_table_index_timer = Timer{};
-    for (auto chunk_id = ChunkID{0}; chunk_id < table->chunk_count(); ++chunk_id) {
-      const auto& chunk = table->get_chunk(chunk_id);
-      Assert(chunk, "Requested index on deleted chunk.");
-      Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
-    }
-    // table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
-    if (index_type == "hnsw") {
-      table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
-                                                 testing_value);
-    } else if (index_type == "ivfflat") {
-      table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
-                                                    testing_value);
+  //   // std::cout << std::endl << "- start timing" << std::endl;
+  //   // auto per_table_index_timer = Timer{};
+  //   for (auto chunk_id = ChunkID{0}; chunk_id < table->chunk_count(); ++chunk_id) {
+  //     const auto& chunk = table->get_chunk(chunk_id);
+  //     Assert(chunk, "Requested index on deleted chunk.");
+  //     Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
+  //   }
+  //   // table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim);
+  //   if (index_type == "hnsw") {
+  //     table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
+  //                                                testing_value);
+  //   } else if (index_type == "ivfflat") {
+  //     table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, float_array_dim,
+  //                                                   testing_value);
 
-    } else {
-      std::cout << "other index type is not supported." << std::endl;
-    }
-    // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  }
-  const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  std::string index_save_path = index_type + "_" + table_name + ".bin";
-  float_array_index->save_index(index_save_path);
+  //   } else {
+  //     std::cout << "other index type is not supported." << std::endl;
+  //   }
+  //   // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // }
+  // const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  // std::string index_save_path = index_type + "_" + table_name + ".bin";
+  // float_array_index->save_index(index_save_path);
   return ReturnCode::Ok;
 }
 
 int Console::_similar_vector(const std::string& args) {
-  const auto arguments = trim_and_split(args);
+  // const auto arguments = trim_and_split(args);
 
-  if (arguments.size() != 4) {
-    out("Usage:\n");
-    out("  similar_vector FILEPATH GTFILEPATH TABLENAME ColumnName\n");
-    return ReturnCode::Error;
-  }
-
-  const auto filepath = arguments.at(0);
-  const auto gtfilepath = arguments.at(1);
-  const auto table_name = arguments.at(2);
-  const auto column_name = arguments.at(3);
-  auto script = std::ifstream{filepath};
-  out("loading query data file: " + filepath + "\n");
-  auto command = std::string{};
-  // std::vector<float_array> queryList;
-  // int nq = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
-  // int nq = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
-  int nq = 0, dim = 0, id = 0, k = 0;
-  if (table_name == "sift_base" || table_name == "bigann_10m") {
-    nq = 10000;
-    dim = 128;
-    id = 0;
-    k = 100;
-  } else if (table_name == "gist_base") {
-    nq = 1000;
-    dim = 960;
-    id = 0;
-    k = 100;
-  } else if (table_name == "deep10m") {
-    nq = 10000;
-    dim = 96;
-    id = 0;
-    k = 100;
-  } else if (table_name == "turing10m") {
-    nq = 10000;
-    dim = 100;
-    id = 0;
-    k = 100;
-  } else {
-    std::cout << "not setting searching parameters" << std::endl;
-  }
-  float* queries = new float[nq * dim];
-  // while (std::getline(script, command)) {
-  //   std::istringstream iss(command);
-  //   std::string token;
-  //   while (std::getline(iss, token, ',')) {
-  //     queries[id++] = std::stof(token);
-  //   }
+  // if (arguments.size() != 4) {
+  //   out("Usage:\n");
+  //   out("  similar_vector FILEPATH GTFILEPATH TABLENAME ColumnName\n");
+  //   return ReturnCode::Error;
   // }
-  size_t dout, nout;
-  // queries = bvecs_read(filepath.c_str(), nq, &dout, &nout);
-  queries = fvecs_read(filepath.c_str(), &dout, &nout);
-  // fbin_load_data(filepath.c_str(), queries, nq, dim);
-  // k=1000;
 
-  int64_t* gt = new int64_t[nq * k];
-  size_t kk, nnq;
-  int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nnq);
-  // fbin_load_data_int(gtfilepath.c_str(), gt, nq, k);
-  // gt = new int64_t[kk * nq];
-  for (int i = 0; i < nnq; i++) {
-    for (int j = 0; j < k; j++) {
-      gt[i * k + j] = gt_int[i * kk + j];
-    }
-  }
+  // const auto filepath = arguments.at(0);
+  // const auto gtfilepath = arguments.at(1);
+  // const auto table_name = arguments.at(2);
+  // const auto column_name = arguments.at(3);
+  // auto script = std::ifstream{filepath};
+  // out("loading query data file: " + filepath + "\n");
+  // auto command = std::string{};
+  // // std::vector<float_array> queryList;
+  // // int nq = 10000, dim = 128, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  // // int nq = 1000, dim = 960, id = 0, k = 100;  //TODO: need to fix when changing sift and gist
+  // int nq = 0, dim = 0, id = 0, k = 0;
+  // if (table_name == "sift_base" || table_name == "bigann_10m") {
+  //   nq = 10000;
+  //   dim = 128;
+  //   id = 0;
+  //   k = 100;
+  // } else if (table_name == "gist_base") {
+  //   nq = 1000;
+  //   dim = 960;
+  //   id = 0;
+  //   k = 100;
+  // } else if (table_name == "deep10m") {
+  //   nq = 10000;
+  //   dim = 96;
+  //   id = 0;
+  //   k = 100;
+  // } else if (table_name == "turing10m") {
+  //   nq = 10000;
+  //   dim = 100;
+  //   id = 0;
+  //   k = 100;
+  // } else {
+  //   std::cout << "not setting searching parameters" << std::endl;
+  // }
+  // float* queries = new float[nq * dim];
+  // // while (std::getline(script, command)) {
+  // //   std::istringstream iss(command);
+  // //   std::string token;
+  // //   while (std::getline(iss, token, ',')) {
+  // //     queries[id++] = std::stof(token);
+  // //   }
+  // // }
+  // size_t dout, nout;
+  // // queries = bvecs_read(filepath.c_str(), nq, &dout, &nout);
+  // queries = fvecs_read(filepath.c_str(), &dout, &nout);
+  // // fbin_load_data(filepath.c_str(), queries, nq, dim);
+  // // k=1000;
 
-  if (!Hyrise::get().storage_manager.has_table(table_name)) {
-    out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
-    return ReturnCode::Error;
-  }
-  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
-  const auto column_id = table->column_id_by_name(column_name);
-  if (table->column_data_type(column_id) != DataType::Vector) {
-    out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
-    return ReturnCode::Error;
-  }
-
-  int tru = 0, all = 0;
-  const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  // auto& search = float_array_index->_alg_hnsw;
-  int64_t* I = new int64_t[k * nq];
-  float* D = new float[k * nq];
-  auto per_table_index_timer = Timer{};
-  float_array_index->range_similar_k(nq, queries, I, D, k);
-  std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  // FILE* xxx = fopen("result.txt", "w");
-  // for (int i = 0; i < nq; i++) {
+  // int64_t* gt = new int64_t[nq * k];
+  // size_t kk, nnq;
+  // int* gt_int = ivecs_read(gtfilepath.c_str(), &kk, &nnq);
+  // // fbin_load_data_int(gtfilepath.c_str(), gt, nq, k);
+  // // gt = new int64_t[kk * nq];
+  // for (int i = 0; i < nnq; i++) {
   //   for (int j = 0; j < k; j++) {
-  //     fprintf(xxx, "%d ", I[i * k + j]);
+  //     gt[i * k + j] = gt_int[i * kk + j];
   //   }
-  //   fprintf(xxx, "\n");
   // }
 
-  // FILE* yyy = fopen("gt.txt", "w");
-  // for (int i = 0; i < nq; i++) {
-  //   for (int j = 0; j < k; j++) {
-  //     fprintf(yyy, "%d ", gt[i * k + j]);
-  //   }
-  //   fprintf(yyy, "\n");
+  // if (!Hyrise::get().storage_manager.has_table(table_name)) {
+  //   out("Table \"" + table_name + "\" is not existed. Replacing it.\n");
+  //   return ReturnCode::Error;
   // }
-  int n2_100 = 0;
-  for (int i = 0; i < nq; i++) {
-    std::map<float, int> umap;
-    for (int j = 0; j < k; j++) {
-      umap.insert({gt[i * k + j], 0});
-    }
-    for (int l = 0; l < k; l++) {
-      if (umap.find(I[i * k + l]) != umap.end()) {
-        n2_100++;
-      }
-    }
-    umap.clear();
-  }
-  printf("Intersection R@100 = %.4f\n", n2_100 / float(nq * k));
+  // const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  // const auto column_id = table->column_id_by_name(column_name);
+  // if (table->column_data_type(column_id) != DataType::Vector) {
+  //   out("Table \"" + table_name + "\" column \"" + column_name + "\" is not existed. Replacing it.\n");
+  //   return ReturnCode::Error;
+  // }
+
+  // int tru = 0, all = 0;
+  // const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  // // auto& search = float_array_index->_alg_hnsw;
+  // int64_t* I = new int64_t[k * nq];
+  // float* D = new float[k * nq];
+  // auto per_table_index_timer = Timer{};
+  // float_array_index->range_similar_k(nq, queries, I, D, k);
+  // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // // FILE* xxx = fopen("result.txt", "w");
+  // // for (int i = 0; i < nq; i++) {
+  // //   for (int j = 0; j < k; j++) {
+  // //     fprintf(xxx, "%d ", I[i * k + j]);
+  // //   }
+  // //   fprintf(xxx, "\n");
+  // // }
+
+  // // FILE* yyy = fopen("gt.txt", "w");
+  // // for (int i = 0; i < nq; i++) {
+  // //   for (int j = 0; j < k; j++) {
+  // //     fprintf(yyy, "%d ", gt[i * k + j]);
+  // //   }
+  // //   fprintf(yyy, "\n");
+  // // }
+  // int n2_100 = 0;
+  // for (int i = 0; i < nq; i++) {
+  //   std::map<float, int> umap;
+  //   for (int j = 0; j < k; j++) {
+  //     umap.insert({gt[i * k + j], 0});
+  //   }
+  //   for (int l = 0; l < k; l++) {
+  //     if (umap.find(I[i * k + l]) != umap.end()) {
+  //       n2_100++;
+  //     }
+  //   }
+  //   umap.clear();
+  // }
+  // printf("Intersection R@100 = %.4f\n", n2_100 / float(nq * k));
   return ReturnCode::Ok;
 }
 

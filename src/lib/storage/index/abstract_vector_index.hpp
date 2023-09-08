@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "all_type_variant.hpp"
 #include "types.hpp"
@@ -15,7 +16,7 @@ using SimilarKPair = std::priority_queue<std::pair<float, size_t>>;
 class AbstractVectorIndex : private Noncopyable {
  public:
   AbstractVectorIndex() = delete;
-  explicit AbstractVectorIndex(const VectorIndexType type);
+  explicit AbstractVectorIndex(const VectorIndexType type, const std::string name);
   AbstractVectorIndex(AbstractVectorIndex&&) = default;
   virtual ~AbstractVectorIndex() = default;
 
@@ -25,21 +26,19 @@ class AbstractVectorIndex : private Noncopyable {
   virtual bool is_index_for(const ColumnID) const = 0;
   virtual ColumnID get_indexed_column_id() const = 0;
 
-  virtual void train(int64_t, const float*) = 0;
-  virtual void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&) = 0;
-
   virtual void save_index(const std::string& save_path) = 0;
   virtual void change_param(const int param) = 0;
-  char* base_filepath;
-  int nb;
 
   VectorIndexType type() const {
     return _type;
   }
 
-  VectorTestBase _test_base;
+  std::string name() const {
+    return _name;
+  }
 
  private:
   const VectorIndexType _type;
+  const std::string _name;
 };
 }  // namespace hyrise

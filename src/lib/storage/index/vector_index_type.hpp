@@ -11,7 +11,6 @@ namespace hyrise {
 namespace hana = boost::hana;
 
 enum class VectorIndexType : uint8_t { HNSW, IVFFlat };
-enum class VectorTestBase : uint8_t { sift1m, gist1m, sift10m };
 
 class HNSWIndex;
 class IVFFlatIndex;

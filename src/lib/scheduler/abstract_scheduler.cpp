@@ -30,7 +30,9 @@ void AbstractScheduler::_group_tasks(const std::vector<std::shared_ptr<AbstractT
 }
 
 void AbstractScheduler::schedule_tasks(const std::vector<std::shared_ptr<AbstractTask>>& tasks) {
+  // int it = 0;
   for (const auto& task : tasks) {
+    // printf("scheduler task %d\n", it++);
     task->schedule();
   }
 }
@@ -38,6 +40,7 @@ void AbstractScheduler::schedule_tasks(const std::vector<std::shared_ptr<Abstrac
 void AbstractScheduler::schedule_and_wait_for_tasks(const std::vector<std::shared_ptr<AbstractTask>>& tasks) {
   _group_tasks(tasks);
   schedule_tasks(tasks);
+  // printf("checkpoint2.2\n");
   wait_for_tasks(tasks);
 }
 

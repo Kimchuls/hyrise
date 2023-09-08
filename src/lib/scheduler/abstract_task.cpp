@@ -104,12 +104,12 @@ void AbstractTask::schedule(NodeID preferred_node_id) {
   // For the other direction (making sure that this task's writes are visible to whoever scheduled it), we have the
   // _done_condition_variable.
   std::atomic_thread_fence(std::memory_order_seq_cst);
-
+  // printf("checkpoint2.1.1\n");
   // Atomically marks the task as scheduled or returns if another thread has already scheduled it.
   if (!_try_transition_to(TaskState::Scheduled)) {
     return;
   }
-
+  // printf("checkpoint2.1.2\n");
   Hyrise::get().scheduler()->schedule(shared_from_this(), preferred_node_id, _priority);
 }
 

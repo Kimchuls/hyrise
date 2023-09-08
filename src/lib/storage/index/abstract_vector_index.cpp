@@ -1,11 +1,10 @@
 #include "abstract_vector_index.hpp"
 
 #include <memory>
+#include <string>
 #include <vector>
 
-#include "storage/index/hnsw/hnsw_index.hpp"
-
-namespace hyrise
-{
-  AbstractVectorIndex::AbstractVectorIndex(const VectorIndexType type) : _type{type} {}
-} // namespace hyrise
+namespace hyrise {
+AbstractVectorIndex::AbstractVectorIndex(const VectorIndexType type, const std::string name)
+    : _type{type}, _name{name} {}
+}  // namespace hyrise

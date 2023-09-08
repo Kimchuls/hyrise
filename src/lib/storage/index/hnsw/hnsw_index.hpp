@@ -1,7 +1,7 @@
 #pragma once
-
 #include <tsl/sparse_map.h>
 #include <tsl/sparse_set.h>
+#include <unordered_map>
 #include "hnswlib.h"
 #include "storage/index/abstract_vector_index.hpp"
 #include "types.hpp"
@@ -18,14 +18,8 @@ class HNSWIndex : public AbstractVectorIndex {
 
   HNSWIndex(const HNSWIndex&) = delete;
   HNSWIndex& operator=(const HNSWIndex&) = delete;
-  // HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
-  //           long long max_elements, int M, int ef_construction, int ef);
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
-            int dim);
-  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
-            int testing_data);
-  HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id, int dim,
-            int max_elements, int M, int ef_construction, int ef);
+            std::unordered_map<std::string, int> parameters);
 
   void insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
   size_t remove(const std::vector<ChunkID>&);
@@ -39,7 +33,7 @@ class HNSWIndex : public AbstractVectorIndex {
 
   void change_param(const int param) {
     _alg_hnsw->setEf(param);
-    std::cout<<"hnsw ef: "<<_alg_hnsw->ef_<<std::endl;
+    std::cout << "hnsw ef: " << _alg_hnsw->ef_ << std::endl;
   }
 
   bool is_index_for(const ColumnID) const;
@@ -74,7 +68,7 @@ class HNSWIndex : public AbstractVectorIndex {
  private:
   ColumnID _column_id;
   int _dim;
-  long long _max_elements;
+  int _max_elements;
   int _M;
   int _ef_construction;
   hnswlib::L2Space* _space;

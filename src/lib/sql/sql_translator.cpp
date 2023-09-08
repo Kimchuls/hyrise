@@ -29,6 +29,7 @@
 #include "logical_query_plan/change_meta_table_node.hpp"
 #include "logical_query_plan/create_prepared_plan_node.hpp"
 #include "logical_query_plan/create_table_node.hpp"
+#include "logical_query_plan/create_vector_index_node.hpp"
 #include "logical_query_plan/create_view_node.hpp"
 #include "logical_query_plan/delete_node.hpp"
 #include "logical_query_plan/drop_table_node.hpp"
@@ -1503,6 +1504,8 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create(const hsql::Cr
       FailInput("CREATE TABLE FROM is not yet supported");
     case hsql::CreateType::kCreateIndex:
       FailInput("CREATE INDEX is not yet supported");
+    case hsql::CreateType::kCreateVectorIndex:
+      return _translate_create_vector_index(create_statement);
   }
   Fail("Invalid enum value");
 }
@@ -1533,6 +1536,23 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create_view(const hsq
 
   return CreateViewNode::make(create_statement.tableName, std::make_shared<LQPView>(lqp, column_names),
                               create_statement.ifNotExists);
+}
+
+std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create_vector_index(
+    const hsql::CreateStatement& create_statement) {
+  Assert(create_statement.float_array_index_constraints, "CREATE VECTOR INDEX: No column specified. Parser bug?");
+  auto vector_index_definitions = TableVectorIndexDefinitions{create_statement.float_array_index_constraints->size()};
+  auto indexColumns = std::vector<std::string>{create_statement.indexColumns->size()};
+  for (auto column_id = ColumnID{0}; column_id < create_statement.indexColumns->size(); ++column_id) {
+    indexColumns[column_id] = (*create_statement.indexColumns)[column_id];
+  }
+  for (auto column_id = ColumnID{0}; column_id < create_statement.float_array_index_constraints->size(); ++column_id) {
+    const auto* parser_vector_index_definition = create_statement.float_array_index_constraints->at(column_id);
+    vector_index_definitions[column_id].name = parser_vector_index_definition->name;
+    vector_index_definitions[column_id].value = parser_vector_index_definition->value;
+  }
+  return CreateVectorIndexNode::make(create_statement.tableName, create_statement.indexName,
+                                     create_statement.ifNotExists, indexColumns, vector_index_definitions);
 }
 
 std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create_table(const hsql::CreateStatement& create_statement) {

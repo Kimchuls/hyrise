@@ -4,6 +4,7 @@
 #include <mutex>
 #include <queue>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -19,6 +20,7 @@
 #include "storage/index/chunk_index_statistics.hpp"
 #include "storage/index/table_index_statistics.hpp"
 #include "storage/table_column_definition.hpp"
+#include "storage/table_vector_index_definition.hpp"
 #include "types.hpp"
 #include "utils/assert.hpp"
 #include "utils/performance_warning.hpp"
@@ -204,10 +206,7 @@ class Table : private Noncopyable {
   void create_partial_hash_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids);
 
   template <typename Index>
-  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim);
-
-  template <typename Index>
-  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim, int testing_data);
+  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, const std::unordered_map<std::string, int> parameters);
 
   template <typename Index>
   void create_chunk_index(const std::vector<ColumnID>& column_ids, const std::string& name = "");
@@ -300,7 +299,7 @@ class Table : private Noncopyable {
   std::unique_ptr<std::mutex> _append_mutex;
   std::vector<ChunkIndexStatistics> _chunk_indexes_statistics;
   std::vector<TableIndexStatistics> _table_indexes_statistics;
-  std::vector<TableIndexStatistics> _table_indexes_vector_statistics;
+  // std::vector<TableIndexStatistics> _table_indexes_vector_statistics;
   pmr_vector<std::shared_ptr<PartialHashIndex>> _table_indexes;
   pmr_vector<std::shared_ptr<AbstractVectorIndex>> _table_indexes_vector;
 

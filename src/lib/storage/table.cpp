@@ -631,8 +631,8 @@ void Table::create_partial_hash_index(const ColumnID column_id, const std::vecto
 }
 
 template <typename Index>
-void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, int dim,
-                                     int testing_data) {
+void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids,
+                                     const std::unordered_map<std::string, int> parameters) {
   if (chunk_ids.empty()) {
     Fail("Creating a partial hash index with no chunks being indexed is not supported.");
   }
@@ -647,9 +647,9 @@ void Table::create_float_array_index(const ColumnID column_id, const std::vector
     Assert(!chunk->is_mutable(), "Cannot index mutable chunk.");
     chunks_to_index.emplace_back(chunk_id, chunk);
   }
-  auto table_indexes_vector = std::make_shared<Index>(chunks_to_index, column_id, dim, testing_data);
+  auto table_indexes_vector = std::make_shared<Index>(chunks_to_index, column_id, parameters);
   _table_indexes_vector.emplace_back(table_indexes_vector);
-  _table_indexes_vector_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
+  // _table_indexes_vector_statistics.emplace_back(TableIndexStatistics{{column_id}, chunks_to_index});
 }
 
 int Table::drop_index_vector(const int index_id) {
@@ -661,7 +661,7 @@ int Table::drop_index_vector(const int index_id) {
   for (auto it = _table_indexes_vector.begin(); it != _table_indexes_vector.end(); it++, id++) {
     if (id == index_id) {
       _table_indexes_vector.erase(it);
-      printf("size of index vector:%ld\n",_table_indexes_vector.size());
+      printf("size of index vector:%ld\n", _table_indexes_vector.size());
       return 1;
     }
   }
@@ -669,11 +669,11 @@ int Table::drop_index_vector(const int index_id) {
 }
 
 template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
-                                                         const std::vector<ChunkID>& chunk_ids, int dim,
-                                                         int testing_data);
+                                                         const std::vector<ChunkID>& chunk_ids,
+                                                         const std::unordered_map<std::string, int> parameters);
 template void Table::create_float_array_index<IVFFlatIndex>(const ColumnID column_id,
-                                                            const std::vector<ChunkID>& chunk_ids, int dim,
-                                                            int testing_data);
+                                                            const std::vector<ChunkID>& chunk_ids,
+                                                            const std::unordered_map<std::string, int> parameters);
 
 template void Table::create_chunk_index<GroupKeyIndex>(const std::vector<ColumnID>& column_ids,
                                                        const std::string& name);

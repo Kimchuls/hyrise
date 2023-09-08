@@ -18,6 +18,7 @@ enum class LQPNodeType {
   CreateTable,
   CreatePreparedPlan,
   CreateView,
+  CreateVectorIndex,
   Delete,
   DropView,
   DropTable,

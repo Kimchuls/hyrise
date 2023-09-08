@@ -113,6 +113,8 @@ set(
     logical_query_plan/create_prepared_plan_node.hpp
     logical_query_plan/create_table_node.cpp
     logical_query_plan/create_table_node.hpp
+    logical_query_plan/create_vector_index_node.cpp
+    logical_query_plan/create_vector_index_node.hpp
     logical_query_plan/create_view_node.cpp
     logical_query_plan/create_view_node.hpp
     logical_query_plan/data_dependencies/functional_dependency.cpp
@@ -229,6 +231,8 @@ set(
     operators/maintenance/create_prepared_plan.hpp
     operators/maintenance/create_table.cpp
     operators/maintenance/create_table.hpp
+    operators/maintenance/create_vector_index.cpp
+    operators/maintenance/create_vector_index.hpp
     operators/maintenance/create_view.cpp
     operators/maintenance/create_view.hpp
     operators/maintenance/drop_table.cpp
@@ -632,6 +636,8 @@ set(
     storage/table.hpp
     storage/table_column_definition.cpp
     storage/table_column_definition.hpp
+    storage/table_vector_index_definition.cpp
+    storage/table_vector_index_definition.hpp
     storage/value_segment.cpp
     storage/value_segment.hpp
     storage/value_segment/null_value_vector_iterable.hpp

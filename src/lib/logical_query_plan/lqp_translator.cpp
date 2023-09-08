@@ -9,6 +9,7 @@
 #include "change_meta_table_node.hpp"
 #include "create_prepared_plan_node.hpp"
 #include "create_table_node.hpp"
+#include "create_vector_index_node.hpp"
 #include "create_view_node.hpp"
 #include "delete_node.hpp"
 #include "drop_table_node.hpp"
@@ -44,6 +45,7 @@
 #include "operators/limit.hpp"
 #include "operators/maintenance/create_prepared_plan.hpp"
 #include "operators/maintenance/create_table.hpp"
+#include "operators/maintenance/create_vector_index.hpp"
 #include "operators/maintenance/create_view.hpp"
 #include "operators/maintenance/drop_table.hpp"
 #include "operators/maintenance/drop_view.hpp"
@@ -121,7 +123,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_node_recursively(
 std::shared_ptr<AbstractOperator> LQPTranslator::_translate_by_node_type(
     LQPNodeType type, const std::shared_ptr<AbstractLQPNode>& node) const {
   switch (type) {
-    // clang-format off
+      // clang-format off
     case LQPNodeType::Aggregate:          return _translate_aggregate_node(node);
     case LQPNodeType::Alias:              return _translate_alias_node(node);
     case LQPNodeType::ChangeMetaTable:    return _translate_change_meta_table_node(node);
@@ -146,6 +148,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_by_node_type(
     case LQPNodeType::CreateView:         return _translate_create_view_node(node);
     case LQPNodeType::DropView:           return _translate_drop_view_node(node);
     case LQPNodeType::CreateTable:        return _translate_create_table_node(node);
+    case LQPNodeType::CreateVectorIndex:  return _translate_create_vector_index_node(node);
     case LQPNodeType::DropTable:          return _translate_drop_table_node(node);
     case LQPNodeType::Import:             return _translate_import_node(node);
     case LQPNodeType::Export:             return _translate_export_node(node);
@@ -533,6 +536,15 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_create_table_node(
   const auto input_node = create_table_node->left_input();
   return std::make_shared<CreateTable>(create_table_node->table_name, create_table_node->if_not_exists,
                                        _translate_node_recursively(input_node));
+}
+
+// NOLINTNEXTLINE - while this particular method could be made static, others cannot.
+std::shared_ptr<AbstractOperator> LQPTranslator::_translate_create_vector_index_node(
+    const std::shared_ptr<AbstractLQPNode>& node) const {
+  const auto create_vector_index_node = std::dynamic_pointer_cast<CreateVectorIndexNode>(node);
+  return std::make_shared<CreateVectorIndex>(create_vector_index_node->table_name, create_vector_index_node->index_name,
+                                       create_vector_index_node->if_not_exists, create_vector_index_node->column_names,
+                                       create_vector_index_node->vector_index_definitions);
 }
 
 // NOLINTNEXTLINE - while this particular method could be made static, others cannot.

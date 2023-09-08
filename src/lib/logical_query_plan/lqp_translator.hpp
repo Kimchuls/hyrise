@@ -64,6 +64,7 @@ class LQPTranslator {
   std::shared_ptr<AbstractOperator> _translate_create_view_node(const std::shared_ptr<AbstractLQPNode>& node) const;
   std::shared_ptr<AbstractOperator> _translate_drop_view_node(const std::shared_ptr<AbstractLQPNode>& node) const;
   std::shared_ptr<AbstractOperator> _translate_create_table_node(const std::shared_ptr<AbstractLQPNode>& node) const;
+  std::shared_ptr<AbstractOperator> _translate_create_vector_index_node(const std::shared_ptr<AbstractLQPNode>& node) const;
   std::shared_ptr<AbstractOperator> _translate_drop_table_node(const std::shared_ptr<AbstractLQPNode>& node) const;
   std::shared_ptr<AbstractOperator> _translate_import_node(const std::shared_ptr<AbstractLQPNode>& node) const;
   std::shared_ptr<AbstractOperator> _translate_export_node(const std::shared_ptr<AbstractLQPNode>& node) const;

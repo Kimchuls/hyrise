@@ -59,6 +59,7 @@
 [submodule "third_party/sql-parser"]
 	path = third_party/sql-parser
 	url = https://github.com/Kimchuls/sql-parser.git
+	branch = master
 [submodule "third_party/sparse-map"]
 	path = third_party/sparse-map
 	url = https://github.com/Kimchuls/sparse-map.git

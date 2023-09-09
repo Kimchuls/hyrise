@@ -49,6 +49,7 @@
 #include "operators/maintenance/create_view.hpp"
 #include "operators/maintenance/drop_table.hpp"
 #include "operators/maintenance/drop_view.hpp"
+#include "operators/maintenance/set_vector_index.hpp"
 #include "operators/operator_join_predicate.hpp"
 #include "operators/operator_scan_predicate.hpp"
 #include "operators/pqp_utils.hpp"
@@ -63,6 +64,7 @@
 #include "operators/validate.hpp"
 #include "predicate_node.hpp"
 #include "projection_node.hpp"
+#include "set_node.hpp"
 #include "sort_node.hpp"
 #include "static_table_node.hpp"
 #include "stored_table_node.hpp"
@@ -136,6 +138,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_by_node_type(
     case LQPNodeType::Limit:              return _translate_limit_node(node);
     case LQPNodeType::Predicate:          return _translate_predicate_node(node);
     case LQPNodeType::Projection:         return _translate_projection_node(node);
+    case LQPNodeType::SetVectorIndex:     return _translate_set_node(node);
     case LQPNodeType::Sort:               return _translate_sort_node(node);
     case LQPNodeType::StaticTable:        return _translate_static_table_node(node);
     case LQPNodeType::StoredTable:        return _translate_stored_table_node(node);
@@ -444,6 +447,12 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_insert_node(
   const auto input_operator = _translate_node_recursively(node->left_input());
   auto insert_node = std::dynamic_pointer_cast<InsertNode>(node);
   return std::make_shared<Insert>(insert_node->table_name, input_operator);
+}
+
+std::shared_ptr<AbstractOperator> LQPTranslator::_translate_set_node(
+    const std::shared_ptr<AbstractLQPNode>& node) const {
+  auto set_node = std::dynamic_pointer_cast<SetNode>(node);
+  return std::make_shared<SetVectorIndex>(set_node->table_name, set_node->index_name, set_node->parameter_name, set_node->value);
 }
 
 std::shared_ptr<AbstractOperator> LQPTranslator::_translate_delete_node(

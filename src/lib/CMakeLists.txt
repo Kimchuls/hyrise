@@ -156,6 +156,8 @@ set(
     logical_query_plan/predicate_node.hpp
     logical_query_plan/projection_node.cpp
     logical_query_plan/projection_node.hpp
+    logical_query_plan/set_node.cpp
+    logical_query_plan/set_node.hpp 
     logical_query_plan/sort_node.cpp
     logical_query_plan/sort_node.hpp
     logical_query_plan/static_table_node.cpp
@@ -239,6 +241,8 @@ set(
     operators/maintenance/drop_table.hpp
     operators/maintenance/drop_view.cpp
     operators/maintenance/drop_view.hpp
+    operators/maintenance/set_vector_index.cpp
+    operators/maintenance/set_vector_index.hpp
     operators/multi_predicate_join/multi_predicate_join_evaluator.cpp
     operators/multi_predicate_join/multi_predicate_join_evaluator.hpp
     operators/operator_join_predicate.cpp

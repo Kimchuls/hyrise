@@ -75,6 +75,7 @@ ExpressionUnorderedSet gather_locally_required_expressions(
     case LQPNodeType::Limit:
     case LQPNodeType::Root:
     case LQPNodeType::Sort:
+    case LQPNodeType::SetVectorIndex:
     case LQPNodeType::StaticTable:
     case LQPNodeType::StoredTable:
     case LQPNodeType::Validate:

@@ -115,6 +115,7 @@ void validate_lqp_with_uncorrelated_subqueries(const std::shared_ptr<const Abstr
       case LQPNodeType::CreatePreparedPlan:
       case LQPNodeType::CreateView:
       case LQPNodeType::CreateVectorIndex:
+      case LQPNodeType::SetVectorIndex:
       case LQPNodeType::DummyTable:
       case LQPNodeType::DropView:
       case LQPNodeType::DropTable:

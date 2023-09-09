@@ -33,6 +33,7 @@ enum class LQPNodeType {
   Predicate,
   Projection,
   Root,
+  SetVectorIndex,
   Sort,
   StaticTable,
   StoredTable,

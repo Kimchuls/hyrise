@@ -45,6 +45,7 @@
 #include "logical_query_plan/lqp_utils.hpp"
 #include "logical_query_plan/predicate_node.hpp"
 #include "logical_query_plan/projection_node.hpp"
+#include "logical_query_plan/set_node.hpp"
 #include "logical_query_plan/sort_node.hpp"
 #include "logical_query_plan/static_table_node.hpp"
 #include "logical_query_plan/stored_table_node.hpp"
@@ -350,6 +351,8 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_statement(const hsql:
       // The transaction statements are handled directly in the SQLPipelineStatement,
       //  but the translation is still called, so we return a dummy node here.
       return DummyTableNode::make();
+    case hsql::kStmtSet:
+      return _translate_set(static_cast<const hsql::SetStatement&>(statement));
     case hsql::kStmtAlter:
     case hsql::kStmtError:
     case hsql::kStmtRename:
@@ -1542,8 +1545,8 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_create_vector_index(
     const hsql::CreateStatement& create_statement) {
   Assert(create_statement.float_array_index_constraints, "CREATE VECTOR INDEX: No column specified. Parser bug?");
   auto vector_index_definitions = TableVectorIndexDefinitions{create_statement.float_array_index_constraints->size()};
-  auto indexColumns = std::vector<std::string>{create_statement.indexColumns->size()};
-  for (auto column_id = ColumnID{0}; column_id < create_statement.indexColumns->size(); ++column_id) {
+  auto indexColumns = std::vector<std::string>{create_statement.indexColumns->size() - 1};
+  for (auto column_id = ColumnID{0}; column_id < create_statement.indexColumns->size() - 1; ++column_id) {
     indexColumns[column_id] = (*create_statement.indexColumns)[column_id];
   }
   for (auto column_id = ColumnID{0}; column_id < create_statement.float_array_index_constraints->size(); ++column_id) {
@@ -1749,6 +1752,10 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_execute(const hsql::E
               "Mismatch between validation of Prepared statement and query it is used in");
 
   return prepared_plan->instantiate(parameters);
+}
+
+std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_set(const hsql::SetStatement& set_statement) {
+  return SetNode::make(set_statement.tableName, set_statement.indexName, set_statement.parameterName, set_statement.value);
 }
 
 // NOLINTNEXTLINE - while this particular method could be made static, others cannot.

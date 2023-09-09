@@ -304,6 +304,7 @@ std::set<std::string> lqp_find_modified_tables(const std::shared_ptr<AbstractLQP
         modified_tables.insert(static_cast<ChangeMetaTableNode&>(*node).table_name);
         break;
       case LQPNodeType::CreateVectorIndex:
+      case LQPNodeType::SetVectorIndex:
       case LQPNodeType::CreateTable:
       case LQPNodeType::CreatePreparedPlan:
       case LQPNodeType::DropTable:

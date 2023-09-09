@@ -211,6 +211,7 @@ std::shared_ptr<TableStatistics> CardinalityEstimator::estimate_statistics(
     // These Node types should not be relevant during query optimization. Return an empty TableStatistics object for
     // them
     case LQPNodeType::CreateVectorIndex:
+    case LQPNodeType::SetVectorIndex:
     case LQPNodeType::CreateTable:
     case LQPNodeType::CreatePreparedPlan:
     case LQPNodeType::CreateView:

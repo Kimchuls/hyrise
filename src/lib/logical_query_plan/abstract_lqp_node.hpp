@@ -34,6 +34,7 @@ enum class LQPNodeType {
   Projection,
   Root,
   SetVectorIndex,
+  SimilarSearch,
   Sort,
   StaticTable,
   StoredTable,

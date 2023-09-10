@@ -46,6 +46,7 @@
 #include "logical_query_plan/predicate_node.hpp"
 #include "logical_query_plan/projection_node.hpp"
 #include "logical_query_plan/set_node.hpp"
+#include "logical_query_plan/similar_search_node.hpp"
 #include "logical_query_plan/sort_node.hpp"
 #include "logical_query_plan/static_table_node.hpp"
 #include "logical_query_plan/stored_table_node.hpp"
@@ -410,12 +411,19 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_select_statement(cons
 
   // Translate ORDER BY and DISTINCT. ORDER BY and LIMIT must be executed after DISTINCT. Thus, we must ensure that all
   // ORDER BY expressions are part of the SELECT list if a DISTINCT result is required.
-  const auto& inflated_select_list_expressions = unwrap_elements(_inflated_select_list_elements);
-  _translate_distinct_order_by(select.order, inflated_select_list_expressions, select.selectDistinct);
-
-  // Translate LIMIT.
+  int limit_k = -1;
   if (select.limit) {
-    _translate_limit(*select.limit);
+    limit_k = (*select.limit).limit->ival;
+  }
+  const auto& inflated_select_list_expressions = unwrap_elements(_inflated_select_list_elements);
+  _translate_distinct_order_by(select.order, inflated_select_list_expressions, select.selectDistinct, limit_k);
+
+  if (!(select.order && (*select.order)[0]->type == hsql::OrderType::kOrderSimilarK))
+  {
+    // Translate LIMIT.
+    if (select.limit) {
+      _translate_limit(*select.limit);
+    }
   }
 
   // Project, arrange, and name the columns as specified in the SELECT clause.
@@ -465,7 +473,8 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_select_statement(cons
       //               LIMIT 10;
       // While ORDER BY sales_price DESC LIMIT 5 belongs to the subquery and has to be executed locally, ORDER BY
       // sold_date ASC LIMIT 10 refers to the intersection and must be executed on the result.
-      _translate_distinct_order_by(set_operator->resultOrder, inflated_select_list_expressions, select.selectDistinct);
+      _translate_distinct_order_by(set_operator->resultOrder, inflated_select_list_expressions, select.selectDistinct,
+                                   limit_k);
       if (set_operator->resultLimit) {
         _translate_limit(*set_operator->resultLimit);
       }
@@ -1422,7 +1431,29 @@ void SQLTranslator::_translate_set_operation(const hsql::SetOperation& set_opera
 
 void SQLTranslator::_translate_distinct_order_by(const std::vector<hsql::OrderDescription*>* order_list,
                                                  const std::vector<std::shared_ptr<AbstractExpression>>& select_list,
-                                                 const bool distinct) {
+                                                 const bool distinct, const int k_for_similar_search) {
+  if (order_list) {
+    if (order_list->size() == 1) {
+      auto first_order = (*order_list)[0];
+      if (first_order->type == hsql::OrderType::kOrderSimilarK) {
+        Assert(k_for_similar_search > -1, "Error when translating to similar check");
+        // printf("_translate_distinct_order_by:\n");
+        // for (size_t i = 0; i < select_list.size(); i++) {
+        //   auto x = select_list[i];
+        //   const auto lqp_column_expression = std::dynamic_pointer_cast<const LQPColumnExpression>(x);
+        //   printf("%d\n", lqp_column_expression->original_column_id);
+        // }
+        // _current_lqp = SimilarSearchNode::make(k_for_similar_search, "first_order->columnName",
+        //                                        "first_order->indexName", 100, 100, new float[100], _current_lqp);
+        hsql::VectorQueries* vector_queries = first_order->vectorQueries;
+        _current_lqp = SimilarSearchNode::make(select_list, k_for_similar_search, first_order->columnName,
+                                               first_order->indexName, vector_queries->dim, vector_queries->nq,
+                                               (vector_queries->multipleQueries).data(), _current_lqp);
+        return;
+      }
+    }
+  }
+
   const auto perform_sort = order_list && !order_list->empty();
   auto expressions = std::vector<std::shared_ptr<AbstractExpression>>{};
   auto sort_modes = std::vector<SortMode>{};
@@ -1755,7 +1786,8 @@ std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_execute(const hsql::E
 }
 
 std::shared_ptr<AbstractLQPNode> SQLTranslator::_translate_set(const hsql::SetStatement& set_statement) {
-  return SetNode::make(set_statement.tableName, set_statement.indexName, set_statement.parameterName, set_statement.value);
+  return SetNode::make(set_statement.tableName, set_statement.indexName, set_statement.parameterName,
+                       set_statement.value);
 }
 
 // NOLINTNEXTLINE - while this particular method could be made static, others cannot.

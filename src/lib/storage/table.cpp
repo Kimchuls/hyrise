@@ -103,6 +103,35 @@ Table::Table(const TableColumnDefinitions& column_definitions, const TableType t
   }
 }
 
+Table::Table(const TableColumnDefinitions& column_definitions, const TableType type,
+             const pmr_vector<std::shared_ptr<AbstractVectorIndex>>& table_indexes_vector,
+             std::vector<std::shared_ptr<Chunk>>&& chunks, const UseMvcc use_mvcc,
+             pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes)
+    : Table(column_definitions, type, type == TableType::Data ? std::optional{Chunk::DEFAULT_SIZE} : std::nullopt,
+            use_mvcc, table_indexes, table_indexes_vector) {
+  _chunks = {chunks.begin(), chunks.end()};
+
+  if constexpr (HYRISE_DEBUG) {
+    const auto chunk_count = _chunks.size();
+    const auto num_columns = column_count();
+    for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; ++chunk_id) {
+      const auto chunk = get_chunk(chunk_id);
+      if (!chunk) {
+        continue;
+      }
+
+      Assert(chunk->size() > 0 || (type == TableType::Data && chunk_id == chunk_count - 1 && chunk->is_mutable()),
+             "Empty chunk other than mutable chunk at the end was found");
+      Assert(chunk->has_mvcc_data() == (_use_mvcc == UseMvcc::Yes), "Supply MvccData for Chunks iff Table uses MVCC");
+      Assert(chunk->column_count() == num_columns, "Invalid Chunk column count");
+
+      for (auto column_id = ColumnID{0}; column_id < num_columns; ++column_id) {
+        Assert(chunk->get_segment(column_id)->data_type() == column_data_type(column_id), "Invalid Segment DataType");
+      }
+    }
+  }
+}
+
 const TableColumnDefinitions& Table::column_definitions() const {
   return _column_definitions;
 }

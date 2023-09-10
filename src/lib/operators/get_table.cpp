@@ -271,7 +271,7 @@ std::shared_ptr<const Table> GetTable::_on_execute() {
                       table_indexes.cend());
 
   return std::make_shared<Table>(pruned_column_definitions, TableType::Data, std::move(output_chunks),
-                                 stored_table->uses_mvcc(), table_indexes);
+                                 stored_table->uses_mvcc(), table_indexes, stored_table->get_table_indexes_vector());
 }
 
 }  // namespace hyrise

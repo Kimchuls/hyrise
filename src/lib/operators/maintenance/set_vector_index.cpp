@@ -45,7 +45,7 @@ std::shared_ptr<const Table> SetVectorIndex::_on_execute() {
          "Table \"" + table_name + "\" is not existed. Replacing it.\n");
   const auto& table = Hyrise::get().storage_manager.get_table(table_name);
   const auto float_array_indexs = table->get_table_indexes_vector();
-  std::cout<<"index_name: "<<index_name<<std::endl;
+  // std::cout<<"index_name: "<<index_name<<std::endl;
   for (auto& float_array_index : float_array_indexs) {
     std::cout<<"float_array_index->name(): "<<float_array_index->name()<<std::endl;
     if (float_array_index->name() == index_name) {

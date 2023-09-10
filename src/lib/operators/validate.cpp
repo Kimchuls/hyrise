@@ -140,7 +140,7 @@ std::shared_ptr<const Table> Validate::_on_execute(std::shared_ptr<TransactionCo
 
   Hyrise::get().scheduler()->schedule_and_wait_for_tasks(jobs);
 
-  return std::make_shared<Table>(input_table->column_definitions(), TableType::References, std::move(output_chunks));
+  return std::make_shared<Table>(input_table->column_definitions(), TableType::References, input_table->get_table_indexes_vector(), std::move(output_chunks));
 }
 
 void Validate::_validate_chunks(const std::shared_ptr<const Table>& input_table, const ChunkID chunk_id_start,

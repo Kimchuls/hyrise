@@ -73,6 +73,7 @@ ExpressionUnorderedSet gather_locally_required_expressions(
     case LQPNodeType::DummyTable:
     case LQPNodeType::Import:
     case LQPNodeType::Limit:
+    case LQPNodeType::SimilarSearch:
     case LQPNodeType::Root:
     case LQPNodeType::Sort:
     case LQPNodeType::SetVectorIndex:

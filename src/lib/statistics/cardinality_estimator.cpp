@@ -222,6 +222,7 @@ std::shared_ptr<TableStatistics> CardinalityEstimator::estimate_statistics(
     case LQPNodeType::Delete:
     case LQPNodeType::DropView:
     case LQPNodeType::DropTable:
+    case LQPNodeType::SimilarSearch://TODO: fix when using complex query statement
     case LQPNodeType::ChangeMetaTable:
     case LQPNodeType::DummyTable: {
       auto empty_column_statistics = std::vector<std::shared_ptr<BaseAttributeStatistics>>();

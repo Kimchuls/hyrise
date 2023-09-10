@@ -133,6 +133,7 @@ void validate_lqp_with_uncorrelated_subqueries(const std::shared_ptr<const Abstr
       case LQPNodeType::Export:
       case LQPNodeType::Insert:
       case LQPNodeType::Limit:
+      case LQPNodeType::SimilarSearch:
       case LQPNodeType::Predicate:
       case LQPNodeType::Projection:
       case LQPNodeType::Root:

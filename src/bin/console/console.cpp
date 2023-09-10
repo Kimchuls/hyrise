@@ -231,7 +231,7 @@ int Console::_eval(const std::string& input) {
     auto parse_result = hsql::SQLParserResult{};
     auto per_table_index_timer = Timer{};
     hsql::SQLParser::parse(input, &parse_result);
-    std::cout << "parser time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+    // std::cout << "parser time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
     if (parse_result.isValid()) {
       return _eval_sql(input);
     }
@@ -319,20 +319,53 @@ int Console::_eval_sql(const std::string& sql) {
 
   const auto row_count = table ? table->row_count() : 0;
 
-  // Print result (to Console and logfile)
   if (table) {
     out(table);
+    FILE* writes = fopen("output.txt", "w");
+      const auto chunk_count = table->chunk_count();
+      const auto column_count = table->column_count();
+      printf("chunk_count %d %d\n",chunk_count,column_count);
+      const auto column_id = ColumnID{0};
+      for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; chunk_id++) {
+        auto searched_chunk = table->get_chunk(chunk_id);
+        auto searched_segment = searched_chunk->get_segment(column_id);
+        // const auto source_value_segment = std::dynamic_pointer_cast<ValueSegment<int>>(searched_segment);
+        const auto maxoffset = searched_segment->size();
+        for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
+          auto x=get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
+          fprintf(writes, "%s\n", x.c_str());
+        }
+      }
+      fclose(writes);
   }
   //TODO: out
   // out("===\n");
   // out(std::to_string(row_count) + " rows total\n");
+
+  // {
+  //   FILE* writes = fopen("output.txt", "w");
+  //   const auto chunk_count = table->chunk_count();
+  //   const auto column_count = table->column_count();
+  //   const auto column_id = ColumnID{0};
+  //   for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; chunk_id++) {
+  //     // auto searched_chunk = table->get_chunk(chunk_id);
+  //     // auto searched_segment = searched_chunk->get_segment(column_id);
+  //     // // const auto source_value_segment = std::dynamic_pointer_cast<ValueSegment<int>>(searched_segment);
+  //     // const auto maxoffset = searched_segment->size();
+  //     // for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
+  //     //   auto x=get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
+  //     //   fprintf(writes, "%s\n", x.c_str());
+  //     // }
+  //   }
+  //   fclose(writes);
+  // }
 
   auto stream = std::ostringstream{};
   stream << _sql_pipeline->metrics();
 
   // out(stream.str());
 
-  std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   return ReturnCode::Ok;
 }
 

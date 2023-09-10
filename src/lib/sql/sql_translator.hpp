@@ -157,7 +157,7 @@ class SQLTranslator final {
   void _translate_set_operation(const hsql::SetOperation& set_operator);
   void _translate_distinct_order_by(const std::vector<hsql::OrderDescription*>* order_list,
                                     const std::vector<std::shared_ptr<AbstractExpression>>& select_list,
-                                    const bool distinct);
+                                    const bool distinct, const int k_for_similar_search);
   void _translate_limit(const hsql::LimitDescription& limit);
 
   std::shared_ptr<AbstractLQPNode> _translate_insert(const hsql::InsertStatement& insert);

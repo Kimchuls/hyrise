@@ -158,6 +158,8 @@ set(
     logical_query_plan/projection_node.hpp
     logical_query_plan/set_node.cpp
     logical_query_plan/set_node.hpp 
+    logical_query_plan/similar_search_node.cpp 
+    logical_query_plan/similar_search_node.hpp
     logical_query_plan/sort_node.cpp
     logical_query_plan/sort_node.hpp
     logical_query_plan/static_table_node.cpp
@@ -259,6 +261,8 @@ set(
     operators/product.hpp
     operators/projection.cpp
     operators/projection.hpp
+    operators/similar_search.cpp
+    operators/similar_search.hpp
     operators/sort.cpp
     operators/sort.hpp
     operators/table_scan.cpp

@@ -43,6 +43,7 @@ enum class OperatorType {
   Print,
   Product,
   Projection,
+  SimilarSearch,
   Sort,
   TableScan,
   TableWrapper,

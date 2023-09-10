@@ -55,6 +55,7 @@
 #include "operators/pqp_utils.hpp"
 #include "operators/product.hpp"
 #include "operators/projection.hpp"
+#include "operators/similar_search.hpp"
 #include "operators/sort.hpp"
 #include "operators/table_scan.hpp"
 #include "operators/table_wrapper.hpp"
@@ -65,6 +66,7 @@
 #include "predicate_node.hpp"
 #include "projection_node.hpp"
 #include "set_node.hpp"
+#include "similar_search_node.hpp"
 #include "sort_node.hpp"
 #include "static_table_node.hpp"
 #include "stored_table_node.hpp"
@@ -138,7 +140,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_by_node_type(
     case LQPNodeType::Limit:              return _translate_limit_node(node);
     case LQPNodeType::Predicate:          return _translate_predicate_node(node);
     case LQPNodeType::Projection:         return _translate_projection_node(node);
-    case LQPNodeType::SetVectorIndex:     return _translate_set_node(node);
+    case LQPNodeType::SimilarSearch:      return _translate_similar_search_node(node);
     case LQPNodeType::Sort:               return _translate_sort_node(node);
     case LQPNodeType::StaticTable:        return _translate_static_table_node(node);
     case LQPNodeType::StoredTable:        return _translate_stored_table_node(node);
@@ -156,6 +158,7 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_by_node_type(
     case LQPNodeType::Import:             return _translate_import_node(node);
     case LQPNodeType::Export:             return _translate_export_node(node);
     case LQPNodeType::CreatePreparedPlan: return _translate_create_prepared_plan_node(node);
+    case LQPNodeType::SetVectorIndex:     return _translate_set_node(node);
       // clang-format on
 
     default:
@@ -442,6 +445,15 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_limit_node(
       input_operator, _translate_expressions({limit_node->num_rows_expression()}, node->left_input()).front());
 }
 
+std::shared_ptr<AbstractOperator> LQPTranslator::_translate_similar_search_node(
+    const std::shared_ptr<AbstractLQPNode>& node) const {
+  const auto input_operator = _translate_node_recursively(node->left_input());
+  auto similar_search_node = std::dynamic_pointer_cast<SimilarSearchNode>(node);
+  return std::make_shared<SimilarSearch>(
+      input_operator, similar_search_node->k_for_similar_search, similar_search_node->column_name,
+      similar_search_node->index_name, similar_search_node->dim, similar_search_node->nq, similar_search_node->queries);
+}
+
 std::shared_ptr<AbstractOperator> LQPTranslator::_translate_insert_node(
     const std::shared_ptr<AbstractLQPNode>& node) const {
   const auto input_operator = _translate_node_recursively(node->left_input());
@@ -452,7 +464,8 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_insert_node(
 std::shared_ptr<AbstractOperator> LQPTranslator::_translate_set_node(
     const std::shared_ptr<AbstractLQPNode>& node) const {
   auto set_node = std::dynamic_pointer_cast<SetNode>(node);
-  return std::make_shared<SetVectorIndex>(set_node->table_name, set_node->index_name, set_node->parameter_name, set_node->value);
+  return std::make_shared<SetVectorIndex>(set_node->table_name, set_node->index_name, set_node->parameter_name,
+                                          set_node->value);
 }
 
 std::shared_ptr<AbstractOperator> LQPTranslator::_translate_delete_node(
@@ -552,8 +565,9 @@ std::shared_ptr<AbstractOperator> LQPTranslator::_translate_create_vector_index_
     const std::shared_ptr<AbstractLQPNode>& node) const {
   const auto create_vector_index_node = std::dynamic_pointer_cast<CreateVectorIndexNode>(node);
   return std::make_shared<CreateVectorIndex>(create_vector_index_node->table_name, create_vector_index_node->index_name,
-                                       create_vector_index_node->if_not_exists, create_vector_index_node->column_names,
-                                       create_vector_index_node->vector_index_definitions);
+                                             create_vector_index_node->if_not_exists,
+                                             create_vector_index_node->column_names,
+                                             create_vector_index_node->vector_index_definitions);
 }
 
 // NOLINTNEXTLINE - while this particular method could be made static, others cannot.

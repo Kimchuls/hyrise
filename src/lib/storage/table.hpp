@@ -54,6 +54,11 @@ class Table : private Noncopyable {
         pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes = {},
         pmr_vector<std::shared_ptr<AbstractVectorIndex>> const& table_indexes_vector = {});
 
+  Table(const TableColumnDefinitions& column_definitions, const TableType type,
+        pmr_vector<std::shared_ptr<AbstractVectorIndex>> const& table_indexes_vector,
+        std::vector<std::shared_ptr<Chunk>>&& chunks,
+        const UseMvcc use_mvcc = UseMvcc::No, pmr_vector<std::shared_ptr<PartialHashIndex>> const& table_indexes = {});
+
   /**
    * @defgroup Getter and convenience functions for the column definitions
    * @{
@@ -206,7 +211,8 @@ class Table : private Noncopyable {
   void create_partial_hash_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids);
 
   template <typename Index>
-  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids, const std::unordered_map<std::string, int> parameters);
+  void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids,
+                                const std::unordered_map<std::string, int> parameters);
 
   template <typename Index>
   void create_chunk_index(const std::vector<ColumnID>& column_ids, const std::string& name = "");

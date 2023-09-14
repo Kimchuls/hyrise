@@ -60,7 +60,7 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
   float* data = new float[chunks_to_index.size() * Chunk::DEFAULT_SIZE*_d];
   int nb = 0;
 
-  // auto per_table_index_timer = Timer{};
+  auto per_table_index_timer = Timer{};
   for (const auto& chunk : chunks_to_index) {
     ++indexed_chunks;
     const auto abstract_segment = chunk.second->get_segment(_column_id);
@@ -71,7 +71,7 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
       nb++;
     }
   }
-  // std::cout << "cut data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  std::cout << "cut data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   srand((int)time(0));
   float* trainvecs = new float[nb / 100 * _d];
   for (int i = 0; i < nb / 100; i++) {
@@ -79,13 +79,13 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
     memcpy(trainvecs + i * _d, data + rng * _d, sizeof(float) * _d);
   }
 
-  // std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   _index->train(nb / 100, trainvecs);
-  // std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] trainvecs;
   // std::cout << "cut delete vec(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   _index->add(nb, data);
-  // std::cout << "cut finish add(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  std::cout << "cut finish add(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] data;
   // std::cout << "cut delete data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
 }

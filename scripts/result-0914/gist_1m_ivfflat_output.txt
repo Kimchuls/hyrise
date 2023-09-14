@@ -1,0 +1,317 @@
+Executing script file: /ssd_root/dataset/gist1m/gist_1m_ivfflat_test.sh
+Loading /ssd_root/dataset/gist_base_id.bin into table "gist_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(9 s 67 ms)
+Encoding "gist_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+cut data(1 s 771 ms)
+cut train data(6 ms 247 µs)
+cut finish train(1 s 489 ms)
+cut finish add(16 s 61 ms)
+IVFFlatIndex time(19 s 328 ms)
+_eval_sql time(19 s 526 ms)
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 3
+_eval_sql time(210 µs 630 ns)
+IVFFlatIndex::range_similar_k
+3 s 796 ms
+(11 ms 954 µs)
+_eval_sql time(3 s 916 ms)
+Intersection R@100 = 0.4223
+IVFFlatIndex::range_similar_k
+3 s 731 ms
+(11 ms 498 µs)
+_eval_sql time(3 s 837 ms)
+Intersection R@100 = 0.4223
+IVFFlatIndex::range_similar_k
+3 s 791 ms
+(11 ms 659 µs)
+_eval_sql time(3 s 905 ms)
+Intersection R@100 = 0.4223
+IVFFlatIndex::range_similar_k
+3 s 927 ms
+(11 ms 584 µs)
+_eval_sql time(4 s 40 ms)
+Intersection R@100 = 0.4223
+IVFFlatIndex::range_similar_k
+3 s 496 ms
+(11 ms 508 µs)
+_eval_sql time(3 s 604 ms)
+Intersection R@100 = 0.4223
+IVFFlatIndex::range_similar_k
+3 s 256 ms
+(11 ms 460 µs)
+_eval_sql time(3 s 368 ms)
+Intersection R@100 = 0.4223
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 5
+_eval_sql time(213 µs 870 ns)
+IVFFlatIndex::range_similar_k
+5 s 327 ms
+(11 ms 388 µs)
+_eval_sql time(5 s 435 ms)
+Intersection R@100 = 0.5383
+IVFFlatIndex::range_similar_k
+5 s 313 ms
+(11 ms 345 µs)
+_eval_sql time(5 s 420 ms)
+Intersection R@100 = 0.5383
+IVFFlatIndex::range_similar_k
+5 s 315 ms
+(11 ms 468 µs)
+_eval_sql time(5 s 423 ms)
+Intersection R@100 = 0.5383
+IVFFlatIndex::range_similar_k
+5 s 321 ms
+(11 ms 363 µs)
+_eval_sql time(5 s 428 ms)
+Intersection R@100 = 0.5383
+IVFFlatIndex::range_similar_k
+5 s 316 ms
+(11 ms 416 µs)
+_eval_sql time(5 s 422 ms)
+Intersection R@100 = 0.5383
+IVFFlatIndex::range_similar_k
+5 s 322 ms
+(11 ms 371 µs)
+_eval_sql time(5 s 425 ms)
+Intersection R@100 = 0.5383
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 7
+_eval_sql time(213 µs 365 ns)
+IVFFlatIndex::range_similar_k
+7 s 351 ms
+(11 ms 440 µs)
+_eval_sql time(7 s 451 ms)
+Intersection R@100 = 0.6199
+IVFFlatIndex::range_similar_k
+7 s 349 ms
+(11 ms 345 µs)
+_eval_sql time(7 s 461 ms)
+Intersection R@100 = 0.6199
+IVFFlatIndex::range_similar_k
+7 s 357 ms
+(10 ms 881 µs)
+_eval_sql time(7 s 465 ms)
+Intersection R@100 = 0.6199
+IVFFlatIndex::range_similar_k
+7 s 347 ms
+(11 ms 360 µs)
+_eval_sql time(7 s 457 ms)
+Intersection R@100 = 0.6199
+IVFFlatIndex::range_similar_k
+7 s 357 ms
+(11 ms 336 µs)
+_eval_sql time(7 s 468 ms)
+Intersection R@100 = 0.6199
+IVFFlatIndex::range_similar_k
+7 s 344 ms
+(11 ms 310 µs)
+_eval_sql time(7 s 456 ms)
+Intersection R@100 = 0.6199
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 10
+_eval_sql time(211 µs 792 ns)
+IVFFlatIndex::range_similar_k
+10 s 298 ms
+(10 ms 865 µs)
+_eval_sql time(10 s 404 ms)
+Intersection R@100 = 0.7052
+IVFFlatIndex::range_similar_k
+10 s 302 ms
+(11 ms 302 µs)
+_eval_sql time(10 s 409 ms)
+Intersection R@100 = 0.7052
+IVFFlatIndex::range_similar_k
+10 s 312 ms
+(11 ms 279 µs)
+_eval_sql time(10 s 424 ms)
+Intersection R@100 = 0.7052
+IVFFlatIndex::range_similar_k
+10 s 458 ms
+(11 ms 314 µs)
+_eval_sql time(10 s 560 ms)
+Intersection R@100 = 0.7052
+IVFFlatIndex::range_similar_k
+10 s 304 ms
+(10 ms 818 µs)
+_eval_sql time(10 s 415 ms)
+Intersection R@100 = 0.7052
+IVFFlatIndex::range_similar_k
+10 s 300 ms
+(11 ms 346 µs)
+_eval_sql time(10 s 411 ms)
+Intersection R@100 = 0.7052
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 20
+_eval_sql time(212 µs 191 ns)
+IVFFlatIndex::range_similar_k
+19 s 752 ms
+(11 ms 313 µs)
+_eval_sql time(19 s 859 ms)
+Intersection R@100 = 0.8491
+IVFFlatIndex::range_similar_k
+19 s 762 ms
+(11 ms 218 µs)
+_eval_sql time(19 s 867 ms)
+Intersection R@100 = 0.8491
+IVFFlatIndex::range_similar_k
+19 s 757 ms
+(11 ms 247 µs)
+_eval_sql time(19 s 869 ms)
+Intersection R@100 = 0.8491
+IVFFlatIndex::range_similar_k
+19 s 753 ms
+(11 ms 210 µs)
+_eval_sql time(19 s 856 ms)
+Intersection R@100 = 0.8491
+IVFFlatIndex::range_similar_k
+19 s 761 ms
+(11 ms 289 µs)
+_eval_sql time(19 s 864 ms)
+Intersection R@100 = 0.8491
+IVFFlatIndex::range_similar_k
+19 s 775 ms
+(10 ms 827 µs)
+_eval_sql time(19 s 880 ms)
+Intersection R@100 = 0.8491
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 30
+_eval_sql time(213 µs 253 ns)
+IVFFlatIndex::range_similar_k
+28 s 685 ms
+(11 ms 213 µs)
+_eval_sql time(28 s 788 ms)
+Intersection R@100 = 0.9122
+IVFFlatIndex::range_similar_k
+28 s 699 ms
+(11 ms 238 µs)
+_eval_sql time(28 s 810 ms)
+Intersection R@100 = 0.9122
+IVFFlatIndex::range_similar_k
+28 s 691 ms
+(11 ms 276 µs)
+_eval_sql time(28 s 794 ms)
+Intersection R@100 = 0.9122
+IVFFlatIndex::range_similar_k
+28 s 698 ms
+(11 ms 224 µs)
+_eval_sql time(28 s 805 ms)
+Intersection R@100 = 0.9122
+IVFFlatIndex::range_similar_k
+28 s 688 ms
+(11 ms 270 µs)
+_eval_sql time(28 s 800 ms)
+Intersection R@100 = 0.9122
+IVFFlatIndex::range_similar_k
+28 s 698 ms
+(11 ms 260 µs)
+_eval_sql time(28 s 802 ms)
+Intersection R@100 = 0.9122
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 40
+_eval_sql time(207 µs 683 ns)
+IVFFlatIndex::range_similar_k
+37 s 212 ms
+(11 ms 316 µs)
+_eval_sql time(37 s 318 ms)
+Intersection R@100 = 0.9445
+IVFFlatIndex::range_similar_k
+37 s 225 ms
+(11 ms 259 µs)
+_eval_sql time(37 s 331 ms)
+Intersection R@100 = 0.9445
+IVFFlatIndex::range_similar_k
+37 s 216 ms
+(11 ms 210 µs)
+_eval_sql time(37 s 326 ms)
+Intersection R@100 = 0.9445
+IVFFlatIndex::range_similar_k
+37 s 217 ms
+(13 ms 111 µs)
+_eval_sql time(37 s 330 ms)
+Intersection R@100 = 0.9445
+IVFFlatIndex::range_similar_k
+37 s 226 ms
+(11 ms 224 µs)
+_eval_sql time(37 s 339 ms)
+Intersection R@100 = 0.9445
+IVFFlatIndex::range_similar_k
+37 s 220 ms
+(11 ms 278 µs)
+_eval_sql time(37 s 330 ms)
+Intersection R@100 = 0.9445
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 50
+_eval_sql time(212 µs 27 ns)
+IVFFlatIndex::range_similar_k
+45 s 271 ms
+(11 ms 194 µs)
+_eval_sql time(45 s 377 ms)
+Intersection R@100 = 0.9639
+IVFFlatIndex::range_similar_k
+45 s 275 ms
+(11 ms 308 µs)
+_eval_sql time(45 s 386 ms)
+Intersection R@100 = 0.9639
+IVFFlatIndex::range_similar_k
+45 s 315 ms
+(11 ms 257 µs)
+_eval_sql time(45 s 426 ms)
+Intersection R@100 = 0.9639
+IVFFlatIndex::range_similar_k
+45 s 278 ms
+(11 ms 196 µs)
+_eval_sql time(45 s 387 ms)
+Intersection R@100 = 0.9639
+IVFFlatIndex::range_similar_k
+45 s 279 ms
+(11 ms 261 µs)
+_eval_sql time(45 s 389 ms)
+Intersection R@100 = 0.9639
+IVFFlatIndex::range_similar_k
+45 s 376 ms
+(11 ms 241 µs)
+_eval_sql time(45 s 481 ms)
+Intersection R@100 = 0.9639
+Executing script file done
+Bye.

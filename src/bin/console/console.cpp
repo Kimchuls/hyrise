@@ -117,6 +117,58 @@ std::vector<std::string> tokenize(std::string input) {
   return tokens;
 }
 
+float* fvecs_read(const char* fname, size_t* d_out, size_t* n_out) {
+  FILE* f = fopen(fname, "r");
+  if (!f) {
+    fprintf(stderr, "could not open %s\n", fname);
+    perror("");
+    abort();
+  }
+  int d;
+  fread(&d, 1, sizeof(int), f);
+  assert((d > 0 && d < 1000000) || !"unreasonable dimension");
+  fseek(f, 0, SEEK_SET);
+  struct stat st;
+  fstat(fileno(f), &st);
+  size_t sz = st.st_size;
+  assert(sz % ((d + 1) * 4) == 0 || !"weird file size");
+  size_t n = sz / ((d + 1) * 4);
+
+  *d_out = d;
+  *n_out = n;
+  float* x = new float[n * (d + 1)];
+  size_t nr = fread(x, sizeof(float), n * (d + 1), f);
+  assert(nr == n * (d + 1) || !"could not read whole file");
+
+  // shift array to remove row headers
+  for (size_t i = 0; i < n; i++)
+    memmove(x + i * d, x + 1 + i * (d + 1), d * sizeof(*x));
+
+  fclose(f);
+  return x;
+}
+
+int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
+  return (int*)fvecs_read(fname, d_out, n_out);
+}
+
+void fbin_load_data_int(const char* filename, int*& data, int num, int dim) {
+  std::ifstream in(filename, std::ios::binary);  // open file in binary
+  if (!in.is_open()) {
+    std::cout << "open file error" << std::endl;
+    exit(-1);
+  }
+  data = new int[(size_t)num * (size_t)dim];
+  in.seekg(0, std::ios::beg);  // shift to start
+  in.seekg(4, std::ios::cur);
+  in.seekg(4, std::ios::cur);
+  for (size_t i = 0; i < num; i++) {
+    for (int j = 0; j < dim; j++)
+      in.read((char*)(data + i * dim + j), 4);  // load data
+  }
+  in.close();
+}
+
 }  // namespace
 
 namespace hyrise {
@@ -318,54 +370,95 @@ int Console::_eval_sql(const std::string& sql) {
   Assert(pipeline_status == SQLPipelineStatus::Success, "Unexpected pipeline status");
 
   const auto row_count = table ? table->row_count() : 0;
-
+  std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   if (table) {
-    out(table);
-    FILE* writes = fopen("output.txt", "w");
+    // out(table);
+    {
+      const auto arguments = trim_and_split(sql);
+      // std::string table_name = "gist_base", gt_path;
+      std::string table_name = arguments[3], gt_path;
+      // printf("%s\n",table_name.c_str());
+      int* gt_int = new int[1];
+      int dim = 128, nq = 10'000, k = 100;
+      size_t kk, nnq;
+      if (table_name == "sift_base" || table_name == "bigann_10m") {
+        nq = 10'000;
+        dim = 128;
+        gt_path = table_name == "sift_base" ? "/ssd_root/dataset/sift1m/sift_groundtruth.ivecs"
+                                            : "/ssd_root/dataset/ann_sift1b/gnd/idx_10M.ivecs";
+        gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
+      } else if (table_name == "gist_base") {
+        nq = 1000;
+        dim = 960;
+        gt_path = "/ssd_root/dataset/gist1m/gist_groundtruth.ivecs";
+        gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
+      } else if (table_name == "deep_10m") {
+        nq = 10000;
+        dim = 96;
+        gt_path = "/ssd_root/dataset/deep1b/deep10M_groundtruth.ivecs";
+        gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
+      } else if (table_name == "turing_10m") {
+        nq = 10000;
+        dim = 100;
+        gt_path = "/ssd_root/dataset/turing10m/clu_msturing10M_gt100";
+        gt_int = new int[nq * k];
+        fbin_load_data_int(gt_path.c_str(), gt_int, nq, k);
+      } else {
+        std::cout << "not setting searching parameters" << std::endl;
+      }
+      int* gt = new int[k * nq];
+      // int* gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
+      FILE* wr=fopen("gt.txt","w");
+      for (int i = 0; i < nq; i++) {
+        for (int j = 0; j < k; j++) {
+          gt[i * k + j] = gt_int[i * kk + j];
+          fprintf(wr,"%d\n",gt[i * k + j]);
+        }
+      }
+      fclose(wr);
+      int64_t* I = new int64_t[k * nq];
+      FILE* writes=fopen("output.txt","w");
       const auto chunk_count = table->chunk_count();
       const auto column_count = table->column_count();
-      printf("chunk_count %d %d\n",chunk_count,column_count);
+      int iter = 0;
       const auto column_id = ColumnID{0};
       for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; chunk_id++) {
         auto searched_chunk = table->get_chunk(chunk_id);
         auto searched_segment = searched_chunk->get_segment(column_id);
-        // const auto source_value_segment = std::dynamic_pointer_cast<ValueSegment<int>>(searched_segment);
         const auto maxoffset = searched_segment->size();
         for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
-          auto x=get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
-          fprintf(writes, "%s\n", x.c_str());
+          auto x = get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
+          I[iter++] = std::stoi(x);
+          fprintf(writes, "%d\n",std::stoi(x));
         }
       }
       fclose(writes);
+      int n2_100 = 0;
+      for (int i = 0; i < nq; i++) {
+        std::map<float, int> umap;
+        for (int j = 0; j < k; j++) {
+          umap.insert({gt[i * k + j], 0});
+        }
+        for (int l = 0; l < k; l++) {
+          if (umap.find(I[i * k + l]) != umap.end()) {
+            n2_100++;
+          }
+        }
+        umap.clear();
+      }
+      printf("Intersection R@100 = %.4f\n", n2_100 / float(nq * k));
+    }
   }
   //TODO: out
   // out("===\n");
   // out(std::to_string(row_count) + " rows total\n");
-
-  // {
-  //   FILE* writes = fopen("output.txt", "w");
-  //   const auto chunk_count = table->chunk_count();
-  //   const auto column_count = table->column_count();
-  //   const auto column_id = ColumnID{0};
-  //   for (auto chunk_id = ChunkID{0}; chunk_id < chunk_count; chunk_id++) {
-  //     // auto searched_chunk = table->get_chunk(chunk_id);
-  //     // auto searched_segment = searched_chunk->get_segment(column_id);
-  //     // // const auto source_value_segment = std::dynamic_pointer_cast<ValueSegment<int>>(searched_segment);
-  //     // const auto maxoffset = searched_segment->size();
-  //     // for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
-  //     //   auto x=get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
-  //     //   fprintf(writes, "%s\n", x.c_str());
-  //     // }
-  //   }
-  //   fclose(writes);
-  // }
 
   auto stream = std::ostringstream{};
   stream << _sql_pipeline->metrics();
 
   // out(stream.str());
 
-  // std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+
   return ReturnCode::Ok;
 }
 
@@ -629,131 +722,6 @@ int Console::_generate_ssb(const std::string& args) {
   SSBTableGenerator{ssb_dbgen_path, csv_meta_path, ssb_data_path.str(), scale_factor, chunk_size}.generate_and_store();
 
   return ReturnCode::Ok;
-}
-
-float* fvecs_read(const char* fname, size_t* d_out, size_t* n_out) {
-  FILE* f = fopen(fname, "r");
-  if (!f) {
-    fprintf(stderr, "could not open %s\n", fname);
-    perror("");
-    abort();
-  }
-  int d;
-  fread(&d, 1, sizeof(int), f);
-  assert((d > 0 && d < 1000000) || !"unreasonable dimension");
-  fseek(f, 0, SEEK_SET);
-  struct stat st;
-  fstat(fileno(f), &st);
-  size_t sz = st.st_size;
-  assert(sz % ((d + 1) * 4) == 0 || !"weird file size");
-  size_t n = sz / ((d + 1) * 4);
-
-  *d_out = d;
-  *n_out = n;
-  float* x = new float[n * (d + 1)];
-  size_t nr = fread(x, sizeof(float), n * (d + 1), f);
-  assert(nr == n * (d + 1) || !"could not read whole file");
-
-  // shift array to remove row headers
-  for (size_t i = 0; i < n; i++)
-    memmove(x + i * d, x + 1 + i * (d + 1), d * sizeof(*x));
-
-  fclose(f);
-  return x;
-}
-
-int* ivecs_read(const char* fname, size_t* d_out, size_t* n_out) {
-  return (int*)fvecs_read(fname, d_out, n_out);
-}
-
-float* bvecs_read(const char* input_file, int num_vectors_to_read, size_t* d_out, size_t* n_out) {
-  float* result = nullptr;
-  unsigned char* tmp = nullptr;
-
-  FILE* file = fopen(input_file, "r");  // Open the file in binary read mode
-  if (!file) {
-    std::cerr << "Error: Unable to open file " << input_file << std::endl;
-    return result;
-  }
-
-  int32_t d;
-  int32_t n;
-  fread(&d, sizeof(int32_t), 1, file);
-  *d_out = d;
-  fseek(file, 0, SEEK_END);
-  long file_size = ftell(file);
-  long total_n = file_size / (d + 4);
-
-  num_vectors_to_read = std::min(num_vectors_to_read, (int)total_n);
-  *n_out = total_n;
-  n = num_vectors_to_read;
-  int64_t tmp_elements = (int64_t)n * (d + 4);
-  int64_t num_elements = (int64_t)num_vectors_to_read * d;
-
-  std::cout << "num elements " << num_elements << std::endl;
-  result = new float[num_elements];
-  tmp = new unsigned char[tmp_elements];
-  fseek(file, 0, SEEK_SET);
-  fread(tmp, n * (d + 4), 1, file);
-
-  for (int64_t i = 0; i < num_vectors_to_read; ++i)
-    for (int j = 0; j < d; ++j)
-      result[i * d + j] = static_cast<float>(tmp[i * (d + 4) + 4 + j]);
-  fclose(file);
-  delete[] tmp;
-  return result;
-}
-
-void load_data(char* filename, float*& data, int num, int dim) {
-  std::ifstream in(filename, std::ios::binary);  //open file in binary
-  if (!in.is_open()) {
-    std::cout << "open file error" << std::endl;
-    exit(-1);
-  }
-  data = new float[(size_t)num * (size_t)dim];
-  in.seekg(0, std::ios::beg);  //shift to start
-                               //       printf("shift successfully\n");
-  for (size_t i = 0; i < num; i++) {
-    in.seekg(4, std::ios::cur);  //right shift 4 bytes
-
-    for (int j = 0; j < dim; j++)
-      in.read((char*)(data + i * dim + j), 4);  //load data
-                                                //in.read((char*)(data + i*dim), dim );
-  }
-}
-
-void fbin_load_data(const char* filename, float*& data, int num, int dim) {
-  std::ifstream in(filename, std::ios::binary);  // open file in binary
-  if (!in.is_open()) {
-    std::cout << "open file error" << std::endl;
-    exit(-1);
-  }
-  data = new float[(size_t)num * (size_t)dim];
-  in.seekg(0, std::ios::beg);  // shift to start
-  in.seekg(4, std::ios::cur);
-  in.seekg(4, std::ios::cur);
-  for (size_t i = 0; i < num; i++) {
-    for (int j = 0; j < dim; j++)
-      in.read((char*)(data + i * dim + j), 4);  // load data
-    // in.read((char*)(data + i*dim), dim );
-  }
-}
-
-void fbin_load_data_int(const char* filename, int64_t*& data, int num, int dim) {
-  std::ifstream in(filename, std::ios::binary);  // open file in binary
-  if (!in.is_open()) {
-    std::cout << "open file error" << std::endl;
-    exit(-1);
-  }
-  data = new int64_t[(size_t)num * (size_t)dim];
-  in.seekg(0, std::ios::beg);  // shift to start
-  in.seekg(4, std::ios::cur);
-  in.seekg(4, std::ios::cur);
-  for (size_t i = 0; i < num; i++) {
-    for (int j = 0; j < dim; j++)
-      in.read((char*)(data + i * dim + j), 4);  // load data
-  }
-  in.close();
 }
 
 int Console::_reset_para(const std::string& args) {

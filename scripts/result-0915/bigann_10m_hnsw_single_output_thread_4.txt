@@ -1,0 +1,376 @@
+Executing script file: /ssd_root/dataset/ann_sift1b/bigann_10m_hnsw_test_single.sh
+Loading /ssd_root/dataset/bigann_10m_id.bin into table "bigann_10m"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(22 s 415 ms)
+Encoding "bigann_10m" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+insert into HNSWIndex: 
+444 s 729 ms
+_eval_sql time(445 s 182 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+443 s 488 ms
+_eval_sql time(443 s 977 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+507 s 927 ms
+_eval_sql time(508 s 414 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+513 s 280 ms
+_eval_sql time(513 s 789 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+528 s 140 ms
+_eval_sql time(528 s 711 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+574 s 438 ms
+_eval_sql time(574 s 957 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+603 s 124 ms
+_eval_sql time(603 s 795 ms)
+HNSWIndex::range_similar_k: 
+1 s 717 ms
+(206 ms 876 µs)
+_eval_sql time(2 s 11 ms)
+Intersection R@100 = 0.0000
+HNSWIndex::range_similar_k: 
+1 s 715 ms
+(194 ms 751 µs)
+_eval_sql time(1 s 976 ms)
+Intersection R@100 = 0.0000
+HNSWIndex::range_similar_k: 
+1 s 714 ms
+(196 ms 855 µs)
+_eval_sql time(1 s 982 ms)
+Intersection R@100 = 0.0000
+HNSWIndex::range_similar_k: 
+1 s 718 ms
+(197 ms 449 µs)
+_eval_sql time(1 s 984 ms)
+Intersection R@100 = 0.0000
+HNSWIndex::range_similar_k: 
+1 s 717 ms
+(196 ms 483 µs)
+_eval_sql time(1 s 985 ms)
+Intersection R@100 = 0.0000
+HNSWIndex::range_similar_k: 
+1 s 715 ms
+(187 ms 640 µs)
+_eval_sql time(1 s 969 ms)
+Intersection R@100 = 0.0000
+Executing script file done
+Bye.

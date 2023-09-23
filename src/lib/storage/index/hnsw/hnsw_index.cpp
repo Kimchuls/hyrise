@@ -1,4 +1,5 @@
 #include "hnsw_index.hpp"
+#include <omp.h>
 #include <boost/lexical_cast.hpp>
 #include <unordered_map>
 #include "storage/chunk.hpp"
@@ -74,6 +75,7 @@ void HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chun
     // std::cout<<"idx: "<<idx<<std::endl;
     const auto abstract_segment = chunk.second->get_segment(_column_id);
     const auto segment_size = abstract_segment->size();
+#pragma omp parallel for
     for (auto chunk_offset = ChunkOffset{0}; chunk_offset < segment_size; ++chunk_offset) {
       const auto value = boost::get<float_array>((*abstract_segment)[chunk_offset]);
       // auto label = (int)(times * idx) + chunk_offset;
@@ -96,6 +98,7 @@ void HNSWIndex::similar_k(const float* query, int64_t* I, float* D, int k = 1) {
 void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k = 1) {
   std::cout << "HNSWIndex::range_similar_k: " << std::endl;
   auto per_table_index_timer = Timer{};
+#pragma omp parallel for
   for (size_t i = 0; i < n; i++) {
     SimilarKPair result = _alg_hnsw->searchKnn(queries + i * _dim, k);
     int iter = result.size() - 1;

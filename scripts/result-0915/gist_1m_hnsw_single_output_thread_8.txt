@@ -1,0 +1,102 @@
+Executing script file: /ssd_root/dataset/gist1m/gist_1m_hnsw_test_single.sh
+Loading /ssd_root/dataset/gist_base_id.bin into table "gist_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(8 s 948 ms)
+Encoding "gist_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+insert into HNSWIndex: 
+76 s 159 ms
+_eval_sql time(76 s 858 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+73 s 586 ms
+_eval_sql time(74 s 110 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+72 s 678 ms
+_eval_sql time(73 s 183 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+72 s 564 ms
+_eval_sql time(73 s 58 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+72 s 558 ms
+_eval_sql time(73 s 53 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+72 s 968 ms
+_eval_sql time(73 s 467 ms)
+size of index vector:0
+- Creating table indexes
+insert into HNSWIndex: 
+72 s 646 ms
+_eval_sql time(73 s 134 ms)
+HNSWIndex::range_similar_k: 
+265 ms 476 µs
+(18 ms 205 µs)
+_eval_sql time(406 ms 782 µs)
+Intersection R@100 = 0.0001
+HNSWIndex::range_similar_k: 
+264 ms 827 µs
+(15 ms 904 µs)
+_eval_sql time(378 ms 236 µs)
+Intersection R@100 = 0.0001
+HNSWIndex::range_similar_k: 
+265 ms 246 µs
+(17 ms 232 µs)
+_eval_sql time(375 ms 225 µs)
+Intersection R@100 = 0.0001
+HNSWIndex::range_similar_k: 
+264 ms 982 µs
+(16 ms 447 µs)
+_eval_sql time(375 ms 561 µs)
+Intersection R@100 = 0.0001
+HNSWIndex::range_similar_k: 
+264 ms 504 µs
+(17 ms 349 µs)
+_eval_sql time(371 ms 827 µs)
+Intersection R@100 = 0.0001
+HNSWIndex::range_similar_k: 
+265 ms 826 µs
+(17 ms 273 µs)
+_eval_sql time(372 ms 810 µs)
+Intersection R@100 = 0.0001
+Executing script file done
+Bye.

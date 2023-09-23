@@ -370,6 +370,7 @@ int Console::_eval_sql(const std::string& sql) {
   Assert(pipeline_status == SQLPipelineStatus::Success, "Unexpected pipeline status");
 
   const auto row_count = table ? table->row_count() : 0;
+  // auto per_table_index_timer = Timer{};
   std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   if (table) {
     // out(table);
@@ -377,6 +378,9 @@ int Console::_eval_sql(const std::string& sql) {
       const auto arguments = trim_and_split(sql);
       // std::string table_name = "gist_base", gt_path;
       std::string table_name = arguments[3], gt_path;
+      // const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+      // const auto float_array_index = table->get_table_indexes_vector()[0];
+      // float_array_index->save_index(table_name+"_"+float_array_index->name()+"_index.bin");
       // printf("%s\n",table_name.c_str());
       int* gt_int = new int[1];
       int dim = 128, nq = 10'000, k = 100;
@@ -408,16 +412,16 @@ int Console::_eval_sql(const std::string& sql) {
       }
       int* gt = new int[k * nq];
       // int* gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
-      FILE* wr=fopen("gt.txt","w");
+      FILE* wr = fopen("gt.txt", "w");
       for (int i = 0; i < nq; i++) {
         for (int j = 0; j < k; j++) {
           gt[i * k + j] = gt_int[i * kk + j];
-          fprintf(wr,"%d\n",gt[i * k + j]);
+          fprintf(wr, "%d\n", gt[i * k + j]);
         }
       }
       fclose(wr);
       int64_t* I = new int64_t[k * nq];
-      FILE* writes=fopen("output.txt","w");
+      FILE* writes = fopen("output.txt", "w");
       const auto chunk_count = table->chunk_count();
       const auto column_count = table->column_count();
       int iter = 0;
@@ -429,7 +433,7 @@ int Console::_eval_sql(const std::string& sql) {
         for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
           auto x = get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
           I[iter++] = std::stoi(x);
-          fprintf(writes, "%d\n",std::stoi(x));
+          fprintf(writes, "%d\n", std::stoi(x));
         }
       }
       fclose(writes);
@@ -457,7 +461,6 @@ int Console::_eval_sql(const std::string& sql) {
   stream << _sql_pipeline->metrics();
 
   // out(stream.str());
-
 
   return ReturnCode::Ok;
 }
@@ -1267,8 +1270,12 @@ int Console::_exec_script(const std::string& script_file) {
   // TODO(anyone): Use std::to_underlying(ReturnCode::Ok) once we use C++23.
   auto return_code = magic_enum::enum_underlying(ReturnCode::Ok);
   int number = 0;
+  // auto per_table_index_timer = Timer{};
   while (std::getline(script, command)) {
     // printf("command: %s\n",command.c_str());
+    // if (number == 2) {
+    // per_table_index_timer = Timer{};
+    // }
     return_code = _eval(command);
     if (return_code == ReturnCode::Error || return_code == ReturnCode::Quit) {
       break;
@@ -1277,6 +1284,7 @@ int Console::_exec_script(const std::string& script_file) {
     if (number % 50000 == 0) {
       printf("Now it is executing the %dth command\n", number);
     }
+    // std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   }
   out("Executing script file done\n");
   _verbose = false;

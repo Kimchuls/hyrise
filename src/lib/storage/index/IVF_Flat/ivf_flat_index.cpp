@@ -71,7 +71,7 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
       nb++;
     }
   }
-  std::cout << "cut data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "cut data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   srand((int)time(0));
   float* trainvecs = new float[nb / 100 * _d];
   for (int i = 0; i < nb / 100; i++) {
@@ -79,13 +79,13 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
     memcpy(trainvecs + i * _d, data + rng * _d, sizeof(float) * _d);
   }
 
-  std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   _index->train(nb / 100, trainvecs);
-  std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] trainvecs;
   // std::cout << "cut delete vec(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   _index->add(nb, data);
-  std::cout << "cut finish add(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "cut finish add(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] data;
   // std::cout << "cut delete data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
 }
@@ -96,10 +96,10 @@ void IVFFlatIndex::similar_k(const float* query, int64_t* I, float* D, int k) {
 }
 
 void IVFFlatIndex::range_similar_k(size_t n, const float* query, int64_t* I, float* D, int k) {
-  std::cout << "IVFFlatIndex::range_similar_k" << std::endl;
-  auto per_table_index_timer = Timer{};
+  // std::cout << "IVFFlatIndex::range_similar_k" << std::endl;
+  // auto per_table_index_timer = Timer{};
   _index->search(n, query, k, D, I);
-  std::cout << per_table_index_timer.lap_formatted() << std::endl;
+  // std::cout << per_table_index_timer.lap_formatted() << std::endl;
 }
 
 void IVFFlatIndex::save_index(const std::string& save_path) {

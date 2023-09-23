@@ -1,0 +1,99 @@
+Executing script file: /ssd_root/dataset/gist1m/gist_1m_ivfflat_test_single.sh
+Loading /ssd_root/dataset/gist_base_id.bin into table "gist_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(9 s 366 ms)
+Encoding "gist_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+cut data(1 s 730 ms)
+cut train data(10 ms 854 µs)
+cut finish train(26 s 20 ms)
+cut finish add(262 s 404 ms)
+IVFFlatIndex time(290 s 166 ms)
+_eval_sql time(290 s 362 ms)
+size of index vector:0
+- Creating table indexes
+cut data(1 s 758 ms)
+cut train data(6 ms 327 µs)
+cut finish train(25 s 992 ms)
+cut finish add(262 s 463 ms)
+IVFFlatIndex time(290 s 219 ms)
+_eval_sql time(290 s 219 ms)
+size of index vector:0
+- Creating table indexes
+cut data(1 s 719 ms)
+cut train data(17 ms 75 µs)
+cut finish train(25 s 948 ms)
+cut finish add(262 s 474 ms)
+IVFFlatIndex time(290 s 159 ms)
+_eval_sql time(290 s 159 ms)
+size of index vector:0
+- Creating table indexes
+cut data(1 s 969 ms)
+cut train data(22 ms 952 µs)
+cut finish train(25 s 940 ms)
+cut finish add(260 s 334 ms)
+IVFFlatIndex time(288 s 266 ms)
+_eval_sql time(288 s 266 ms)
+IVFFlatIndex::range_similar_k
+19 s 726 ms
+(11 ms 738 µs)
+_eval_sql time(19 s 849 ms)
+Intersection R@100 = 0.8458
+IVFFlatIndex::range_similar_k
+19 s 722 ms
+(11 ms 306 µs)
+_eval_sql time(19 s 841 ms)
+Intersection R@100 = 0.8458
+IVFFlatIndex::range_similar_k
+19 s 729 ms
+(11 ms 401 µs)
+_eval_sql time(19 s 841 ms)
+Intersection R@100 = 0.8458
+IVFFlatIndex::range_similar_k
+19 s 730 ms
+(11 ms 340 µs)
+_eval_sql time(19 s 839 ms)
+Intersection R@100 = 0.8458
+IVFFlatIndex::range_similar_k
+19 s 719 ms
+(11 ms 425 µs)
+_eval_sql time(19 s 824 ms)
+Intersection R@100 = 0.8458
+IVFFlatIndex::range_similar_k
+19 s 735 ms
+(10 ms 933 µs)
+_eval_sql time(19 s 845 ms)
+Intersection R@100 = 0.8458
+Executing script file done
+Bye.

@@ -374,7 +374,7 @@ void AbstractTableGenerator::_create_chunk_indexes(
 void AbstractTableGenerator::_create_table_indexes(
     std::unordered_map<std::string, BenchmarkTableInfo>& table_info_by_name) {
   auto timer = Timer{};
-  std::cout << "- Creating table indexes" << std::endl;
+  // std::cout << "- Creating table indexes" << std::endl;
   const auto& indexes_by_table = _indexes_by_table();
   if (indexes_by_table.empty()) {
     std::cout << "-  No indexes defined by benchmark" << std::endl;
@@ -400,7 +400,7 @@ void AbstractTableGenerator::_create_table_indexes(
     }
   }
   metrics.table_index_duration = timer.lap();
-  std::cout << "- Creating table indexes done (" << format_duration(metrics.table_index_duration) << ")" << std::endl;
+  // std::cout << "- Creating table indexes done (" << format_duration(metrics.table_index_duration) << ")" << std::endl;
 }
 
 AbstractTableGenerator::IndexesByTable AbstractTableGenerator::_indexes_by_table() const {

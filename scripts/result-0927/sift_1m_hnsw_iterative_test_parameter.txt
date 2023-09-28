@@ -1,0 +1,122 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_hnsw_iterative_test_parameter.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(1 s 974 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+_eval_sql time(1 s 983 ms)
+insert into HNSWIndex: 
+86 s 2 ms
+_eval_sql time(86 s 479 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 100
+_eval_sql time(198 µs 328 ns)
+_eval_sql time(4 s 106 ms)
+_eval_sql time(4 s 32 ms)
+_eval_sql time(4 s 60 ms)
+_eval_sql time(4 s 54 ms)
+_eval_sql time(4 s 62 ms)
+_eval_sql time(4 s 57 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 200
+_eval_sql time(29 ms 163 µs)
+_eval_sql time(5 s 702 ms)
+_eval_sql time(5 s 743 ms)
+_eval_sql time(5 s 740 ms)
+_eval_sql time(5 s 731 ms)
+_eval_sql time(5 s 743 ms)
+_eval_sql time(5 s 738 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 300
+_eval_sql time(30 ms 777 µs)
+_eval_sql time(7 s 270 ms)
+_eval_sql time(7 s 283 ms)
+_eval_sql time(7 s 286 ms)
+_eval_sql time(7 s 281 ms)
+_eval_sql time(7 s 291 ms)
+_eval_sql time(7 s 290 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 400
+_eval_sql time(30 ms 935 µs)
+_eval_sql time(8 s 785 ms)
+_eval_sql time(8 s 819 ms)
+_eval_sql time(8 s 836 ms)
+_eval_sql time(8 s 815 ms)
+_eval_sql time(8 s 832 ms)
+_eval_sql time(8 s 825 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 500
+_eval_sql time(31 ms 188 µs)
+_eval_sql time(10 s 234 ms)
+_eval_sql time(10 s 296 ms)
+_eval_sql time(10 s 292 ms)
+_eval_sql time(10 s 295 ms)
+_eval_sql time(10 s 294 ms)
+_eval_sql time(10 s 298 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 600
+_eval_sql time(31 ms 726 µs)
+_eval_sql time(11 s 616 ms)
+_eval_sql time(11 s 658 ms)
+_eval_sql time(11 s 674 ms)
+_eval_sql time(11 s 675 ms)
+_eval_sql time(11 s 665 ms)
+_eval_sql time(11 s 672 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 700
+_eval_sql time(32 ms 326 µs)
+_eval_sql time(12 s 944 ms)
+_eval_sql time(13 s 16 ms)
+_eval_sql time(13 s 0 ms)
+_eval_sql time(13 s 28 ms)
+_eval_sql time(13 s 10 ms)
+_eval_sql time(13 s 15 ms)
+*************************reset parameter**************************
+float_array_index->name(): hnsw
+hnsw ef: 800
+_eval_sql time(32 ms 194 µs)
+_eval_sql time(14 s 293 ms)
+_eval_sql time(14 s 374 ms)
+_eval_sql time(14 s 384 ms)
+_eval_sql time(14 s 385 ms)
+_eval_sql time(14 s 379 ms)
+_eval_sql time(14 s 378 ms)
+Executing script file done
+Bye.

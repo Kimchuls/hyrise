@@ -1,5 +1,7 @@
 #include "Index.hpp"
 
+#include <cstring>
+
 #include "AuxIndexStructures.hpp"
 #include "distances.hpp"
 #include "DistanceComputer.hpp"

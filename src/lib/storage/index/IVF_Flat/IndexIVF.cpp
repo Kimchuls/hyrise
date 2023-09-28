@@ -12,6 +12,7 @@
 
 #include "AuxIndexStructures.hpp"
 #include "CodePacker.hpp"
+#include "hamming.hpp"
 #include "IDSelector.hpp"
 #include "IndexFlat.hpp"
 #include "utils.hpp"

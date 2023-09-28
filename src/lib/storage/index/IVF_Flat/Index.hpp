@@ -1,7 +1,10 @@
 #ifndef VINDEX_INDEX_HPP
 #define VINDEX_INDEX_HPP
 #include <cstdio>
-#include <iostream>
+#include <sstream>
+#include <string>
+#include <typeinfo>
+
 #include "MetricType.hpp"
 namespace vindex
 {

@@ -1,9 +1,13 @@
 #include "IndexFlat.hpp"
 #include <cstring>
 
+#include "AuxIndexStructures.hpp"
 #include "distances.hpp"
 #include "extra_distances.hpp"
 #include "Heap.hpp"
+#include "prefetch.hpp"
+#include "sorting.hpp"
+#include "utils.hpp"
 #include "VIndexAssert.hpp"
 namespace vindex
 {

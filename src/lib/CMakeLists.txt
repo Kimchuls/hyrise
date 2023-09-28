@@ -547,8 +547,12 @@ set(
     storage/index/IVF_Flat/VIndexAssert.hpp
     storage/index/IVF_Flat/VIndexException.cpp
     storage/index/IVF_Flat/VIndexException.hpp
+    storage/index/IVF_Flat/approx_topk.hpp
+    storage/index/IVF_Flat/approx_topk_hamming.hpp
+    storage/index/IVF_Flat/approx_topk_avx2-inl.hpp
     storage/index/IVF_Flat/avx512.cpp
     storage/index/IVF_Flat/avx512.hpp
+    storage/index/IVF_Flat/common.hpp
     storage/index/IVF_Flat/distances.cpp
     storage/index/IVF_Flat/distances.hpp
     storage/index/IVF_Flat/distances_fused.cpp
@@ -557,16 +561,26 @@ set(
     storage/index/IVF_Flat/extra_distances-inl.hpp
     storage/index/IVF_Flat/extra_distances.cpp
     storage/index/IVF_Flat/extra_distances.hpp
+    storage/index/IVF_Flat/generic.hpp
+    storage/index/IVF_Flat/generic-inl.hpp
+    storage/index/IVF_Flat/hamdis-inl.hpp
+    storage/index/IVF_Flat/hamming.cpp
+    storage/index/IVF_Flat/hamming.hpp
+    storage/index/IVF_Flat/hamming-inl.hpp
+    storage/index/IVF_Flat/hamming_distance_avx2-inl.hpp
     storage/index/IVF_Flat/index_io.hpp
     storage/index/IVF_Flat/index_read.cpp
     storage/index/IVF_Flat/index_write.cpp
     storage/index/IVF_Flat/io.cpp
     storage/index/IVF_Flat/io.hpp
     storage/index/IVF_Flat/io_macros.hpp
+    storage/index/IVF_Flat/mode.hpp
+    storage/index/IVF_Flat/neon-inl.hpp
     storage/index/IVF_Flat/ordered_key_value.hpp
     storage/index/IVF_Flat/partitioning.cpp
     storage/index/IVF_Flat/partitioning.hpp
     storage/index/IVF_Flat/platform_macros.hpp
+    storage/index/IVF_Flat/prefetch.hpp
     storage/index/IVF_Flat/random.cpp
     storage/index/IVF_Flat/random.hpp
     storage/index/IVF_Flat/simdlib.hpp
@@ -575,6 +589,9 @@ set(
     storage/index/IVF_Flat/simdlib_based.hpp
     storage/index/IVF_Flat/simdlib_emulated.hpp
     storage/index/IVF_Flat/simdlib_neon.hpp
+    storage/index/IVF_Flat/sorting.cpp
+    storage/index/IVF_Flat/sorting.hpp
+    storage/index/IVF_Flat/transpose-avx2-inl.hpp
     storage/index/IVF_Flat/utils.cpp
     storage/index/IVF_Flat/utils.hpp    
     storage/index/IVF_Flat/ivf_flat_index.cpp

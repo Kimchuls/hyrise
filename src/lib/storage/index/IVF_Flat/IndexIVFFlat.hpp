@@ -1,6 +1,10 @@
 #ifndef VINDEX_INDEX_IVF_FLAT_HPP
 #define VINDEX_INDEX_IVF_FLAT_HPP
+
 #include "IndexIVF.hpp"
+
+#include <stdint.h>
+#include <unordered_map>
 namespace vindex
 {
   struct IndexIVFFlat : public IndexIVF

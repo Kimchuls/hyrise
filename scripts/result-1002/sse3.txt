@@ -1,0 +1,372 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_batch_test_parameter.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(2 s 116 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+distances, null , exhaustive_L2sqr_blas
+IVFFlatIndex time(3 s 504 ms)
+_eval_sql time(3 s 505 ms)
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 3
+_eval_sql time(152 µs 13 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 8 µs)
+_eval_sql time(2 s 708 ms)
+Intersection R@100 = 0.5382
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 26 µs)
+_eval_sql time(2 s 682 ms)
+Intersection R@100 = 0.5382
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(92 ms 463 µs)
+_eval_sql time(2 s 673 ms)
+Intersection R@100 = 0.5382
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 318 µs)
+_eval_sql time(2 s 662 ms)
+Intersection R@100 = 0.5382
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 49 µs)
+_eval_sql time(2 s 671 ms)
+Intersection R@100 = 0.5382
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(91 ms 113 µs)
+_eval_sql time(2 s 684 ms)
+Intersection R@100 = 0.5382
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 5
+_eval_sql time(3 ms 81 µs)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 158 µs)
+_eval_sql time(4 s 139 ms)
+Intersection R@100 = 0.6605
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 471 µs)
+_eval_sql time(4 s 124 ms)
+Intersection R@100 = 0.6605
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 952 µs)
+_eval_sql time(4 s 126 ms)
+Intersection R@100 = 0.6605
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 992 µs)
+_eval_sql time(4 s 140 ms)
+Intersection R@100 = 0.6605
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 125 µs)
+_eval_sql time(4 s 148 ms)
+Intersection R@100 = 0.6605
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(87 ms 670 µs)
+_eval_sql time(4 s 119 ms)
+Intersection R@100 = 0.6605
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 7
+_eval_sql time(182 µs 731 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 877 µs)
+_eval_sql time(5 s 553 ms)
+Intersection R@100 = 0.7356
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(83 ms 253 µs)
+_eval_sql time(5 s 543 ms)
+Intersection R@100 = 0.7356
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 444 µs)
+_eval_sql time(5 s 534 ms)
+Intersection R@100 = 0.7356
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 805 µs)
+_eval_sql time(5 s 544 ms)
+Intersection R@100 = 0.7356
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 958 µs)
+_eval_sql time(5 s 533 ms)
+Intersection R@100 = 0.7356
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 946 µs)
+_eval_sql time(5 s 551 ms)
+Intersection R@100 = 0.7356
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 10
+_eval_sql time(181 µs 295 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 567 µs)
+_eval_sql time(7 s 627 ms)
+Intersection R@100 = 0.8073
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 761 µs)
+_eval_sql time(7 s 625 ms)
+Intersection R@100 = 0.8073
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 899 µs)
+_eval_sql time(7 s 634 ms)
+Intersection R@100 = 0.8073
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 803 µs)
+_eval_sql time(7 s 632 ms)
+Intersection R@100 = 0.8073
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 228 µs)
+_eval_sql time(7 s 632 ms)
+Intersection R@100 = 0.8073
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 45 µs)
+_eval_sql time(7 s 618 ms)
+Intersection R@100 = 0.8073
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 20
+_eval_sql time(185 µs 530 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 493 µs)
+_eval_sql time(14 s 281 ms)
+Intersection R@100 = 0.9144
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 884 µs)
+_eval_sql time(14 s 283 ms)
+Intersection R@100 = 0.9144
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(83 ms 31 µs)
+_eval_sql time(14 s 289 ms)
+Intersection R@100 = 0.9144
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 924 µs)
+_eval_sql time(14 s 303 ms)
+Intersection R@100 = 0.9144
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 714 µs)
+_eval_sql time(14 s 297 ms)
+Intersection R@100 = 0.9144
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(95 ms 129 µs)
+_eval_sql time(14 s 321 ms)
+Intersection R@100 = 0.9144
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 30
+_eval_sql time(183 µs 294 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 965 µs)
+_eval_sql time(20 s 688 ms)
+Intersection R@100 = 0.9547
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 59 µs)
+_eval_sql time(20 s 839 ms)
+Intersection R@100 = 0.9547
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(84 ms 221 µs)
+_eval_sql time(20 s 713 ms)
+Intersection R@100 = 0.9547
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 817 µs)
+_eval_sql time(20 s 709 ms)
+Intersection R@100 = 0.9547
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 814 µs)
+_eval_sql time(20 s 676 ms)
+Intersection R@100 = 0.9547
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(85 ms 732 µs)
+_eval_sql time(20 s 673 ms)
+Intersection R@100 = 0.9547
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 40
+_eval_sql time(6 ms 539 µs)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 769 µs)
+_eval_sql time(26 s 933 ms)
+Intersection R@100 = 0.9736
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 808 µs)
+_eval_sql time(26 s 987 ms)
+Intersection R@100 = 0.9736
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(79 ms 57 µs)
+_eval_sql time(26 s 118 ms)
+Intersection R@100 = 0.9736
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 990 µs)
+_eval_sql time(26 s 277 ms)
+Intersection R@100 = 0.9736
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(79 ms 149 µs)
+_eval_sql time(26 s 46 ms)
+Intersection R@100 = 0.9736
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(79 ms 178 µs)
+_eval_sql time(26 s 58 ms)
+Intersection R@100 = 0.9736
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 50
+_eval_sql time(177 µs 693 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(77 ms 198 µs)
+_eval_sql time(31 s 954 ms)
+Intersection R@100 = 0.9838
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(79 ms 42 µs)
+_eval_sql time(31 s 946 ms)
+Intersection R@100 = 0.9838
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(101 ms 668 µs)
+_eval_sql time(35 s 459 ms)
+Intersection R@100 = 0.9838
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 131 µs)
+_eval_sql time(33 s 448 ms)
+Intersection R@100 = 0.9838
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 968 µs)
+_eval_sql time(33 s 77 ms)
+Intersection R@100 = 0.9838
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 499 µs)
+_eval_sql time(32 s 901 ms)
+Intersection R@100 = 0.9838
+Executing script file done
+Bye.

@@ -1,0 +1,155 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_batch_test_parameter.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(2 s 168 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(2 s 972 ms)
+_eval_sql time(2 s 973 ms)
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 3
+_eval_sql time(179 µs 780 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 944 µs)
+_eval_sql time(2 s 226 ms)
+Intersection R@100 = 0.5342
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 890 µs)
+_eval_sql time(2 s 198 ms)
+Intersection R@100 = 0.5342
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 821 µs)
+_eval_sql time(2 s 223 ms)
+Intersection R@100 = 0.5342
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 184 µs)
+_eval_sql time(2 s 203 ms)
+Intersection R@100 = 0.5342
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 783 µs)
+_eval_sql time(2 s 205 ms)
+Intersection R@100 = 0.5342
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 169 µs)
+_eval_sql time(2 s 212 ms)
+Intersection R@100 = 0.5342
+*************************reset parameter**************************
+float_array_index->name(): ivfflat
+ivfflat nprobe: 5
+_eval_sql time(226 µs 972 ns)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 23 µs)
+_eval_sql time(3 s 391 ms)
+Intersection R@100 = 0.6568
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(87 ms 764 µs)
+_eval_sql time(3 s 404 ms)
+Intersection R@100 = 0.6568
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 498 µs)
+_eval_sql time(3 s 409 ms)

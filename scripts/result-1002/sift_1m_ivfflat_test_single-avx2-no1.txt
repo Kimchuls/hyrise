@@ -1,0 +1,486 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_test_single.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(2 s 5 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(3 s 449 ms)
+_eval_sql time(3 s 450 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(3 s 74 ms)
+_eval_sql time(3 s 74 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(3 s 16 ms)
+_eval_sql time(3 s 16 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(2 s 616 ms)
+_eval_sql time(2 s 616 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(2 s 628 ms)
+_eval_sql time(2 s 628 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(2 s 618 ms)
+_eval_sql time(2 s 618 ms)
+size of index vector:0
+- Creating table indexes
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+distances, avx2 , exhaustive_L2sqr_blas
+distance_fused,AVX2||aarch64,exhaustive_L2sqr_fused_cmax
+simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib
+distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2
+IVFFlatIndex time(2 s 614 ms)
+_eval_sql time(2 s 615 ms)
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(85 ms 519 µs)
+_eval_sql time(11 s 591 ms)
+Intersection R@100 = 0.9155
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 562 µs)
+_eval_sql time(11 s 476 ms)
+Intersection R@100 = 0.9155
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(81 ms 965 µs)
+_eval_sql time(11 s 473 ms)
+Intersection R@100 = 0.9155
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 456 µs)
+_eval_sql time(11 s 476 ms)
+Intersection R@100 = 0.9155
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(82 ms 157 µs)
+_eval_sql time(11 s 470 ms)
+Intersection R@100 = 0.9155
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+utils, !msever , getmillisecs
+(80 ms 571 µs)
+_eval_sql time(11 s 485 ms)
+Intersection R@100 = 0.9155
+Executing script file done
+Bye.

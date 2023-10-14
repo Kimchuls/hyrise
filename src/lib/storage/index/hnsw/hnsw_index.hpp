@@ -18,6 +18,7 @@ class HNSWIndex : public AbstractVectorIndex {
 
   HNSWIndex(const HNSWIndex&) = delete;
   HNSWIndex& operator=(const HNSWIndex&) = delete;
+  HNSWIndex(const std::string& path,std::unordered_map<std::string, int> parameters);
   HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
             std::unordered_map<std::string, int> parameters);
 
@@ -27,7 +28,7 @@ class HNSWIndex : public AbstractVectorIndex {
   void train(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
 
   // SimilarKPair similar_k(const AllTypeVariant& query, int k);
-  void similar_k(const float* query, int64_t* I, float* D, int k);
+    void similar_k(const float* query, int64_t* I, float* D, int k);
   void range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k);
   void save_index(const std::string& save_path);
 

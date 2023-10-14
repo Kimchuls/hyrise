@@ -119,6 +119,8 @@ class Console : public Singleton<Console> {
   int _generate_tpcds(const std::string& args);
   int _generate_ssb(const std::string& args);
   int _load_table(const std::string& args);
+  int _download(const std::string& args);
+  int _upload(const std::string& args);
   int _create_index(const std::string& args);
   int _similar_vector(const std::string& args);
   int _drop_index(const std::string& args);

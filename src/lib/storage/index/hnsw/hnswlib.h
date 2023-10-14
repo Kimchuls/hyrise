@@ -16,9 +16,11 @@
 #include <intrin.h>
 #include <stdexcept>
 void cpuid(int32_t out[4], int32_t eax, int32_t ecx) {
+    // printf("hnswlib,useavx||usesse,msc_ver,cpuid\n");
     __cpuidex(out, eax, ecx);
 }
 static __int64 xgetbv(unsigned int x) {
+    // printf("hnswlib,useavx||usesse,msc_ver,xgebv\n");
     return _xgetbv(x);
 }
 #else
@@ -26,9 +28,11 @@ static __int64 xgetbv(unsigned int x) {
 #include <cpuid.h>
 #include <stdint.h>
 static void cpuid(int32_t cpuInfo[4], int32_t eax, int32_t ecx) {
+    // printf("hnswlib,useavx||usesse,cpuid\n");
     __cpuid_count(eax, ecx, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
 }
 static uint64_t xgetbv(unsigned int index) {
+    // printf("hnswlib,useavx||usesse,xgebv\n");
     uint32_t eax, edx;
     __asm__ __volatile__("xgetbv" : "=a"(eax), "=d"(edx) : "c"(index));
     return ((uint64_t)edx << 32) | eax;
@@ -51,6 +55,7 @@ static uint64_t xgetbv(unsigned int index) {
 #define _XCR_XFEATURE_ENABLED_MASK  0
 
 static bool AVXCapable() {
+    // printf("hnswlib,useavx||usesse,avxcapable\n");
     int cpuInfo[4];
 
     // CPU support
@@ -78,6 +83,7 @@ static bool AVXCapable() {
 }
 
 static bool AVX512Capable() {
+    // printf("hnswlib,useavx||usesse,avx512capable\n");
     if (!AVXCapable()) return false;
 
     int cpuInfo[4];

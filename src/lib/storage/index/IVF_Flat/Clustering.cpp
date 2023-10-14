@@ -8,6 +8,7 @@
 
 #include "distances.hpp"
 #include "random.hpp"
+#include "utils.hpp"
 #include "VIndexAssert.hpp"
 
 namespace vindex
@@ -31,7 +32,11 @@ namespace vindex
 
   void Clustering::train(int64_t n, const float *x, Index &index, const float *x_weight)
   {
+    // printf("Clustering::train\n");
+    // double t0=getmillisecs();
+    // total_time_clear();
     train_encoded(n, reinterpret_cast<const uint8_t *>(x), nullptr, index, x_weight);
+    // printf("Clustering::train (%.4lf s)\n",(getmillisecs()-t0)/1000);
   }
   namespace
   {
@@ -172,6 +177,7 @@ namespace vindex
 
   void Clustering::train_encoded(int64_t nx, const uint8_t *x_in, const Index *codec, Index &index, const float *weights)
   {
+    // printf("train_encode\n");
     VINDEX_THROW_IF_NOT_FMT(nx >= k,
                             "Number of training points (%" PRId64 ") should be at least as large as number of clusters (%zd)",
                             nx, k);
@@ -234,6 +240,7 @@ namespace vindex
       if (codec)
         printf("Input data encoded in %zd bytes per vector\n", codec->sa_code_size());
     }
+    // printf("train_encode2\n");
     std::unique_ptr<int64_t[]> assign(new int64_t[nx]);
     std::unique_ptr<float[]> dis(new float[nx]);
 
@@ -251,8 +258,10 @@ namespace vindex
     //   printf("  Preprocessing in %.2f s\n", (getmillisecs() - t0) / 1000.);
     // temporary buffer to decode vectors during the optimization
     std::vector<float> decode_buffer(codec ? d * decode_block_size : 0);
+    // printf("train_encode3, timestamp1: %.4f\n",(getmillisecs()-t0)/1000);
     for (int redo = 0; redo < nredo; redo++)
     {
+      // double t1=getmillisecs();
       if (verbose && nredo > 1)
         printf("Outer iteration %d / %d\n", redo, nredo);
       centroids.resize(d * k);
@@ -271,6 +280,8 @@ namespace vindex
         index.train(k, centroids.data());
       // printf("checkpoint: index.add(k, centroids.data());, is_trained: %d\n",index.is_trained);
       index.add(k, centroids.data());
+      // double t2=getmillisecs();
+      // printf("timestamp2: %.4f\n",(t2-t1)/1000);
       // k-means iterations
       float obj = 0;
       for (int i = 0; i < niter; i++)
@@ -335,6 +346,8 @@ namespace vindex
         }
         index.reset();
       }
+      // double t3=getmillisecs();
+      // printf("timestamp3: %.4f\n",(t3-t2)/1000);
     }
     if (nredo > 1)
     {

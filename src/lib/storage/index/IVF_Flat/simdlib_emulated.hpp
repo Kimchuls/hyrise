@@ -22,9 +22,12 @@ struct simd256bit {
         float f32[8];
     };
 
-    simd256bit() {}
+    simd256bit() {
+        // printf("simdlib_emulated, simd256bit\n");
+        }
 
     explicit simd256bit(const void* x) {
+        // printf("simdlib_emulated, simd256bit\n");
         memcpy(u8, x, 32);
     }
 
@@ -72,19 +75,27 @@ struct simd256bit {
 
 /// vector of 16 elements in uint16
 struct simd16uint16 : simd256bit {
-    simd16uint16() {}
+    simd16uint16() {
+        // printf("simdlib_emulated, simd16uint16\n");
+        }
 
     explicit simd16uint16(int x) {
+        // printf("simdlib_emulated, simd16uint16\n");
         set1(x);
     }
 
     explicit simd16uint16(uint16_t x) {
+        // printf("simdlib_emulated, simd16uint16\n");
         set1(x);
     }
 
-    explicit simd16uint16(const simd256bit& x) : simd256bit(x) {}
+    explicit simd16uint16(const simd256bit& x) : simd256bit(x) {
+        // printf("simdlib_emulated, simd16uint16\n");
+        }
 
-    explicit simd16uint16(const uint16_t* x) : simd256bit((const void*)x) {}
+    explicit simd16uint16(const uint16_t* x) : simd256bit((const void*)x) {
+        // printf("simdlib_emulated, simd16uint16\n");
+        }
 
     explicit simd16uint16(
             uint16_t u0,
@@ -103,6 +114,7 @@ struct simd16uint16 : simd256bit {
             uint16_t u13,
             uint16_t u14,
             uint16_t u15) {
+                // printf("simdlib_emulated, simd16uint16\n");
         this->u16[0] = u0;
         this->u16[1] = u1;
         this->u16[2] = u2;
@@ -399,13 +411,17 @@ inline void cmplt_min_max_fast(
 
 // vector of 32 unsigned 8-bit integers
 struct simd32uint8 : simd256bit {
-    simd32uint8() {}
+    simd32uint8() {
+        // printf("simdlib_emulated, simd32uint8\n");
+        }
 
     explicit simd32uint8(int x) {
+        // printf("simdlib_emulated, simd32uint8\n");
         set1(x);
     }
 
     explicit simd32uint8(uint8_t x) {
+        // printf("simdlib_emulated, simd32uint8\n");
         set1(x);
     }
     template <
@@ -478,9 +494,13 @@ struct simd32uint8 : simd256bit {
         return ret;
     }
 
-    explicit simd32uint8(const simd256bit& x) : simd256bit(x) {}
+    explicit simd32uint8(const simd256bit& x) : simd256bit(x) {
+        // printf("simdlib_emulated, simd32uint8\n");
+        }
 
-    explicit simd32uint8(const uint8_t* x) : simd256bit((const void*)x) {}
+    explicit simd32uint8(const uint8_t* x) : simd256bit((const void*)x) {
+        // printf("simdlib_emulated, simd32uint8\n");
+        }
 
     std::string elements_to_string(const char* fmt) const {
         char res[1000], *ptr = res;
@@ -608,15 +628,22 @@ inline simd32uint8 blendv(
 
 /// vector of 8 unsigned 32-bit integers
 struct simd8uint32 : simd256bit {
-    simd8uint32() {}
+    simd8uint32() {
+        // printf("simdlib_emulated, simd8uint32\n");
+        }
 
     explicit simd8uint32(uint32_t x) {
+        // printf("simdlib_emulated, simd8uint32\n");
         set1(x);
     }
 
-    explicit simd8uint32(const simd256bit& x) : simd256bit(x) {}
+    explicit simd8uint32(const simd256bit& x) : simd256bit(x) {
+        // printf("simdlib_emulated, simd8uint32\n");
+        }
 
-    explicit simd8uint32(const uint32_t* x) : simd256bit((const void*)x) {}
+    explicit simd8uint32(const uint32_t* x) : simd256bit((const void*)x) {
+        // printf("simdlib_emulated, simd8uint32\n");
+        }
 
     explicit simd8uint32(
             uint32_t u0,
@@ -627,6 +654,7 @@ struct simd8uint32 : simd256bit {
             uint32_t u5,
             uint32_t u6,
             uint32_t u7) {
+                // printf("simdlib_emulated, simd8uint32\n");
         u32[0] = u0;
         u32[1] = u1;
         u32[2] = u2;
@@ -738,15 +766,21 @@ inline void cmplt_min_max_fast(
 }
 
 struct simd8float32 : simd256bit {
-    simd8float32() {}
+    simd8float32() {
+        // printf("simdlib_emulated, simd8float32\n");
+        }
 
-    explicit simd8float32(const simd256bit& x) : simd256bit(x) {}
+    explicit simd8float32(const simd256bit& x) : simd256bit(x) {
+        // printf("simdlib_emulated, simd8float32\n");
+        }
 
     explicit simd8float32(float x) {
+        // printf("simdlib_emulated, simd8float32\n");
         set1(x);
     }
 
     explicit simd8float32(const float* x) {
+        // printf("simdlib_emulated, simd8float32\n");
         loadu((void*)x);
     }
 
@@ -765,6 +799,7 @@ struct simd8float32 : simd256bit {
             float f5,
             float f6,
             float f7) {
+                // printf("simdlib_emulated, simd8float32\n");
         f32[0] = f0;
         f32[1] = f1;
         f32[2] = f2;

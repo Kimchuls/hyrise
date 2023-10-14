@@ -45,7 +45,8 @@ namespace vindex
         int64_t n_add = 0;
 
         DirectMapAdd dm_adder(direct_map, n, xids);
-
+    // double t1=getmillisecs();
+    // double time0=0.0,time1=0.0;
 #pragma omp parallel reduction(+ : n_add)
         {
             int nt = omp_get_num_threads();
@@ -71,7 +72,8 @@ namespace vindex
                 }
             }
         }
-
+    // double t2=getmillisecs();
+    // printf("IndexIVFFlat::add_core timestamp1: %.4f\n",(t2-t1)/1000);
         if (verbose)
         {
             printf("IndexIVFFlat::add_core: added %" PRId64 " / %" PRId64
@@ -163,7 +165,7 @@ namespace vindex
                 const int64_t *ids,
                 float *simi,
                 int64_t *idxi,
-                size_t k) const override
+                size_t k, double* cost_time=nullptr) const override
             {
                 const float *list_vecs = (const float *)codes;
                 size_t nup = 0;
@@ -174,9 +176,12 @@ namespace vindex
                     {
                         continue;
                     }
+                    // double t0=getmillisecs();
                     float dis = metric == METRIC_INNER_PRODUCT
                                     ? fvec_inner_product(xi, yj, d)
                                     : fvec_L2sqr(xi, yj, d);
+                    // ivfflat_scanner_time0+=
+                    // *cost_time+=(getmillisecs()-t0)/1000;
                     if (C::cmp(simi[0], dis))
                     {
                         int64_t id = store_pairs ? lo_build(list_no, j) : ids[j];

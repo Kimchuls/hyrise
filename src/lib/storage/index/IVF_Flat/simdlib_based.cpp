@@ -26,6 +26,7 @@ namespace {
 // not to waste registers on a bit faster code, if needed.
 template <size_t DIM>
 float l2_sqr(const float* const x) {
+    // printf("simdlib_based, avx2||aarch64 , l2_sqr\n");
     // compiler should be smart enough to handle that
     float output = x[0] * x[0];
     for (size_t i = 1; i < DIM; i++) {
@@ -39,6 +40,7 @@ template <size_t DIM>
 float dot_product(
         const float* const __restrict x,
         const float* const __restrict y) {
+            // printf("simdlib_based, avx2||aarch64 , dot_product\n");
     // compiler should be smart enough to handle that
     float output = x[0] * y[0];
     for (size_t i = 1; i < DIM; i++) {
@@ -65,6 +67,7 @@ void kernel(
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* __restrict y_norms,
         const size_t i) {
+            // printf("simdlib_based, avx2||aarch64 , kernel\n");
     const size_t ny_p =
             (ny / (8 * NY_POINTS_PER_LOOP)) * (8 * NY_POINTS_PER_LOOP);
 
@@ -73,6 +76,7 @@ void kernel(
 
     // prefetch the next point
 #if defined(__AVX2__)
+// printf("simdlib_based, (avx2==true)&&(true||aarch64) , dot_product\n");
     _mm_prefetch(xd_0 + DIM * sizeof(float), _MM_HINT_NTA);
 #endif
 
@@ -123,7 +127,7 @@ void kernel(
             }
         }
 
-        // other DIMs that use FMA
+        // other DIMs that use FMA 
         for (size_t dd = 1; dd < DIM; dd++) {
             for (size_t ny_k = 0; ny_k < NY_POINTS_PER_LOOP; ny_k++) {
                 simd8float32 y_i =
@@ -228,6 +232,7 @@ void exhaustive_L2sqr_fused_cmax(
         size_t ny,
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* __restrict y_norms) {
+            // printf("simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax\n");
     // BLAS does not like empty matrices
     if (nx == 0 || ny == 0) {
         return;
@@ -289,7 +294,7 @@ bool exhaustive_L2sqr_fused_cmax_simdlib(
     // Process only cases with certain dimensionalities.
     // An acceptable dimensionality value is limited by the number of
     // available registers.
-
+// printf("simdlib_based, avx2||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib\n");
 #define DISPATCH(DIM, NX_POINTS_PER_LOOP, NY_POINTS_PER_LOOP)    \
     case DIM: {                                                  \
         exhaustive_L2sqr_fused_cmax<                             \
@@ -308,6 +313,7 @@ bool exhaustive_L2sqr_fused_cmax_simdlib(
     // because of concurrent ports operations for ALU and LOAD/STORE.
 
 #if defined(__AVX2__)
+// printf("simdlib_based, (avx2 yes)||aarch64 , exhaustive_L2sqr_fused_cmax_simdlib\n");
     // It was possible to tweak these parameters on x64 machine.
     switch (d) {
         DISPATCH(1, 6, 1)

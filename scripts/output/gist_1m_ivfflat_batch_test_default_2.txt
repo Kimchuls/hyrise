@@ -1,0 +1,108 @@
+Executing script file: /ssd_root/dataset/gist1m/gist_1m_ivfflat_batch_test_default.sh
+Loading /ssd_root/dataset/gist_base_id.bin into table "gist_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(9 s 452 ms)
+Encoding "gist_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+cut train data(1 s 694 ms)
+IndexIVF::train
+Level1Quantizer::train_q1
+quantizer
+train_encode
+train_encode2
+train_encode3
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+cut finish train(32 s 257 ms)
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+cut finish add(14 s 116 ms)
+IVFFlatIndex time(48 s 66 ms)
+_eval_sql time(48 s 252 ms)
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 347 ms
+(11 ms 121 µs)
+_eval_sql time(10 s 481 ms)
+Intersection R@100 = 0.7674
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 166 ms
+(11 ms 53 µs)
+_eval_sql time(10 s 280 ms)
+Intersection R@100 = 0.7674
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 174 ms
+(11 ms 16 µs)
+_eval_sql time(10 s 281 ms)
+Intersection R@100 = 0.7674
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 264 ms
+(11 ms 17 µs)
+_eval_sql time(10 s 367 ms)
+Intersection R@100 = 0.7674
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 187 ms
+(11 ms 127 µs)
+_eval_sql time(10 s 290 ms)
+Intersection R@100 = 0.7674
+checkpoint3
+exhaustive_L2sqr_blas1
+10 s 179 ms
+(10 ms 957 µs)
+_eval_sql time(10 s 291 ms)
+Intersection R@100 = 0.7674
+Executing script file done
+Bye.

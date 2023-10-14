@@ -40,6 +40,7 @@
 #include "sql/sql_translator.hpp"
 #include "ssb/ssb_table_generator.hpp"
 #include "storage/chunk_encoder.hpp"
+#include "storage/index/IVF_Flat/IndexIVF.hpp"
 #include "storage/index/IVF_Flat/ivf_flat_index.hpp"
 #include "storage/index/hnsw/hnsw_index.hpp"
 #include "tpcc/tpcc_table_generator.hpp"
@@ -202,6 +203,8 @@ Console::Console()
   register_command("generate_tpcds", std::bind(&Console::_generate_tpcds, this, std::placeholders::_1));
   register_command("generate_ssb", std::bind(&Console::_generate_ssb, this, std::placeholders::_1));
   register_command("load", std::bind(&Console::_load_table, this, std::placeholders::_1));
+  register_command("download", std::bind(&Console::_download, this, std::placeholders::_1));
+  register_command("upload", std::bind(&Console::_upload, this, std::placeholders::_1));
   register_command("create_index", std::bind(&Console::_create_index, this, std::placeholders::_1));
   register_command("similar_vector", std::bind(&Console::_similar_vector, this, std::placeholders::_1));
   register_command("drop_index", std::bind(&Console::_drop_index, this, std::placeholders::_1));
@@ -371,17 +374,12 @@ int Console::_eval_sql(const std::string& sql) {
 
   const auto row_count = table ? table->row_count() : 0;
   // auto per_table_index_timer = Timer{};
-  std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   if (table) {
     // out(table);
     {
       const auto arguments = trim_and_split(sql);
-      // std::string table_name = "gist_base", gt_path;
       std::string table_name = arguments[3], gt_path;
-      // const auto& table = Hyrise::get().storage_manager.get_table(table_name);
-      // const auto float_array_index = table->get_table_indexes_vector()[0];
-      // float_array_index->save_index(table_name+"_"+float_array_index->name()+"_index.bin");
-      // printf("%s\n",table_name.c_str());
       int* gt_int = new int[1];
       int dim = 128, nq = 10'000, k = 100;
       size_t kk, nnq;
@@ -421,7 +419,7 @@ int Console::_eval_sql(const std::string& sql) {
       }
       fclose(wr);
       int64_t* I = new int64_t[k * nq];
-      FILE* writes = fopen("output.txt", "w");
+      FILE* writes = fopen((table_name+std::string("-output.txt")).c_str(), "w");
       const auto chunk_count = table->chunk_count();
       const auto column_count = table->column_count();
       int iter = 0;
@@ -725,6 +723,54 @@ int Console::_generate_ssb(const std::string& args) {
   SSBTableGenerator{ssb_dbgen_path, csv_meta_path, ssb_data_path.str(), scale_factor, chunk_size}.generate_and_store();
 
   return ReturnCode::Ok;
+}
+
+int Console::_download(const std::string& args){
+  const auto arguments = trim_and_split(args);
+  const auto table_name = arguments.at(0);
+  const auto index_name = arguments.at(1);
+  const auto index_save_path = arguments.at(2);
+  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+  const auto float_array_indexs = table->get_table_indexes_vector();
+  std::shared_ptr<AbstractVectorIndex> vector_index;
+  for (auto& float_array_index : float_array_indexs) {
+    if (float_array_index->name() == index_name) {
+      if (index_name == "ivfflat") {
+        vector_index = float_array_index;
+        break;
+      } else if (index_name == "hnsw") {
+        vector_index = float_array_index;
+        break;
+      }
+    }
+  }
+  Assert(vector_index, "no such index in the table");
+  vector_index->save_index(index_save_path);
+  return ReturnCode::Ok;
+}
+
+int Console::_upload(const std::string& args){
+  const auto arguments = trim_and_split(args);
+  const auto table_name = arguments.at(0);
+  const auto index_type = arguments.at(1);
+  const auto float_array_dim = std::stoi(arguments.at(2));
+  const auto index_save_path = arguments.at(3);
+  std::unordered_map<std::string, int> parameters;
+  const auto& table = Hyrise::get().storage_manager.get_table(table_name);
+   if (index_type == "hnsw") {
+    parameters["dim"] = float_array_dim;
+      if(table_name=="deep_10m"){
+        parameters["dim"] = float_array_dim;
+        parameters["M"]=32;
+        parameters["ef_construction"]=64;
+      }
+      table->load_float_array_index<HNSWIndex>(index_save_path,parameters);
+    } else if (index_type == "ivfflat") {
+      table->load_float_array_index<IVFFlatIndex>(index_save_path,parameters);
+    } else {
+      std::cout << "other index type is not supported." << std::endl;
+    }
+    return ReturnCode::Ok;
 }
 
 int Console::_reset_para(const std::string& args) {
@@ -1270,21 +1316,23 @@ int Console::_exec_script(const std::string& script_file) {
   // TODO(anyone): Use std::to_underlying(ReturnCode::Ok) once we use C++23.
   auto return_code = magic_enum::enum_underlying(ReturnCode::Ok);
   int number = 0;
-  // auto per_table_index_timer = Timer{};
+  auto per_table_index_timer = Timer{};
   while (std::getline(script, command)) {
     // printf("command: %s\n",command.c_str());
     // if (number == 2) {
-    // per_table_index_timer = Timer{};
+    vindex::indexivf_time_clear();
+    per_table_index_timer = Timer{};
     // }
     return_code = _eval(command);
     if (return_code == ReturnCode::Error || return_code == ReturnCode::Quit) {
       break;
     }
-    number++;
-    if (number % 50000 == 0) {
-      printf("Now it is executing the %dth command\n", number);
-    }
-    // std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+    // number++;
+    // if (number % 50000 == 0) {
+    //   printf("Now it is executing the %dth command\n", number);
+    // }
+    std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+    // vindex::indexivf_print_time();
   }
   out("Executing script file done\n");
   _verbose = false;
@@ -1534,8 +1582,10 @@ int main(int argc, char** argv) {
 
   // Main REPL loop
   while (return_code != Return::Quit) {
+    // auto per_table_index_timer = hyrise::Timer{};
     return_code = console.read();
     if (return_code == Return::Ok) {
+      // std::cout << "executing time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
       console.set_prompt("> ");
     } else if (return_code == Return::Multiline) {
       console.set_prompt("... ");

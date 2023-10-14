@@ -211,6 +211,8 @@ class Table : private Noncopyable {
   void create_partial_hash_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids);
 
   template <typename Index>
+  void load_float_array_index(const std::string& path,const std::unordered_map<std::string, int> parameters);
+  template <typename Index>
   void create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids,
                                 const std::unordered_map<std::string, int> parameters);
 

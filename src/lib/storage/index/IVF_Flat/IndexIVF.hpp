@@ -15,6 +15,9 @@
 
 namespace vindex
 {
+  extern double time_stamp0,time_stamp1;
+  void indexivf_time_clear();
+  void indexivf_print_time();
   struct Level1Quantizer
   {
   public:
@@ -167,7 +170,7 @@ namespace vindex
         const int64_t *ids,
         float *distances,
         int64_t *labels,
-        size_t k) const;
+        size_t k, double* cost_time=nullptr) const;
 
     // same as scan_codes, using an iterator
     virtual size_t iterate_codes(

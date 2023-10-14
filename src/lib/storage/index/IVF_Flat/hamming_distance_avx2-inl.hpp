@@ -23,6 +23,7 @@ namespace vindex {
 /* Elementary Hamming distance computation: unoptimized  */
 template <size_t nbits, typename T>
 inline T hamming(const uint8_t* bs1, const uint8_t* bs2) {
+    // printf("hamming_distance_avx2-inl, AVX2, hamming::T\n");
     const size_t nbytes = nbits / 8;
     size_t i;
     T h = 0;
@@ -35,6 +36,7 @@ inline T hamming(const uint8_t* bs1, const uint8_t* bs2) {
 /* Hamming distances for multiples of 64 bits */
 template <size_t nbits>
 inline hamdis_t hamming(const uint64_t* bs1, const uint64_t* bs2) {
+    // printf("hamming_distance_avx2-inl, AVX2, hamming<nbit>::hamdis_t\n");
     const size_t nwords = nbits / 64;
     size_t i;
     hamdis_t h = 0;
@@ -47,16 +49,19 @@ inline hamdis_t hamming(const uint64_t* bs1, const uint64_t* bs2) {
 /* specialized (optimized) functions */
 template <>
 inline hamdis_t hamming<64>(const uint64_t* pa, const uint64_t* pb) {
+    // printf("hamming_distance_avx2-inl, AVX2, hamming<64>\n");
     return popcount64(pa[0] ^ pb[0]);
 }
 
 template <>
 inline hamdis_t hamming<128>(const uint64_t* pa, const uint64_t* pb) {
+    // printf("hamming_distance_avx2-inl, AVX2, hamming<128>\n");
     return popcount64(pa[0] ^ pb[0]) + popcount64(pa[1] ^ pb[1]);
 }
 
 template <>
 inline hamdis_t hamming<256>(const uint64_t* pa, const uint64_t* pb) {
+    // printf("hamming_distance_avx2-inl, AVX2, hamming<256>\n");
     return popcount64(pa[0] ^ pb[0]) + popcount64(pa[1] ^ pb[1]) +
             popcount64(pa[2] ^ pb[2]) + popcount64(pa[3] ^ pb[3]);
 }
@@ -66,6 +71,7 @@ inline hamdis_t hamming(
         const uint64_t* bs1,
         const uint64_t* bs2,
         size_t nwords) {
+            // printf("hamming_distance_avx2-inl, AVX2, hamming::hamdis_t\n");
     hamdis_t h = 0;
     for (size_t i = 0; i < nwords; i++) {
         h += popcount64(bs1[i] ^ bs2[i]);
@@ -84,22 +90,28 @@ inline hamdis_t hamming(
 struct HammingComputer4 {
     uint32_t a0;
 
-    HammingComputer4() {}
+    HammingComputer4() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer4 null\n");
+        }
 
     HammingComputer4(const uint8_t* a, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer4\n");
         set(a, code_size);
     }
 
     void set(const uint8_t* a, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer4::set\n");
         assert(code_size == 4);
         a0 = *(uint32_t*)a;
     }
 
     inline int hamming(const uint8_t* b) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer4::hamming\n");
         return popcount64(*(uint32_t*)b ^ a0);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer4::size\n");
         return 4;
     }
 };
@@ -107,22 +119,28 @@ struct HammingComputer4 {
 struct HammingComputer8 {
     uint64_t a0;
 
-    HammingComputer8() {}
+    HammingComputer8() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer8 null\n");
+        }
 
     HammingComputer8(const uint8_t* a, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer8\n");
         set(a, code_size);
     }
 
     void set(const uint8_t* a, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer8::Set\n");
         assert(code_size == 8);
         a0 = *(uint64_t*)a;
     }
 
     inline int hamming(const uint8_t* b) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer8::hamming\n");
         return popcount64(*(uint64_t*)b ^ a0);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer8::size\n");
         return 8;
     }
 };
@@ -130,13 +148,17 @@ struct HammingComputer8 {
 struct HammingComputer16 {
     uint64_t a0, a1;
 
-    HammingComputer16() {}
+    HammingComputer16() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer16 null\n");
+        }
 
     HammingComputer16(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer16\n");
         set(a8, code_size);
     }
 
     void set(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer16::set\n");
         assert(code_size == 16);
         const uint64_t* a = (uint64_t*)a8;
         a0 = a[0];
@@ -144,11 +166,13 @@ struct HammingComputer16 {
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer16::hamming\n");
         const uint64_t* b = (uint64_t*)b8;
         return popcount64(b[0] ^ a0) + popcount64(b[1] ^ a1);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer16::size\n");
         return 16;
     }
 };
@@ -159,13 +183,17 @@ struct HammingComputer20 {
     uint64_t a0, a1;
     uint32_t a2;
 
-    HammingComputer20() {}
+    HammingComputer20() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer20 null\n");
+        }
 
     HammingComputer20(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer20\n");
         set(a8, code_size);
     }
 
     void set(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer20::set\n");
         assert(code_size == 20);
         const uint64_t* a = (uint64_t*)a8;
         a0 = a[0];
@@ -174,12 +202,14 @@ struct HammingComputer20 {
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer20::hamming\n");
         const uint64_t* b = (uint64_t*)b8;
         return popcount64(b[0] ^ a0) + popcount64(b[1] ^ a1) +
                 popcount64(*(uint32_t*)(b + 2) ^ a2);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer20::size\n");
         return 20;
     }
 };
@@ -187,13 +217,17 @@ struct HammingComputer20 {
 struct HammingComputer32 {
     uint64_t a0, a1, a2, a3;
 
-    HammingComputer32() {}
+    HammingComputer32() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer32 null\n");
+        }
 
     HammingComputer32(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer32\n");
         set(a8, code_size);
     }
 
     void set(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer32::Set\n");
         assert(code_size == 32);
         const uint64_t* a = (uint64_t*)a8;
         a0 = a[0];
@@ -203,12 +237,14 @@ struct HammingComputer32 {
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer32::hamming\n");
         const uint64_t* b = (uint64_t*)b8;
         return popcount64(b[0] ^ a0) + popcount64(b[1] ^ a1) +
                 popcount64(b[2] ^ a2) + popcount64(b[3] ^ a3);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer32::size\n");
         return 32;
     }
 };
@@ -216,13 +252,17 @@ struct HammingComputer32 {
 struct HammingComputer64 {
     uint64_t a0, a1, a2, a3, a4, a5, a6, a7;
 
-    HammingComputer64() {}
+    HammingComputer64() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer64 null\n");
+        }
 
     HammingComputer64(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer64\n");
         set(a8, code_size);
     }
 
     void set(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer64::set\n");
         assert(code_size == 64);
         const uint64_t* a = (uint64_t*)a8;
         a0 = a[0];
@@ -236,6 +276,7 @@ struct HammingComputer64 {
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer64::hamming\n");
         const uint64_t* b = (uint64_t*)b8;
         return popcount64(b[0] ^ a0) + popcount64(b[1] ^ a1) +
                 popcount64(b[2] ^ a2) + popcount64(b[3] ^ a3) +
@@ -244,6 +285,7 @@ struct HammingComputer64 {
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputer64::Size\n");
         return 64;
     }
 };
@@ -253,19 +295,24 @@ struct HammingComputerDefault {
     int quotient8;
     int remainder8;
 
-    HammingComputerDefault() {}
+    HammingComputerDefault() {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputerdef null\n");
+        }
 
     HammingComputerDefault(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputerdef\n");
         set(a8, code_size);
     }
 
     void set(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputerdef::set\n");
         this->a8 = a8;
         quotient8 = code_size / 8;
         remainder8 = code_size % 8;
     }
 
     int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputerdef::hamming\n");
         int accu = 0;
 
         const uint64_t* a64 = reinterpret_cast<const uint64_t*>(a8);
@@ -341,6 +388,7 @@ struct HammingComputerDefault {
     }
 
     inline int get_code_size() const {
+        // printf("hamming_distance_avx2-inl, AVX2, HammingComputerdef::size\n");
         return quotient8 * 8 + remainder8;
     }
 };
@@ -351,6 +399,7 @@ struct HammingComputerDefault {
  ***************************************************************************/
 
 inline int generalized_hamming_64(uint64_t a) {
+    // printf("hamming_distance_avx2-inl, AVX2, generalized_hamming_64\n");
     a |= a >> 1;
     a |= a >> 2;
     a |= a >> 4;
@@ -362,15 +411,18 @@ struct GenHammingComputer8 {
     uint64_t a0;
 
     GenHammingComputer8(const uint8_t* a, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer8\n");
         assert(code_size == 8);
         a0 = *(uint64_t*)a;
     }
 
     inline int hamming(const uint8_t* b) const {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer8::hamming\n");
         return generalized_hamming_64(*(uint64_t*)b ^ a0);
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer8::size\n");
         return 8;
     }
 };
@@ -381,11 +433,13 @@ struct GenHammingComputer16 {
     __m128i a;
 
     GenHammingComputer16(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer16\n");
         assert(code_size == 16);
         a = _mm_loadu_si128((const __m128i_u*)a8);
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer16::hamming\n");
         const __m128i b = _mm_loadu_si128((const __m128i_u*)b8);
         const __m128i cmp = _mm_cmpeq_epi8(a, b);
         const auto movemask = _mm_movemask_epi8(cmp);
@@ -393,6 +447,7 @@ struct GenHammingComputer16 {
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer16::size\n");
         return 16;
     }
 };
@@ -401,11 +456,13 @@ struct GenHammingComputer32 {
     __m256i a;
 
     GenHammingComputer32(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer32\n");
         assert(code_size == 32);
         a = _mm256_loadu_si256((const __m256i_u*)a8);
     }
 
     inline int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer32::hamming\n");
         const __m256i b = _mm256_loadu_si256((const __m256i_u*)b8);
         const __m256i cmp = _mm256_cmpeq_epi8(a, b);
         const uint32_t movemask = _mm256_movemask_epi8(cmp);
@@ -413,6 +470,7 @@ struct GenHammingComputer32 {
     }
 
     inline static constexpr int get_code_size() {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputer32::size\n");
         return 32;
     }
 };
@@ -428,12 +486,14 @@ struct GenHammingComputerM8 {
     int n;
 
     GenHammingComputerM8(const uint8_t* a8, int code_size) {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputerM8\n");
         assert(code_size % 8 == 0);
         a = (uint64_t*)a8;
         n = code_size / 8;
     }
 
     int hamming(const uint8_t* b8) const {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputerM8::hamming\n");
         const uint64_t* b = (uint64_t*)b8;
         int accu = 0;
 
@@ -453,6 +513,7 @@ struct GenHammingComputerM8 {
     }
 
     inline int get_code_size() const {
+        // printf("hamming_distance_avx2-inl, AVX2, GenHammingComputerM8::size\n");
         return n * 8;
     }
 };

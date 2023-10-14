@@ -25,6 +25,7 @@
 #include "VIndexAssert.hpp"
 #include "IDSelector.hpp"
 #include "ResultHandler.hpp"
+#include "utils.hpp"
 
 #include "distances_fused.hpp"
 
@@ -57,7 +58,15 @@ namespace vindex {
 /***************************************************************************
  * Matrix/vector ops
  ***************************************************************************/
+// double total_time=0.0;
+// double total_time1=0.0;
+// double total_time2=0.0;
 
+// void total_time_clear(){
+//     total_time=0.0;
+//     total_time1=0.0;
+//     total_time2=0.0;
+// }
 /* Compute the L2 norm of a set of nx vectors */
 void fvec_norms_L2(
         float* __restrict nr,
@@ -240,6 +249,7 @@ void exhaustive_L2sqr_blas_default_impl(
         ResultHandler& res,
         const float* y_norms = nullptr) {
     // BLAS does not like empty matrices
+    // double t0=getmillisecs();
     if (nx == 0 || ny == 0)
         return;
 
@@ -272,6 +282,7 @@ void exhaustive_L2sqr_blas_default_impl(
             if (j1 > ny)
                 j1 = ny;
             /* compute the actual dot products */
+            // double t1=getmillisecs();
             {
                 float one = 1, zero = 0;
                 FINTEGER nyi = j1 - j0, nxi = i1 - i0, di = d;
@@ -289,6 +300,8 @@ void exhaustive_L2sqr_blas_default_impl(
                        ip_block.get(),
                        &nyi);
             }
+            // total_time1+=(getmillisecs()-t1)/1000;
+            // double t2=getmillisecs();
 #pragma omp parallel for
             for (int64_t i = i0; i < i1; i++) {
                 float* ip_line = ip_block.get() + (i - i0) * (j1 - j0);
@@ -296,7 +309,11 @@ void exhaustive_L2sqr_blas_default_impl(
                 for (size_t j = j0; j < j1; j++) {
                     float ip = *ip_line;
                     float dis = x_norms[i] + y_norms[j] - 2 * ip;
-
+                    // float dis = 0;
+                    // for (int64_t iii = 0; iii < d; iii++) {
+                    //     float tmp = x[iii] - y[iii];
+                    //     dis += tmp * tmp;
+                    // }
                     // negative values can occur for identical vectors
                     // due to roundoff errors
                     if (dis < 0)
@@ -307,10 +324,15 @@ void exhaustive_L2sqr_blas_default_impl(
                 }
             }
             res.add_results(j0, j1, ip_block.get());
+            // total_time2+=(getmillisecs()-t2)/1000;
         }
         res.end_multiple();
         InterruptCallback::check();
     }
+    // total_time+=(getmillisecs()-t0)/1000;
+    // printf("exhaustive_L2sqr_blas_default_impl time: %.4f/ %.4f s = %.4f + %.4f\n",total_time,total_time1+total_time2,total_time1,total_time2);
+    // fflush(stdout);
+    // printf("nx: %ld\n",nx);
 }
 
 template <class ResultHandler>
@@ -322,6 +344,7 @@ void exhaustive_L2sqr_blas(
         size_t ny,
         ResultHandler& res,
         const float* y_norms = nullptr) {
+            // printf("exhaustive_L2sqr_blas1\n");
     exhaustive_L2sqr_blas_default_impl(x, y, d, nx, ny, res);
 }
 
@@ -334,6 +357,7 @@ void exhaustive_L2sqr_blas_cmax_avx2(
         size_t ny,
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* y_norms) {
+            // printf("distances, avx2 , exhaustive_L2sqr_blas_cmax_avx2\n");
     // BLAS does not like empty matrices
     if (nx == 0 || ny == 0)
         return;
@@ -544,6 +568,7 @@ void exhaustive_L2sqr_blas<SingleBestResultHandler<CMax<float, int64_t>>>(
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* y_norms) {
 #if defined(__AVX2__)
+    // printf("distances, avx2 , exhaustive_L2sqr_blas\n");
     // use a faster fused kernel if available
     if (exhaustive_L2sqr_fused_cmax(x, y, d, nx, ny, res, y_norms)) {
         // the kernel is available and it is complete, we're done.
@@ -554,6 +579,7 @@ void exhaustive_L2sqr_blas<SingleBestResultHandler<CMax<float, int64_t>>>(
     exhaustive_L2sqr_blas_cmax_avx2(x, y, d, nx, ny, res, y_norms);
 
 #elif defined(__aarch64__)
+// printf("distances, aarch64 , exhaustive_L2sqr_blas\n");    
     // use a faster fused kernel if available
     if (exhaustive_L2sqr_fused_cmax(x, y, d, nx, ny, res, y_norms)) {
         // the kernel is available and it is complete, we're done.
@@ -565,6 +591,7 @@ void exhaustive_L2sqr_blas<SingleBestResultHandler<CMax<float, int64_t>>>(
             SingleBestResultHandler<CMax<float, int64_t>>>(
             x, y, d, nx, ny, res, y_norms);
 #else
+// printf("distances, null , exhaustive_L2sqr_blas\n");
     // run the default implementation
     exhaustive_L2sqr_blas_default_impl<
             SingleBestResultHandler<CMax<float, int64_t>>>(
@@ -588,8 +615,10 @@ void knn_L2sqr_select(
     //     exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
     // } // TAG:SGEMM
     } else if (nx < distance_compute_blas_threshold) {
+        // printf("check seq %ld\n",nx);
         exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
     } else {
+        // printf("check blas %ld\n",nx);
         exhaustive_L2sqr_blas(x, y, d, nx, ny, res, y_norm2);
     }
 }
@@ -687,6 +716,7 @@ void knn_L2sqr(
         int64_t* ids,
         const float* y_norm2,
         const IDSelector* sel) {
+    // double t0 = getmillisecs();
     int64_t imin = 0;
     if (auto selr = dynamic_cast<const IDSelectorRange*>(sel)) {
         imin = std::max(selr->imin, int64_t(0));
@@ -696,16 +726,20 @@ void knn_L2sqr(
         sel = nullptr;
     }
     if (auto sela = dynamic_cast<const IDSelectorArray*>(sel)) {
+        // printf("checkpoint1\n");
         knn_L2sqr_by_idx(x, y, sela->ids, d, nx, sela->n, k, vals, ids, 0);
         return;
     }
     if (k == 1) {
+        // printf("checkpoint2\n");
         SingleBestResultHandler<CMax<float, int64_t>> res(nx, vals, ids);
         knn_L2sqr_select(x, y, d, nx, ny, res, y_norm2, sel);
     } else if (k < distance_compute_min_k_reservoir) {
+        // printf("checkpoint3\n");
         HeapResultHandler<CMax<float, int64_t>> res(nx, vals, ids, k);
         knn_L2sqr_select(x, y, d, nx, ny, res, y_norm2, sel);
     } else {
+        // printf("checkpoint4\n");
         ReservoirResultHandler<CMax<float, int64_t>> res(nx, vals, ids, k);
         knn_L2sqr_select(x, y, d, nx, ny, res, y_norm2, sel);
     }
@@ -747,13 +781,16 @@ void range_search_L2sqr(
     using RH = RangeSearchResultHandler<CMax<float, int64_t>>;
     RH resh(res, radius);
     if (sel) {
+        // printf("range1\n");
         exhaustive_L2sqr_seq<RH, true>(x, y, d, nx, ny, resh, sel);
     // } else {
     //     exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
-    // } 
+    // }  // TAG:SGEMM
     } else if (nx < distance_compute_blas_threshold) {
+        // printf("range2\n");
         exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
     } else {
+        // printf("range3\n");
         exhaustive_L2sqr_blas(x, y, d, nx, ny, resh);
     }
 }

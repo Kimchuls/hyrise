@@ -56,9 +56,9 @@ const int IO_FLAG_SKIP_PRECOMPUTE_TABLE = 16;
 // OnDiskInvertedLists)
 const int IO_FLAG_MMAP = IO_FLAG_SKIP_IVF_DATA | 0x646f0000;
 
-// Index* read_index(const char* fname, int io_flags = 0);
-// Index* read_index(FILE* f, int io_flags = 0);
-// Index* read_index(IOReader* reader, int io_flags = 0);
+Index* read_index(const char* fname, int io_flags = 0);
+Index* read_index(FILE* f, int io_flags = 0);
+Index* read_index(IOReader* reader, int io_flags = 0);
 
 // IndexBinary* read_index_binary(const char* fname, int io_flags = 0);
 // IndexBinary* read_index_binary(FILE* f, int io_flags = 0);
@@ -77,7 +77,7 @@ const int IO_FLAG_MMAP = IO_FLAG_SKIP_IVF_DATA | 0x646f0000;
 // void write_ProductQuantizer(const ProductQuantizer* pq, IOWriter* f);
 
 void write_InvertedLists(const InvertedLists* ils, IOWriter* f);
-// InvertedLists* read_InvertedLists(IOReader* reader, int io_flags = 0);
+InvertedLists* read_InvertedLists(IOReader* reader, int io_flags = 0);
 
 } // namespace vindex
 

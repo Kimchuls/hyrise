@@ -13,6 +13,14 @@
 #define DEFAULT_NPROBE 20
 
 namespace hyrise {
+
+                                                            
+IVFFlatIndex::IVFFlatIndex(const std::string& path,const std::unordered_map<std::string, int> parameters)
+    : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>(), "ivfflat"} {
+  vindex::Index* new_index = vindex::read_index(path.c_str());
+  _index = dynamic_cast<vindex::IndexIVFFlat*>(new_index);
+}
+
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
                            ColumnID column_id, std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>(), "ivfflat"} {
@@ -57,7 +65,7 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
     return;
   }
   auto indexed_chunks = size_t{0};
-  float* data = new float[chunks_to_index.size() * Chunk::DEFAULT_SIZE*_d];
+  float* data = new float[chunks_to_index.size() * Chunk::DEFAULT_SIZE * _d];
   int nb = 0;
 
   auto per_table_index_timer = Timer{};
@@ -81,6 +89,7 @@ void IVFFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::sh
 
   // std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   _index->train(nb / 100, trainvecs);
+  // _index->train(nb, data);
   // std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] trainvecs;
   // std::cout << "cut delete vec(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
@@ -97,7 +106,7 @@ void IVFFlatIndex::similar_k(const float* query, int64_t* I, float* D, int k) {
 
 void IVFFlatIndex::range_similar_k(size_t n, const float* query, int64_t* I, float* D, int k) {
   // std::cout << "IVFFlatIndex::range_similar_k" << std::endl;
-  // auto per_table_index_timer = Timer{};
+  auto per_table_index_timer = Timer{};
   _index->search(n, query, k, D, I);
   // std::cout << per_table_index_timer.lap_formatted() << std::endl;
 }

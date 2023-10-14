@@ -104,10 +104,13 @@ namespace vindex
 #endif
 
 #ifdef __AVX2__
+// printf("utils, avx2 , get_compile_options\n");
     options += "AVX2 ";
 #elif defined(__aarch64__)
+// printf("utils, aarch64 , get_compile_options\n");
     options += "NEON ";
 #else
+// printf("utils, null , get_compile_options\n");
     options += "GENERIC ";
 #endif
 
@@ -119,6 +122,7 @@ namespace vindex
 #ifdef _MSC_VER
   double getmillisecs()
   {
+    // printf("utils, mscver , getmillisecs\n");
     LARGE_INTEGER ts;
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
@@ -129,6 +133,7 @@ namespace vindex
 #else  // _MSC_VER
   double getmillisecs()
   {
+    // printf("utils, !msever , getmillisecs\n");
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return tv.tv_sec * 1e3 + tv.tv_usec * 1e-3;

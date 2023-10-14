@@ -13,10 +13,40 @@
 #define DEFAULT_EFS 200
 
 namespace hyrise {
+HNSWIndex::HNSWIndex(const std::string& path, std::unordered_map<std::string, int> parameters = {})
+    : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>(), "hnsw"} {
+      printf("path2\n");
+  std::unordered_map<std::string, int>::iterator get_item;
+  if (get_item = parameters.find("dim"), get_item == parameters.end())
+    _dim = DEFAULT_DIM;
+  else
+    _dim = get_item->second;
+
+  if (get_item = parameters.find("max_elements"), get_item == parameters.end())
+    _max_elements = MAX_ELES_UINT;
+  else
+    _max_elements = get_item->second;
+
+  if (get_item = parameters.find("M"), get_item == parameters.end())
+    _M = DEFAULT_M;
+  else
+    _M = get_item->second;
+
+  if (get_item = parameters.find("ef_construction"), get_item == parameters.end())
+    _ef_construction = DEFAULT_EF_CONSTRUCTION;
+  else
+    _ef_construction = get_item->second;
+
+  _space = new hnswlib::L2Space(_dim);
+  _alg_hnsw = new hnswlib::HierarchicalNSW<float>(_space, _max_elements, _M, _ef_construction);
+  _alg_hnsw->loadIndex(path, _space);
+}
+
 HNSWIndex::HNSWIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
                      std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWIndex>(), "hnsw"} {
   Assert(!chunks_to_index.empty(), "HNSWIndex requires chunks_to_index not to be empty.");
+  // printf("path1\n");
   _column_id = column_id;
 
   std::unordered_map<std::string, int>::iterator get_item;
@@ -71,19 +101,19 @@ void HNSWIndex::insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chun
     }
     _indexed_chunk_ids.insert(chunk.first);
     ++indexed_chunks;
-    // int idx = chunk.first;
+    int idx = chunk.first;
     // std::cout<<"idx: "<<idx<<std::endl;
     const auto abstract_segment = chunk.second->get_segment(_column_id);
     const auto segment_size = abstract_segment->size();
 #pragma omp parallel for
     for (auto chunk_offset = ChunkOffset{0}; chunk_offset < segment_size; ++chunk_offset) {
       const auto value = boost::get<float_array>((*abstract_segment)[chunk_offset]);
-      // auto label = (int)(times * idx) + chunk_offset;
+      auto label = (int)(times * idx) + chunk_offset;
       // if(chunk_offset%100==0){
       //   std::cout<<"chunk_offset: "<<chunk_offset<<", label: "<<label<<std::endl;
       // }
-      // _alg_hnsw->addPoint(value.data(), label);
-      _alg_hnsw->addPoint(value.data(), give_label++);
+      _alg_hnsw->addPoint(value.data(), label);
+      // _alg_hnsw->addPoint(value.data(), give_label++);
     }
   }
   std::cout << per_table_index_timer.lap_formatted() << std::endl;
@@ -96,7 +126,7 @@ void HNSWIndex::similar_k(const float* query, int64_t* I, float* D, int k = 1) {
 }
 
 void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, float* D, int k = 1) {
-  std::cout << "HNSWIndex::range_similar_k: " << std::endl;
+  // std::cout << "HNSWIndex::range_similar_k: " << std::endl;
   auto per_table_index_timer = Timer{};
 #pragma omp parallel for
   for (size_t i = 0; i < n; i++) {
@@ -109,7 +139,7 @@ void HNSWIndex::range_similar_k(size_t n, const float* queries, int64_t* I, floa
       result.pop();
     }
   }
-  std::cout << per_table_index_timer.lap_formatted() << std::endl;
+  // std::cout << per_table_index_timer.lap_formatted() << std::endl;
 }
 
 void HNSWIndex::train(int64_t n, const float* data) {

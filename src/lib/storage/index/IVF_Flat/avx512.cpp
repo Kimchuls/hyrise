@@ -22,6 +22,7 @@ namespace {
 // not to waste registers on a bit faster code, if needed.
 template <size_t DIM>
 float l2_sqr(const float* const x) {
+    // printf("avx512,AVX512,l2_sqr\n");
     // compiler should be smart enough to handle that
     float output = x[0] * x[0];
     for (size_t i = 1; i < DIM; i++) {
@@ -33,6 +34,7 @@ float l2_sqr(const float* const x) {
 
 template <>
 float l2_sqr<4>(const float* const x) {
+    // printf("avx512,AVX512,l2_sqr<4>\n");
     __m128 v = _mm_loadu_ps(x);
     __m128 v2 = _mm_mul_ps(v, v);
     v2 = _mm_hadd_ps(v2, v2);
@@ -46,6 +48,7 @@ float dot_product(
         const float* const __restrict x,
         const float* const __restrict y) {
     // compiler should be smart enough to handle that
+    // printf("avx512,AVX512,dot_product\n");
     float output = x[0] * y[0];
     for (size_t i = 1; i < DIM; i++) {
         output += x[i] * y[i];
@@ -71,6 +74,7 @@ void kernel(
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* __restrict y_norms,
         size_t i) {
+            // printf("avx512,AVX512,kernel\n");
     const size_t ny_p =
             (ny / (16 * NY_POINTS_PER_LOOP)) * (16 * NY_POINTS_PER_LOOP);
 
@@ -233,6 +237,7 @@ void exhaustive_L2sqr_fused_cmax(
         size_t ny,
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* __restrict y_norms) {
+            // printf("avx512,AVX512,exhaustive_L2sqr_fused_cmax\n");
     // BLAS does not like empty matrices
     if (nx == 0 || ny == 0) {
         return;
@@ -292,7 +297,7 @@ bool exhaustive_L2sqr_fused_cmax_AVX512(
         SingleBestResultHandler<CMax<float, int64_t>>& res,
         const float* y_norms) {
     // process only cases with certain dimensionalities
-
+// printf("avx512,AVX512,exhaustive_L2sqr_fused_cmax_AVX512\n");
 #define DISPATCH(DIM, NX_POINTS_PER_LOOP, NY_POINTS_PER_LOOP)    \
     case DIM: {                                                  \
         exhaustive_L2sqr_fused_cmax<                             \

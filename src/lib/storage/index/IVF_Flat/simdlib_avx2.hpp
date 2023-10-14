@@ -34,14 +34,22 @@ namespace vindex
       __m256 f;
     };
 
-    simd256bit() {}
+    simd256bit() {
+      // printf("simd_avx2, AVX2, simd256bit\n");
+      }
 
-    explicit simd256bit(__m256i i) : i(i) {}
+    explicit simd256bit(__m256i i) : i(i) {
+      // printf("simd_avx2, AVX2, simd256bit\n");
+      }
 
-    explicit simd256bit(__m256 f) : f(f) {}
+    explicit simd256bit(__m256 f) : f(f) {
+      // printf("simd_avx2, AVX2, simd256bit\n");
+      }
 
     explicit simd256bit(const void *x)
-        : i(_mm256_load_si256((__m256i const *)x)) {}
+        : i(_mm256_load_si256((__m256i const *)x)) {
+          // printf("simd_avx2, AVX2, simd256bit\n");
+          }
 
     void clear()
     {
@@ -93,17 +101,29 @@ namespace vindex
   /// vector of 16 elements in uint16
   struct simd16uint16 : simd256bit
   {
-    simd16uint16() {}
+    simd16uint16() {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
-    explicit simd16uint16(__m256i i) : simd256bit(i) {}
+    explicit simd16uint16(__m256i i) : simd256bit(i) {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
-    explicit simd16uint16(int x) : simd256bit(_mm256_set1_epi16(x)) {}
+    explicit simd16uint16(int x) : simd256bit(_mm256_set1_epi16(x)) {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
-    explicit simd16uint16(uint16_t x) : simd256bit(_mm256_set1_epi16(x)) {}
+    explicit simd16uint16(uint16_t x) : simd256bit(_mm256_set1_epi16(x)) {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
-    explicit simd16uint16(simd256bit x) : simd256bit(x) {}
+    explicit simd16uint16(simd256bit x) : simd256bit(x) {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
-    explicit simd16uint16(const uint16_t *x) : simd256bit((const void *)x) {}
+    explicit simd16uint16(const uint16_t *x) : simd256bit((const void *)x) {
+      // printf("simd_avx2, AVX2, simd16uint16\n");
+      }
 
     explicit simd16uint16(
         uint16_t u0,
@@ -138,7 +158,9 @@ namespace vindex
               u12,
               u13,
               u14,
-              u15)) {}
+              u15)) {
+                // printf("simd_avx2, AVX2, simd16uint16\n");
+                }
 
     std::string elements_to_string(const char *fmt) const
     {
@@ -388,13 +410,21 @@ namespace vindex
   // vector of 32 unsigned 8-bit integers
   struct simd32uint8 : simd256bit
   {
-    simd32uint8() {}
+    simd32uint8() {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
-    explicit simd32uint8(__m256i i) : simd256bit(i) {}
+    explicit simd32uint8(__m256i i) : simd256bit(i) {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
-    explicit simd32uint8(int x) : simd256bit(_mm256_set1_epi8(x)) {}
+    explicit simd32uint8(int x) : simd256bit(_mm256_set1_epi8(x)) {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
-    explicit simd32uint8(uint8_t x) : simd256bit(_mm256_set1_epi8(x)) {}
+    explicit simd32uint8(uint8_t x) : simd256bit(_mm256_set1_epi8(x)) {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
     template <
         uint8_t _0,
@@ -431,6 +461,7 @@ namespace vindex
         uint8_t _31>
     static simd32uint8 create()
     {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
       return simd32uint8(_mm256_setr_epi8(
           (char)_0,
           (char)_1,
@@ -466,9 +497,13 @@ namespace vindex
           (char)_31));
     }
 
-    explicit simd32uint8(simd256bit x) : simd256bit(x) {}
+    explicit simd32uint8(simd256bit x) : simd256bit(x) {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
-    explicit simd32uint8(const uint8_t *x) : simd256bit((const void *)x) {}
+    explicit simd32uint8(const uint8_t *x) : simd256bit((const void *)x) {
+      // printf("simd_avx2, AVX2, simd32uint8\n");
+      }
 
     std::string elements_to_string(const char *fmt) const
     {
@@ -567,15 +602,25 @@ namespace vindex
   /// vector of 8 unsigned 32-bit integers
   struct simd8uint32 : simd256bit
   {
-    simd8uint32() {}
+    simd8uint32() {
+      // printf("simd_avx2, AVX2, simd8uint32\n");
+      }
 
-    explicit simd8uint32(__m256i i) : simd256bit(i) {}
+    explicit simd8uint32(__m256i i) : simd256bit(i) {
+      // printf("simd_avx2, AVX2, simd8uint32\n");
+      }
 
-    explicit simd8uint32(uint32_t x) : simd256bit(_mm256_set1_epi32(x)) {}
+    explicit simd8uint32(uint32_t x) : simd256bit(_mm256_set1_epi32(x)) {
+      // printf("simd_avx2, AVX2, simd8uint32\n");
+      }
 
-    explicit simd8uint32(simd256bit x) : simd256bit(x) {}
+    explicit simd8uint32(simd256bit x) : simd256bit(x) {
+      // printf("simd_avx2, AVX2, simd8uint32\n");
+      }
 
-    explicit simd8uint32(const uint8_t *x) : simd256bit((const void *)x) {}
+    explicit simd8uint32(const uint8_t *x) : simd256bit((const void *)x) {
+      // printf("simd_avx2, AVX2, simd8uint32\n");
+      }
 
     explicit simd8uint32(
         uint32_t u0,
@@ -586,7 +631,9 @@ namespace vindex
         uint32_t u5,
         uint32_t u6,
         uint32_t u7)
-        : simd256bit(_mm256_setr_epi32(u0, u1, u2, u3, u4, u5, u6, u7)) {}
+        : simd256bit(_mm256_setr_epi32(u0, u1, u2, u3, u4, u5, u6, u7)) {
+          // printf("simd_avx2, AVX2, simd8uint32\n");
+          }
 
     simd8uint32 operator+(simd8uint32 other) const
     {
@@ -692,15 +739,25 @@ namespace vindex
 
   struct simd8float32 : simd256bit
   {
-    simd8float32() {}
+    simd8float32() {
+      // printf("simd_avx2, AVX2, simd8float32\n");
+      }
 
-    explicit simd8float32(simd256bit x) : simd256bit(x) {}
+    explicit simd8float32(simd256bit x) : simd256bit(x) {
+      // printf("simd_avx2, AVX2, simd8float32\n");
+      }
 
-    explicit simd8float32(__m256 x) : simd256bit(x) {}
+    explicit simd8float32(__m256 x) : simd256bit(x) {
+      // printf("simd_avx2, AVX2, simd8float32\n");
+      }
 
-    explicit simd8float32(float x) : simd256bit(_mm256_set1_ps(x)) {}
+    explicit simd8float32(float x) : simd256bit(_mm256_set1_ps(x)) {
+      // printf("simd_avx2, AVX2, simd8float32\n");
+      }
 
-    explicit simd8float32(const float *x) : simd256bit(_mm256_loadu_ps(x)) {}
+    explicit simd8float32(const float *x) : simd256bit(_mm256_loadu_ps(x)) {
+      // printf("simd_avx2, AVX2, simd8float32\n");
+      }
 
     explicit simd8float32(
         float f0,
@@ -711,7 +768,9 @@ namespace vindex
         float f5,
         float f6,
         float f7)
-        : simd256bit(_mm256_setr_ps(f0, f1, f2, f3, f4, f5, f6, f7)) {}
+        : simd256bit(_mm256_setr_ps(f0, f1, f2, f3, f4, f5, f6, f7)) {
+          // printf("simd_avx2, AVX2, simd8float32\n");
+          }
 
     simd8float32 operator*(simd8float32 other) const
     {

@@ -25,7 +25,7 @@ inline void transpose_8x2(
     // say, we have the following as in input:
     // i0:  00 01 10 11 20 21 30 31
     // i1:  40 41 50 51 60 61 70 71
-
+// printf("transpose-avx2-inl, avx2 , transpose_8x2\n");
     // 00 01 10 11 40 41 50 51
     const __m256 r0 = _mm256_permute2f128_ps(i0, i1, _MM_SHUFFLE(0, 2, 0, 0));
     // 20 21 30 31 60 61 70 71
@@ -52,7 +52,7 @@ inline void transpose_8x4(
     // i1:  20 21 22 23 30 31 32 33
     // i2:  40 41 42 43 50 51 52 53
     // i3:  60 61 62 63 70 71 72 73
-
+// printf("transpose-avx2-inl, avx2 , transpose_8x4\n");
     // 00 01 02 03 40 41 42 43
     const __m256 r0 = _mm256_permute2f128_ps(i0, i2, _MM_SHUFFLE(0, 2, 0, 0));
     // 20 21 22 23 60 61 62 63
@@ -107,7 +107,7 @@ inline void transpose_8x8(
     // i5:  50 51 52 53 54 55 56 57
     // i6:  60 61 62 63 64 65 66 67
     // i7:  70 71 72 73 74 75 76 77
-
+// printf("transpose-avx2-inl, avx2 , transpose_8x8\n");
     // 00 10 01 11 04 14 05 15
     const __m256 r0 = _mm256_unpacklo_ps(i0, i1);
     // 02 12 03 13 06 16 07 17

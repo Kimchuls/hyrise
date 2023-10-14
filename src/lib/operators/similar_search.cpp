@@ -154,7 +154,7 @@ std::shared_ptr<const Table> SimilarSearch::_on_execute() {
     output_chunks.emplace_back(output_chunk);
   }
   // fclose(writes);
-  std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
+  // std::cout << "(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   auto result =
       std::make_shared<Table>(referenced_table->column_definitions(), TableType::Data, std::move(output_chunks));
   // printf("chunk_count %d %d\n",result->chunk_count(),result->column_count());

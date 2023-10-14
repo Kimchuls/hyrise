@@ -40,6 +40,7 @@ struct HeapWithBuckets<CMax<float, int>, NBUCKETS, N> {
             // output indices, each being within [0, n) range
             int32_t* const __restrict bh_ids) {
         // forward a call to bs_addn with 1 beam
+        // printf("approx_topk_avx2-inl, AVX2, HeapWithBuckets::addn\n");
         bs_addn(1, n, distances, k, bh_val, bh_ids);
     }
 
@@ -68,7 +69,7 @@ struct HeapWithBuckets<CMax<float, int>, NBUCKETS, N> {
         //         "Check the function and template arguments values.",
         //         k,
         //         beam_size * NBUCKETS * N);
-
+// printf("approx_topk_avx2-inl, AVX2, HeapWithBuckets::bsaddn\n");
         using C = CMax<float, int>;
 
         // main loop

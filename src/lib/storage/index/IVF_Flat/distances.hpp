@@ -7,7 +7,7 @@
 namespace vindex
 {
 struct IDSelector;
-
+// void total_time_clear();
 /*********************************************************
  * Optimized distance/norm/inner prod computations
  *********************************************************/

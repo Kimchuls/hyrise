@@ -47,6 +47,7 @@ struct HeapWithBucketsForHamming32<
             int* const __restrict bh_val,
             // output indices, each being within [0, n) range
             int64_t* const __restrict bh_ids) {
+                // printf("approx_topk_hamming\n");
         // forward a call to bs_addn with 1 beam
         bs_addn(1, n, hc, binaryVectors, k, bh_val, bh_ids);
     }
@@ -67,6 +68,7 @@ struct HeapWithBucketsForHamming32<
             // output indices, each being within [0, n_per_beam * beam_size)
             // range
             int64_t* const __restrict bh_ids) {
+                // printf("approx_topk_hamming\n");
         //
         using C = CMax<int, int64_t>;
 
@@ -214,6 +216,7 @@ struct HeapWithBucketsForHamming16<
             int* const __restrict bh_val,
             // output indices, each being within [0, n) range
             int64_t* const __restrict bh_ids) {
+                // printf("approx_topk_hamming\n");
         // forward a call to bs_addn with 1 beam
         bs_addn(1, n, hc, binaryVectors, k, bh_val, bh_ids);
     }
@@ -234,6 +237,7 @@ struct HeapWithBucketsForHamming16<
             // output indices, each being within [0, n_per_beam * beam_size)
             // range
             int64_t* const __restrict bh_ids) {
+                // printf("approx_topk_hamming\n");
         //
         using C = CMax<int, int64_t>;
 

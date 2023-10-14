@@ -660,6 +660,12 @@ void Table::create_partial_hash_index(const ColumnID column_id, const std::vecto
 }
 
 template <typename Index>
+void Table::load_float_array_index(const std::string& path,const std::unordered_map<std::string, int> parameters){
+  auto table_indexes_vector = std::make_shared<Index>(path,parameters);
+  _table_indexes_vector.emplace_back(table_indexes_vector);
+}
+
+template <typename Index>
 void Table::create_float_array_index(const ColumnID column_id, const std::vector<ChunkID>& chunk_ids,
                                      const std::unordered_map<std::string, int> parameters) {
   if (chunk_ids.empty()) {
@@ -696,6 +702,11 @@ int Table::drop_index_vector(const int index_id) {
   }
   return 0;
 }
+
+template void Table::load_float_array_index<HNSWIndex>(const std::string& path,
+                                                            const std::unordered_map<std::string, int> parameters);
+template void Table::load_float_array_index<IVFFlatIndex>(const std::string& path,
+                                                            const std::unordered_map<std::string, int> parameters);
 
 template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
                                                          const std::vector<ChunkID>& chunk_ids,

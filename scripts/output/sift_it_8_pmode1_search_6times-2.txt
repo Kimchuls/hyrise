@@ -1,0 +1,69 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_iterative_test_default.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(2 s 56 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+_eval_sql time(2 s 60 ms)
+stamp0: 0.0000, stamp1: 0.0000
+- Creating table indexes
+cut train data(212 ms 215 µs)
+IndexIVF::train
+Level1Quantizer::train_q1
+quantizer
+Clustering::train
+train_encode
+train_encode2
+train_encode3, timestamp1: 0.0008
+timestamp2: 0.0003
+timestamp3: 0.1999
+cut finish train(201 ms 97 µs)
+IndexIVF::add_with_ids
+cut finish add(1 s 292 ms)
+IVFFlatIndex time(1 s 706 ms)
+_eval_sql time(1 s 706 ms)
+stamp0: 0.0000, stamp1: 0.0000
+_eval_sql time(13 s 3 ms)
+stamp0: 344.0593, stamp1: 9557.2991
+_eval_sql time(13 s 39 ms)
+stamp0: 343.8003, stamp1: 9547.5786
+_eval_sql time(12 s 946 ms)
+stamp0: 343.7317, stamp1: 9444.2849
+_eval_sql time(12 s 995 ms)
+stamp0: 344.1340, stamp1: 9476.9763
+_eval_sql time(13 s 323 ms)
+stamp0: 363.0657, stamp1: 9704.3711
+_eval_sql time(12 s 977 ms)
+stamp0: 346.5483, stamp1: 9479.8362
+Executing script file done
+Bye.

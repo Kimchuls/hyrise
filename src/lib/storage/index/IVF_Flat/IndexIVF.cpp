@@ -12,6 +12,7 @@
 
 #include "AuxIndexStructures.hpp"
 #include "CodePacker.hpp"
+#include "distances.hpp"
 #include "hamming.hpp"
 #include "IDSelector.hpp"
 #include "IndexFlat.hpp"
@@ -24,7 +25,15 @@ namespace vindex
 
 using ScopedIds = InvertedLists::ScopedIds;
 using ScopedCodes = InvertedLists::ScopedCodes;
-
+  double time_stamp0,time_stamp1,time_stamp2;
+  void indexivf_time_clear(){
+    time_stamp0=0.0;
+    time_stamp1=0.0;
+    time_stamp2=0.0;
+  }
+  void indexivf_print_time(){
+    printf("stamp0: %.4lf, stamp1: %.4lf, stamp3: %.4lf\n",time_stamp0,time_stamp1,time_stamp2 );
+  }
 /*****************************************
  * Level1Quantizer implementation
  ******************************************/
@@ -51,6 +60,7 @@ void Level1Quantizer::train_q1(
         bool verbose,
         MetricType metric_type) {
     size_t d = quantizer->d;
+    // printf("Level1Quantizer::train_q1\n");
     // printf("checkpoint: train_q1: %d, %ld, %ld, %d\n",quantizer->is_trained ,quantizer->ntotal , nlist,quantizer_trains_alone);
     if (quantizer->is_trained && (quantizer->ntotal == nlist)) {
         if (verbose)
@@ -174,9 +184,16 @@ void IndexIVF::add(int64_t n, const float* x) {
 }
 
 void IndexIVF::add_with_ids(int64_t n, const float* x, const int64_t* xids) {
+    // printf("IndexIVF::add_with_ids\n");
+    // total_time_clear();
+    // double t0=getmillisecs();
     std::unique_ptr<int64_t[]> coarse_idx(new int64_t[n]);
     quantizer->assign(n, x, coarse_idx.get());
+    // double t1=getmillisecs();
+    // printf("IndexIVF::add_with_ids timestamp1: %.4f\n",(t1-t0)/1000);
     add_core(n, x, xids, coarse_idx.get());
+    // double t2=getmillisecs();
+    // printf("IndexIVF::add_with_ids timestamp2: %.4f\n",(t2-t1)/1000);
 }
 
 void IndexIVF::add_sa_codes(int64_t n, const uint8_t* codes, const int64_t* xids) {
@@ -287,6 +304,10 @@ void IndexIVF::search(
         float* distances,
         int64_t* labels,
         const SearchParameters* params_in) const {
+    // total_time_clear();
+    // indexivf_time_clear();
+    // printf("IndexIVF::search\n");
+    // double tt=getmillisecs();
     VINDEX_THROW_IF_NOT(k > 0);
     const IVFSearchParameters* params = nullptr;
     if (params_in) {
@@ -333,6 +354,8 @@ void IndexIVF::search(
         double t2 = getmillisecs();
         ivf_stats->quantization_time += t1 - t0;
         ivf_stats->search_time += t2 - t0;
+        time_stamp0+=t1-t0;
+        time_stamp1+=t2-t1;
     };
 
     if ((parallel_mode & ~PARALLEL_MODE_NO_HEAP_INIT) == 0) {
@@ -374,6 +397,9 @@ void IndexIVF::search(
         // all)
         sub_search_func(n, x, distances, labels, &indexIVF_stats);
     }
+    // printf("IVFFLAT quant time: %lf, search time: %lf\n",indexIVF_stats.quantization_time/1000,indexIVF_stats.search_time/1000);
+    // printf("IndexIVF::preassigned scan_code %.4lf\n",search_pre_time0);
+    // printf("IndexIVF::search %.4f\n",(getmillisecs()-tt)/1000);
 }
 
 void IndexIVF::search_preassigned(
@@ -423,6 +449,7 @@ void IndexIVF::search_preassigned(
     std::string exception_string;
 
     int pmode = this->parallel_mode & ~PARALLEL_MODE_NO_HEAP_INIT;
+    // int pmode=1;
     bool do_heap_init = !(this->parallel_mode & PARALLEL_MODE_NO_HEAP_INIT);
 
     VINDEX_THROW_IF_NOT_MSG(
@@ -568,7 +595,7 @@ void IndexIVF::search_preassigned(
         /****************************************************
          * Actual loops, depending on parallel_mode
          ****************************************************/
-
+// printf("pmode: %ld,%ld\n",pmode,n);
         if (pmode == 0 || pmode == 3) {
 #pragma omp for
             for (int64_t i = 0; i < n; i++) {
@@ -586,6 +613,7 @@ void IndexIVF::search_preassigned(
                 int64_t nscan = 0;
 
                 // loop over probes
+// #pragma omp for
                 for (size_t ik = 0; ik < nprobe; ik++) {
                     nscan += scan_one_list(
                             keys[i * nprobe + ik],
@@ -613,7 +641,7 @@ void IndexIVF::search_preassigned(
             for (size_t i = 0; i < n; i++) {
                 scanner->set_query(x + i * d);
                 init_result(local_dis.data(), local_idx.data());
-
+double tt=getmillisecs();
 #pragma omp for schedule(dynamic)
                 for (int64_t ik = 0; ik < nprobe; ik++) {
                     ndis += scan_one_list(
@@ -626,6 +654,7 @@ void IndexIVF::search_preassigned(
                     // can't do the test on max_codes
                 }
                 // merge thread-local results
+    time_stamp2+=getmillisecs()-tt;
 
                 float* simi = distances + i * k;
                 int64_t* idxi = labels + i * k;
@@ -680,6 +709,7 @@ void IndexIVF::search_preassigned(
         } else {
             VINDEX_THROW_FMT("parallel_mode %d not supported\n", pmode);
         }
+        // search_pre_time0+=scanner->ivfflat_scanner_time0;
     } // parallel section
 
     if (interrupt) {
@@ -1056,6 +1086,7 @@ void IndexIVF::update_vectors(int n, const int64_t* new_ids, const float* x) {
 }
 
 void IndexIVF::train(int64_t n, const float* x) {
+    // printf("IndexIVF::train\n");
     if (verbose) {
         printf("Training level-1 quantizer\n");
     }
@@ -1206,7 +1237,7 @@ size_t InvertedListScanner::scan_codes(
         const int64_t* ids,
         float* simi,
         int64_t* idxi,
-        size_t k) const {
+        size_t k, double* cost_time) const {
     size_t nup = 0;
 
     if (!keep_max) {

@@ -1,0 +1,184 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_batch_test_default.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(1 s 952 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+cut train data(213 ms 52 µs)
+IndexIVF::train
+Level1Quantizer::train_q1
+quantizer
+Clustering::train
+train_encode
+train_encode2
+train_encode3, timestamp1: 0.0010
+timestamp2: 0.0003
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.1202/ 0.1199 s = 0.1073 + 0.0125
+IndexFlat::search: 0.1203
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.1507/ 0.1500 s = 0.1256 + 0.0244
+IndexFlat::search: 0.0305
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.1812/ 0.1802 s = 0.1438 + 0.0363
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.2190/ 0.2177 s = 0.1695 + 0.0482
+IndexFlat::search: 0.0378
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.2493/ 0.2478 s = 0.1877 + 0.0601
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.2797/ 0.2778 s = 0.2059 + 0.0719
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.3101/ 0.3080 s = 0.2242 + 0.0838
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.3405/ 0.3381 s = 0.2424 + 0.0957
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.3709/ 0.3682 s = 0.2606 + 0.1076
+IndexFlat::search: 0.0304
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 0.4012/ 0.3983 s = 0.2788 + 0.1195
+IndexFlat::search: 0.0304
+timestamp3: 0.4063
+cut finish train(407 ms 635 µs)
+IndexIVF::add_with_ids
+IndexFlat::search
+checkpoint2
+distances, null , exhaustive_L2sqr_blas
+exhaustive_L2sqr_blas_default_impl time: 2.4274/ 2.3809 s = 1.4519 + 0.9290
+IndexFlat::search: 2.4275
+IndexIVF::add_with_ids timestamp1: 2.4279
+IndexIVFFlat::add_core timestamp1: 0.2629
+IndexIVF::add_with_ids timestamp2: 0.2629
+cut finish add(2 s 691 ms)
+IVFFlatIndex time(3 s 312 ms)
+_eval_sql time(3 s 312 ms)
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0536/ 0.0491 s = 0.0146 + 0.0345
+IndexFlat::search: 0.0536
+IndexIVF::preassigned scan_code 20.0007
+IndexIVF::search 29.0144
+29 s 14 ms
+(83 ms 38 µs)
+_eval_sql time(29 s 168 ms)
+Intersection R@100 = 0.9099
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0549/ 0.0504 s = 0.0159 + 0.0345
+IndexFlat::search: 0.0550
+IndexIVF::preassigned scan_code 20.0251
+IndexIVF::search 29.0281
+29 s 28 ms
+(82 ms 594 µs)
+_eval_sql time(29 s 177 ms)
+Intersection R@100 = 0.9099
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0558/ 0.0513 s = 0.0168 + 0.0345
+IndexFlat::search: 0.0558
+IndexIVF::preassigned scan_code 19.9421
+IndexIVF::search 28.9729
+28 s 973 ms
+(88 ms 588 µs)
+_eval_sql time(29 s 130 ms)
+Intersection R@100 = 0.9099
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0548/ 0.0503 s = 0.0157 + 0.0346
+IndexFlat::search: 0.0548
+IndexIVF::preassigned scan_code 20.0501
+IndexIVF::search 29.0106
+29 s 11 ms
+(89 ms 529 µs)
+_eval_sql time(29 s 166 ms)
+Intersection R@100 = 0.9099
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0547/ 0.0503 s = 0.0160 + 0.0343
+IndexFlat::search: 0.0547
+IndexIVF::preassigned scan_code 19.9428
+IndexIVF::search 28.9915
+28 s 992 ms
+(89 ms 194 µs)
+_eval_sql time(29 s 148 ms)
+Intersection R@100 = 0.9099
+IndexIVF::search
+IndexFlat::search
+checkpoint3
+exhaustive_L2sqr_blas1
+exhaustive_L2sqr_blas_default_impl time: 0.0566/ 0.0522 s = 0.0179 + 0.0344
+IndexFlat::search: 0.0567
+IndexIVF::preassigned scan_code 19.9826
+IndexIVF::search 29.0292
+29 s 29 ms
+(90 ms 321 µs)
+_eval_sql time(29 s 185 ms)
+Intersection R@100 = 0.9099
+Executing script file done
+Bye.

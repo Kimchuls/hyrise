@@ -130,6 +130,7 @@ void ColumnVsValueTableScanImpl::_scan_dictionary_segment(
       // Make the compiler try harder to vectorize the trivial loop below.
       // This empty block is used to convince clang-format to keep the pragma indented.
       // NOLINTNEXTLINE
+      // printf("simd column vs value table scan impl\n");
       {}  // clang-format off
       #pragma omp simd
       // clang-format on

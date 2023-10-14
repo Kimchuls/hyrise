@@ -1,0 +1,91 @@
+Executing script file: /ssd_root/dataset/sift1m/sift_1m_ivfflat_batch_test_default.sh
+Loading /ssd_root/dataset/sift_base_id.bin into table "sift_base"
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+(2 s 160 ms)
+Encoding "sift_base" using Unencoded
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+Not fit for this function "generate_chunk_pruning_statistics" due to the std::unordered_set::hash
+- Creating table indexes
+cut train data(281 ms 58 µs)
+IndexIVF::train
+Level1Quantizer::train_q1
+quantizer
+train_encode
+train_encode2
+train_encode3
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+checkpoint2
+cut finish train(2 s 448 ms)
+checkpoint2
+cut finish add(24 s 752 ms)
+IVFFlatIndex time(27 s 481 ms)
+_eval_sql time(27 s 482 ms)
+checkpoint3
+13 s 913 ms
+(84 ms 436 µs)
+_eval_sql time(14 s 67 ms)
+Intersection R@100 = 0.9144
+checkpoint3
+13 s 889 ms
+(81 ms 249 µs)
+_eval_sql time(14 s 46 ms)
+Intersection R@100 = 0.9144
+checkpoint3
+13 s 892 ms
+(81 ms 270 µs)
+_eval_sql time(14 s 38 ms)
+Intersection R@100 = 0.9144
+checkpoint3
+13 s 900 ms
+(81 ms 89 µs)
+_eval_sql time(14 s 53 ms)
+Intersection R@100 = 0.9144
+checkpoint3
+13 s 897 ms
+(81 ms 415 µs)
+_eval_sql time(14 s 51 ms)
+Intersection R@100 = 0.9144
+checkpoint3
+13 s 903 ms
+(81 ms 85 µs)
+_eval_sql time(14 s 56 ms)
+Intersection R@100 = 0.9144
+Executing script file done
+Bye.

@@ -28,6 +28,7 @@ class IVFFlatIndex : public AbstractVectorIndex {
  public:
   IVFFlatIndex() = delete;
   IVFFlatIndex(const IVFFlatIndex&) = delete;
+  IVFFlatIndex(const std::string& path,const std::unordered_map<std::string, int> parameters);
   IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
             std::unordered_map<std::string, int> parameters);
   void train_and_insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);

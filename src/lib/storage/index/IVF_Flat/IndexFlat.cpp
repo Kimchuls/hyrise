@@ -21,9 +21,10 @@ void IndexFlat::search(
         float* distances,
         int64_t* labels,
         const SearchParameters* params) const {
+            // double t0=getmillisecs();
+            // printf("IndexFlat::search\n");
     IDSelector* sel = params ? params->sel : nullptr;
     VINDEX_THROW_IF_NOT(k > 0);
-
     // we see the distances and labels as heaps
     if (metric_type == METRIC_INNER_PRODUCT) {
         float_minheap_array_t res = {size_t(n), size_t(k), labels, distances};
@@ -41,6 +42,7 @@ void IndexFlat::search(
         knn_extra_metrics(
                 x, get_xb(), d, n, ntotal, metric_type, metric_arg, &res);
     }
+    // printf("IndexFlat::search: %.4f\n",(getmillisecs()-t0)/1000);
 }
 
 void IndexFlat::range_search(

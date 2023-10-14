@@ -301,6 +301,7 @@ VINDEX_PRAGMA_IMPRECISE_FUNCTION_END
 
 // reads 0 <= d < 4 floats as __m128
 static inline __m128 masked_read(int d, const float* x) {
+    // printf("distance_simd, SSE3, masked_read\n");
     assert(0 <= d && d < 4);
     ALIGNED(16) float buf[4] = {0, 0, 0, 0};
     switch (d) {
@@ -321,6 +322,7 @@ namespace {
 
 /// helper function
 inline float horizontal_sum(const __m128 v) {
+    // printf("distance_simd, SSE3, horizontal_sum\n");
     // say, v is [x0, x1, x2, x3]
 
     // v0 is [x2, x3, ..., ...]
@@ -338,6 +340,7 @@ inline float horizontal_sum(const __m128 v) {
 #ifdef __AVX2__
 /// helper function for AVX2
 inline float horizontal_sum(const __m256 v) {
+    // printf("distance_simd, SSE3||avx2, horizontal_sum\n");
     // add high and low parts
     const __m128 v0 =
             _mm_add_ps(_mm256_castps256_ps128(v), _mm256_extractf128_ps(v, 1));
@@ -351,17 +354,20 @@ inline float horizontal_sum(const __m256 v) {
 /// functions below
 struct ElementOpL2 {
     static float op(float x, float y) {
+        // printf("distance_simd, SSE3, op\n");
         float tmp = x - y;
         return tmp * tmp;
     }
 
     static __m128 op(__m128 x, __m128 y) {
+        // printf("distance_simd, SSE3, op\n");
         __m128 tmp = _mm_sub_ps(x, y);
         return _mm_mul_ps(tmp, tmp);
     }
 
 #ifdef __AVX2__
     static __m256 op(__m256 x, __m256 y) {
+        // printf("distance_simd, SSE3 && AVX2, op\n");
         __m256 tmp = _mm256_sub_ps(x, y);
         return _mm256_mul_ps(tmp, tmp);
     }
@@ -372,15 +378,18 @@ struct ElementOpL2 {
 /// to compute inner products
 struct ElementOpIP {
     static float op(float x, float y) {
+        // printf("distance_simd, SSE3, op\n");
         return x * y;
     }
 
     static __m128 op(__m128 x, __m128 y) {
+        // printf("distance_simd, SSE3, op\n");
         return _mm_mul_ps(x, y);
     }
 
 #ifdef __AVX2__
     static __m256 op(__m256 x, __m256 y) {
+        // printf("distance_simd, SSE3&&avx2, op\n");
         return _mm256_mul_ps(x, y);
     }
 #endif
@@ -388,6 +397,7 @@ struct ElementOpIP {
 
 template <class ElementOp>
 void fvec_op_ny_D1(float* dis, const float* x, const float* y, size_t ny) {
+    // printf("distance_simd, SSE3, fvec_op_ny_D1\n");
     float x0s = x[0];
     __m128 x0 = _mm_set_ps(x0s, x0s, x0s, x0s);
 
@@ -410,6 +420,7 @@ void fvec_op_ny_D1(float* dis, const float* x, const float* y, size_t ny) {
 
 template <class ElementOp>
 void fvec_op_ny_D2(float* dis, const float* x, const float* y, size_t ny) {
+    // printf("distance_simd, SSE3, fvec_op_ny_D2\n");
     __m128 x0 = _mm_set_ps(x[1], x[0], x[1], x[0]);
 
     size_t i;
@@ -434,6 +445,7 @@ void fvec_op_ny_D2<ElementOpIP>(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 && avx2, fvec_op_ny_D2\n");
     const size_t ny8 = ny / 8;
     size_t i = 0;
 
@@ -491,6 +503,7 @@ void fvec_op_ny_D2<ElementOpL2>(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 && avx2, fvec_op_ny_D2\n");
     const size_t ny8 = ny / 8;
     size_t i = 0;
 
@@ -553,6 +566,7 @@ void fvec_op_ny_D2<ElementOpL2>(
 
 template <class ElementOp>
 void fvec_op_ny_D4(float* dis, const float* x, const float* y, size_t ny) {
+    // printf("distance_simd, SSE3 , fvec_op_ny_D4\n");
     __m128 x0 = _mm_loadu_ps(x);
 
     for (size_t i = 0; i < ny; i++) {
@@ -570,6 +584,7 @@ void fvec_op_ny_D4<ElementOpIP>(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 && avx2, fvec_op_ny_D4\n");
     const size_t ny8 = ny / 8;
     size_t i = 0;
 
@@ -631,6 +646,7 @@ void fvec_op_ny_D4<ElementOpL2>(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 && avx2, fvec_op_ny_D4\n");
     const size_t ny8 = ny / 8;
     size_t i = 0;
 
@@ -696,6 +712,7 @@ void fvec_op_ny_D4<ElementOpL2>(
 
 template <class ElementOp>
 void fvec_op_ny_D8(float* dis, const float* x, const float* y, size_t ny) {
+    // printf("distance_simd, SSE3 , fvec_op_ny_D8\n");
     __m128 x0 = _mm_loadu_ps(x);
     __m128 x1 = _mm_loadu_ps(x + 4);
 
@@ -718,6 +735,7 @@ void fvec_op_ny_D8<ElementOpIP>(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 && avx2, fvec_op_ny_D8\n");
     const size_t ny8 = ny / 8;
     size_t i = 0;
 
@@ -801,7 +819,7 @@ void fvec_op_ny_D8<ElementOpL2>(
         size_t ny) {
     const size_t ny8 = ny / 8;
     size_t i = 0;
-
+// printf("distance_simd, SSE3 && avx2, fvec_op_ny_D8\n");
     if (ny8 > 0) {
         // process 8 D8-vectors per loop.
         const __m256 m0 = _mm256_set1_ps(x[0]);
@@ -888,6 +906,7 @@ void fvec_op_ny_D8<ElementOpL2>(
 
 template <class ElementOp>
 void fvec_op_ny_D12(float* dis, const float* x, const float* y, size_t ny) {
+    // printf("distance_simd, SSE3 , fvec_op_ny_D12\n");
     __m128 x0 = _mm_loadu_ps(x);
     __m128 x1 = _mm_loadu_ps(x + 4);
     __m128 x2 = _mm_loadu_ps(x + 8);
@@ -912,7 +931,7 @@ void fvec_L2sqr_ny(
         size_t d,
         size_t ny) {
     // optimized for a few special cases
-
+// printf("distance_simd, SSE3 , fvec_L2sqr_ny\n");
 #define DISPATCH(dval)                                  \
     case dval:                                          \
         fvec_op_ny_D##dval<ElementOpL2>(dis, x, y, ny); \
@@ -937,6 +956,7 @@ void fvec_inner_products_ny(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, SSE3 , fvec_inner_products_ny\n");
 #define DISPATCH(dval)                                  \
     case dval:                                          \
         fvec_op_ny_D##dval<ElementOpIP>(dis, x, y, ny); \
@@ -964,6 +984,7 @@ void fvec_L2sqr_ny_y_transposed_D(
         const float* y_sqlen,
         const size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_y_transposed_D\n");
     // current index being processed
     size_t i = 0;
 
@@ -1045,6 +1066,7 @@ void fvec_L2sqr_ny_transposed(
     // optimized for a few special cases
 
 #ifdef __AVX2__
+// printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_transposed\n");
 #define DISPATCH(dval)                             \
     case dval:                                     \
         return fvec_L2sqr_ny_y_transposed_D<dval>( \
@@ -1062,6 +1084,7 @@ void fvec_L2sqr_ny_transposed(
 #undef DISPATCH
 #else
     // non-AVX2 case
+    // printf("distance_simd, SSE3 , fvec_L2sqr_ny_transposed\n");
     return fvec_L2sqr_ny_y_transposed_ref(dis, x, y, y_sqlen, d, d_offset, ny);
 #endif
 }
@@ -1073,6 +1096,7 @@ size_t fvec_L2sqr_ny_nearest_D2(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_nearest_D2\n");
     // this implementation does not use distances_tmp_buffer.
 
     // current index being processed
@@ -1183,6 +1207,7 @@ size_t fvec_L2sqr_ny_nearest_D4(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_nearest_D4\n");
     // this implementation does not use distances_tmp_buffer.
 
     // current index being processed
@@ -1297,6 +1322,7 @@ size_t fvec_L2sqr_ny_nearest_D8(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_nearest_D8\n");
     // this implementation does not use distances_tmp_buffer.
 
     // current index being processed
@@ -1436,6 +1462,7 @@ size_t fvec_L2sqr_ny_nearest_D2(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 , fvec_L2sqr_ny_nearest_D2\n");
     return fvec_L2sqr_ny_nearest_ref(distances_tmp_buffer, x, y, 2, ny);
 }
 
@@ -1444,6 +1471,7 @@ size_t fvec_L2sqr_ny_nearest_D4(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 , fvec_L2sqr_ny_nearest_D4\n");
     return fvec_L2sqr_ny_nearest_ref(distances_tmp_buffer, x, y, 4, ny);
 }
 
@@ -1452,6 +1480,7 @@ size_t fvec_L2sqr_ny_nearest_D8(
         const float* x,
         const float* y,
         size_t ny) {
+            // printf("distance_simd, SSE3 , fvec_L2sqr_ny_nearest_D8\n");
     return fvec_L2sqr_ny_nearest_ref(distances_tmp_buffer, x, y, 8, ny);
 }
 #endif
@@ -1463,6 +1492,7 @@ size_t fvec_L2sqr_ny_nearest(
         size_t d,
         size_t ny) {
     // optimized for a few special cases
+    // printf("distance_simd, SSE3 , fvec_L2sqr_ny_nearest\n");
 #define DISPATCH(dval) \
     case dval:         \
         return fvec_L2sqr_ny_nearest_D##dval(distances_tmp_buffer, x, y, ny);
@@ -1486,6 +1516,7 @@ size_t fvec_L2sqr_ny_nearest_y_transposed_D(
         const float* y_sqlen,
         const size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_nearest_y_transposed_D\n");
     // this implementation does not use distances_tmp_buffer.
 
     // current index being processed
@@ -1605,6 +1636,7 @@ size_t fvec_L2sqr_ny_nearest_y_transposed(
         size_t ny) {
     // optimized for a few special cases
 #ifdef __AVX2__
+// printf("distance_simd, SSE3&&avx2 , fvec_L2sqr_ny_nearest_y_transposed\n");
 #define DISPATCH(dval)                                     \
     case dval:                                             \
         return fvec_L2sqr_ny_nearest_y_transposed_D<dval>( \
@@ -1621,6 +1653,7 @@ size_t fvec_L2sqr_ny_nearest_y_transposed(
     }
 #undef DISPATCH
 #else
+// printf("distance_simd, SSE3 , fvec_L2sqr_ny_nearest_y_transposed\n");
     // non-AVX2 case
     return fvec_L2sqr_ny_nearest_y_transposed_ref(
             distances_tmp_buffer, x, y, y_sqlen, d, d_offset, ny);
@@ -1633,6 +1666,7 @@ size_t fvec_L2sqr_ny_nearest_y_transposed(
 
 // reads 0 <= d < 8 floats as __m256
 static inline __m256 masked_read_8(int d, const float* x) {
+    // printf("distance_simd, USE_AVX , masked_read_8\n");
     assert(0 <= d && d < 8);
     if (d < 4) {
         __m256 res = _mm256_setzero_ps();
@@ -1647,6 +1681,7 @@ static inline __m256 masked_read_8(int d, const float* x) {
 }
 
 float fvec_L1(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, USE_AVX , fvec_L1\n");
     __m256 msum1 = _mm256_setzero_ps();
     __m256 signmask = _mm256_castsi256_ps(_mm256_set1_epi32(0x7fffffffUL));
 
@@ -1687,6 +1722,7 @@ float fvec_L1(const float* x, const float* y, size_t d) {
 }
 
 float fvec_Linf(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, USE_AVX , fvec_Linf\n");
     __m256 msum1 = _mm256_setzero_ps();
     __m256 signmask = _mm256_castsi256_ps(_mm256_set1_epi32(0x7fffffffUL));
 
@@ -1729,10 +1765,12 @@ float fvec_Linf(const float* x, const float* y, size_t d) {
 #elif defined(__SSE3__) // But not AVX
 
 float fvec_L1(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, sse3 , fvec_L1\n");
     return fvec_L1_ref(x, y, d);
 }
 
 float fvec_Linf(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, sse3 , fvec_Linf\n");
     return fvec_Linf_ref(x, y, d);
 }
 
@@ -1745,6 +1783,7 @@ void fvec_L2sqr_ny(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, aarch64 , fvec_L2sqr_ny\n");
     fvec_L2sqr_ny_ref(dis, x, y, d, ny);
 }
 
@@ -1756,6 +1795,7 @@ void fvec_L2sqr_ny_transposed(
         size_t d,
         size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, aarch64 , fvec_L2sqr_ny_transposed\n");
     return fvec_L2sqr_ny_y_transposed_ref(dis, x, y, y_sqlen, d, d_offset, ny);
 }
 
@@ -1765,6 +1805,7 @@ size_t fvec_L2sqr_ny_nearest(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, aarch64 , fvec_L2sqr_ny_nearest\n");
     return fvec_L2sqr_ny_nearest_ref(distances_tmp_buffer, x, y, d, ny);
 }
 
@@ -1776,15 +1817,18 @@ size_t fvec_L2sqr_ny_nearest_y_transposed(
         size_t d,
         size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, aarch64 , fvec_L2sqr_ny_nearest_y_transposed\n");
     return fvec_L2sqr_ny_nearest_y_transposed_ref(
             distances_tmp_buffer, x, y, y_sqlen, d, d_offset, ny);
 }
 
 float fvec_L1(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, aarch64 , fvec_L1\n");
     return fvec_L1_ref(x, y, d);
 }
 
 float fvec_Linf(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, aarch64 , fvec_Linf\n");
     return fvec_Linf_ref(x, y, d);
 }
 
@@ -1794,6 +1838,7 @@ void fvec_inner_products_ny(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, aarch64 , fvec_inner_products_ny\n");
     fvec_inner_products_ny_ref(dis, x, y, d, ny);
 }
 
@@ -1801,10 +1846,12 @@ void fvec_inner_products_ny(
 // scalar implementation
 
 float fvec_L1(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, NULL , fvec_L1\n");
     return fvec_L1_ref(x, y, d);
 }
 
 float fvec_Linf(const float* x, const float* y, size_t d) {
+    // printf("distance_simd, NULL , fvec_Linf\n");
     return fvec_Linf_ref(x, y, d);
 }
 
@@ -1814,6 +1861,7 @@ void fvec_L2sqr_ny(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, NULL , fvec_L2sqr_ny\n");
     fvec_L2sqr_ny_ref(dis, x, y, d, ny);
 }
 
@@ -1825,6 +1873,7 @@ void fvec_L2sqr_ny_transposed(
         size_t d,
         size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, NULL , fvec_L2sqr_ny_transposed\n");
     return fvec_L2sqr_ny_y_transposed_ref(dis, x, y, y_sqlen, d, d_offset, ny);
 }
 
@@ -1834,6 +1883,7 @@ size_t fvec_L2sqr_ny_nearest(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, NULL , fvec_L2sqr_ny_nearest\n");
     return fvec_L2sqr_ny_nearest_ref(distances_tmp_buffer, x, y, d, ny);
 }
 
@@ -1845,6 +1895,7 @@ size_t fvec_L2sqr_ny_nearest_y_transposed(
         size_t d,
         size_t d_offset,
         size_t ny) {
+            // printf("distance_simd, NULL , fvec_L2sqr_ny_nearest_y_transposed\n");
     return fvec_L2sqr_ny_nearest_y_transposed_ref(
             distances_tmp_buffer, x, y, y_sqlen, d, d_offset, ny);
 }
@@ -1855,6 +1906,7 @@ void fvec_inner_products_ny(
         const float* y,
         size_t d,
         size_t ny) {
+            // printf("distance_simd, NULL , fvec_inner_products_ny\n");
     fvec_inner_products_ny_ref(dis, x, y, d, ny);
 }
 
@@ -1882,6 +1934,7 @@ static inline void fvec_madd_avx2(
         const float* __restrict b,
         float* __restrict c) {
     //
+    // printf("distance_simd, avx2 , fvec_madd_avx2\n");
     const size_t n8 = n / 8;
     const size_t n_for_masking = n % 8;
 
@@ -1937,6 +1990,7 @@ static inline void fvec_madd_sse(
         float bf,
         const float* b,
         float* c) {
+            // printf("distance_simd, sse3 , fvec_madd_sse\n");
     n >>= 2;
     __m128 bf4 = _mm_set_ps1(bf);
     __m128* a4 = (__m128*)a;
@@ -1953,8 +2007,10 @@ static inline void fvec_madd_sse(
 
 void fvec_madd(size_t n, const float* a, float bf, const float* b, float* c) {
 #ifdef __AVX2__
+// printf("distance_simd, sse3&&avx2 , fvec_madd\n");
     fvec_madd_avx2(n, a, bf, b, c);
 #else
+// printf("distance_simd, sse3 , fvec_madd\n");
     if ((n & 3) == 0 && ((((long)a) | ((long)b) | ((long)c)) & 15) == 0)
         fvec_madd_sse(n, a, bf, b, c);
     else
@@ -1965,6 +2021,7 @@ void fvec_madd(size_t n, const float* a, float bf, const float* b, float* c) {
 #elif defined(__aarch64__)
 
 void fvec_madd(size_t n, const float* a, float bf, const float* b, float* c) {
+    // printf("distance_simd, aarch64 , fvec_madd\n");
     const size_t n_simd = n - (n & 3);
     const float32x4_t bfv = vdupq_n_f32(bf);
     size_t i;
@@ -1981,6 +2038,7 @@ void fvec_madd(size_t n, const float* a, float bf, const float* b, float* c) {
 #else
 
 void fvec_madd(size_t n, const float* a, float bf, const float* b, float* c) {
+    // printf("distance_simd, null , fvec_madd\n");
     fvec_madd_ref(n, a, bf, b, c);
 }
 
@@ -2013,6 +2071,7 @@ static inline int fvec_madd_and_argmin_sse(
         float bf,
         const float* b,
         float* c) {
+            // printf("distance_simd, sse3 , fvec_madd_and_argmin_sse\n");
     n >>= 2;
     __m128 bf4 = _mm_set_ps1(bf);
     __m128 vmin4 = _mm_set_ps1(1e20);
@@ -2065,6 +2124,7 @@ int fvec_madd_and_argmin(
         float bf,
         const float* b,
         float* c) {
+            // printf("distance_simd, sse3 , fvec_madd_and_argmin\n");
     if ((n & 3) == 0 && ((((long)a) | ((long)b) | ((long)c)) & 15) == 0)
         return fvec_madd_and_argmin_sse(n, a, bf, b, c);
     else
@@ -2079,6 +2139,7 @@ int fvec_madd_and_argmin(
         float bf,
         const float* b,
         float* c) {
+            // printf("distance_simd, aarch64 , fvec_madd_and_argmin\n");
     float32x4_t vminv = vdupq_n_f32(1e20);
     uint32x4_t iminv = vdupq_n_u32(static_cast<uint32_t>(-1));
     size_t i;
@@ -2130,6 +2191,7 @@ int fvec_madd_and_argmin(
         float bf,
         const float* b,
         float* c) {
+            // printf("distance_simd, null , fvec_madd_and_argmin\n");
     return fvec_madd_and_argmin_ref(n, a, bf, b, c);
 }
 

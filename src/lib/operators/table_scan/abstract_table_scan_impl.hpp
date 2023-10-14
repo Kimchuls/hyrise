@@ -120,6 +120,7 @@ class AbstractTableScanImpl {
 #ifdef __AVX512VL__
       // __mmask8 would be sufficient, but either GCC or the CPU likes a 16-bit mask better, which is good for the
       // performance.
+      // printf("abstract table scan inmp #ifdef __AVX512VL__\n");
       __mmask16 mask = 0;
 #else
       // Using uint16_t here for consistency with the above.
@@ -132,6 +133,7 @@ class AbstractTableScanImpl {
       // This empty block is used to convince clang-format to keep the pragma indented
       // NOLINTNEXTLINE
       {}  // clang-format off
+      // printf("simd abstract table scan impl\n");
       #pragma omp simd reduction(|:mask) safelen(BLOCK_SIZE)
       // clang-format on
       for (auto index = size_t{0}; index < BLOCK_SIZE; ++index) {
@@ -203,7 +205,7 @@ class AbstractTableScanImpl {
       break;
 #else
       // Fast path for AVX512VL systems
-
+// printf("abstract table scan inmp #ifdef __AVX512VL__\n");
       // Compress `offsets`, i.e., move all values where the mask is set to 1 to the front
       auto offsets_simd =
           _mm256_maskz_compress_epi32(static_cast<unsigned char>(mask), reinterpret_cast<__m256i&>(offsets));

@@ -1,6 +1,0 @@
-Executing script file: workload-bigann_10m-hnsw.sh
-Loading bigann_10m.bin into table "bigann_10m"
-Error: Exception thrown while importing table:
-  src/lib/operators/import.cpp:34 Import: Could not find file bigann_10m.bin
-Executing script file done
-Bye.

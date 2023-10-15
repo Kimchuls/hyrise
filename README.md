@@ -63,11 +63,13 @@ LIMIT 100;
 
 # Experiment results
 
-![avanda](./hyrise_search_generalized.png){:height=70%,width=70%}
 
-![avanda](./hyrise_build_general.png){:height=70%,width=70%}
+<img src="./hyrise_search_generalized.png" width = 70% height = 70% alt="图片名称" align=center />
 
-![avanda](./hyrise_size_general.png){:height=70%,width=70%}
+<img src="./hyrise_build_general.png" width = 70% height = 70% alt="图片名称" align=center />
+
+<img src="./hyrise_size_general.png" width = 70% height = 70% alt="图片名称" align=center />
+
 
 # Conclusion
 

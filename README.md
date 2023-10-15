@@ -55,11 +55,20 @@ SET SIFT_BASE.hnsw.efs=200;
 
 We can use the SQL sentense below to search similar vectors according to a batch of queries.
 ```sql
-SELECT id FROM SIFT_BASE
+SELECT id FROM SIFT_BASE ORDER BY dat <$> 
+    '[1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.1]',
+    '[2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 1.1, 0.1]'
+LIMIT 100;
 `````
 
 # Experiment results
 
-![avanda](./hyrise_build_general.pdf)
+![avanda](./hyrise_search_generalized.png){:height=70%,width=70%}
+
+![avanda](./hyrise_build_general.png){:height=70%,width=70%}
+
+![avanda](./hyrise_size_general.png){:height=70%,width=70%}
 
 # Conclusion
+
+In this paper, we present HyriseVector, a generalized vector database that matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by one to two orders of magnitude. In the future, we aim to apply HyriseVector\'s design optimizations into PostgreSQL, and we expect a significant performance improvement.

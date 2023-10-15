@@ -24,7 +24,7 @@ scripts/vector_test/*.exe
 # Visualization results
 *.dot
 *.svg
-*.png
+# *.png
 
 compile_times.txt
 exported_table_statistics.json

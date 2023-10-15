@@ -63,11 +63,11 @@ LIMIT 100;
 
 # Experiment results
 
-![avanda](./hyrise_search_generalized.png)
+![avanda](./hyrise_search_generalized.png){:height=70%,width=70%}
 
-![avanda](./hyrise_build_general.png)
+![avanda](./hyrise_build_general.png){:height=70%,width=70%}
 
-![avanda](./hyrise_size_general.png)
+![avanda](./hyrise_size_general.png){:height=70%,width=70%}
 
 # Conclusion
 

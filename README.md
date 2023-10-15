@@ -60,5 +60,6 @@ SELECT id FROM SIFT_BASE
 
 # Experiment results
 
-![avanda](/home/jin467/github_download/hyrise/hyrise_build_general.pdf)
+![avanda](./hyrise_build_general.pdf)
+
 # Conclusion

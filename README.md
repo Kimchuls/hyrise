@@ -31,6 +31,41 @@ cmake ..
 make hyriseConsole -j [#Threads]
 ```
 
+# Structure
+We illustrate the important parts in our HyriseVector implementation.
+
+```txt
+.
+├── ...
+├── cmake/
+├── cmake-build-debug/  # build directory
+├── CMakeLists.txt
+├── install_dependencies.sh # install dependencies
+├── README.md
+├── requirements.txt
+└── src/
+    ├── ...
+    ├── benchmark/
+    ├── benchmarklib/ # Hyrise testing benchmark Implementation
+    ├── bin/ # Hyrise Console, Client and Server 
+    ├── CMakeLists.txt
+    └── lib/
+        ├── ...
+        ├── logical_query_plan/ # Logical Query Plan
+        ├── operators/ # Physical Query Plan
+        ├── sql/ # SQL Translator
+        └── storage/ # Storage Manager
+            ├── ...
+            ├── index/ # Index Manager
+            │   ├── ...
+            │   ├── abstract_vector_index.cpp
+            │   ├── abstract_vector_index.hpp
+            │   ├── hnsw/ # HNSW Index Implementation
+            │   └── IVF_Flat/ # IVF_FLAT Index Implementation
+            ├── table.cpp
+            └── table.hpp # Table 
+```
+
 # Getting started
 
 We can use the SQL sentense below to **create a table with vector variable**.

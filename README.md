@@ -176,6 +176,7 @@ select id from sift_base order by data <!>
       23, 77, 95, 9, 3, 14, 60, 40, 4, 30, 23, 32, 10, 3, 19, 13]' 
 limit 100;
 ```
+There will be a file in `./hyrise/cmake-build-debug/sift_base-output.txt` containing all the ids for similar vectors storing in table **SIFT_BASE**. User can check the results with ground truth (stored in the downloaded file).
 
 # Experiment results
 

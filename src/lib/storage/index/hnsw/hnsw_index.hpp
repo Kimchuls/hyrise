@@ -65,7 +65,7 @@ class HNSWIndex : public AbstractVectorIndex {
 
  protected:
   mutable std::shared_mutex _data_access_mutex;
-  //TODO-kcj: this library only support elements less than 2^31
+  //TODO: this library only support elements less than 2^31
  private:
   ColumnID _column_id;
   int _dim;

@@ -2,7 +2,7 @@
 
 #include "expression_result.hpp"
 
-//TODO-kcj: logic fix is needed
+//TODO: logic fix is needed
 /**
  * ExpressionEvaluator internal functor objects.
  */

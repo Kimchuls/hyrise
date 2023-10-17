@@ -36,6 +36,7 @@ We illustrate the important parts in our HyriseVector implementation.
 
 <img src="./ppt_create_index_node_structure2.png" width = 70% height = 70% alt="search" align=center />
 
+#Code Structure
 
 ```txt
 .
@@ -188,4 +189,4 @@ There will be a file in `./hyrise/cmake-build-debug/sift_base-output.txt` contai
 
 # Conclusion
 
-In this paper, we present HyriseVector, a generalized vector database that matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by one to two orders of magnitude. In the future, we aim to apply HyriseVector\'s design optimizations into PostgreSQL, and we expect a significant performance improvement.
+In this paper, we present HyriseVector, a generalized vector database that matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by one to two orders of magnitude.

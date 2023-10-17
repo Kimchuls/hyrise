@@ -36,7 +36,7 @@ We illustrate the important parts in our HyriseVector implementation.
 
 <img src="./ppt_create_index_node_structure2.png" width = 70% height = 70% alt="search" align=center />
 
-#Code Structure
+# Code Structure
 
 ```txt
 .

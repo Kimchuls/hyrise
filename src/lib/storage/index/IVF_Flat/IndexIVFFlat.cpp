@@ -165,7 +165,7 @@ namespace vindex
                 const int64_t *ids,
                 float *simi,
                 int64_t *idxi,
-                size_t k, double* cost_time=nullptr) const override
+                size_t k) const override
             {
                 const float *list_vecs = (const float *)codes;
                 size_t nup = 0;
@@ -180,8 +180,6 @@ namespace vindex
                     float dis = metric == METRIC_INNER_PRODUCT
                                     ? fvec_inner_product(xi, yj, d)
                                     : fvec_L2sqr(xi, yj, d);
-                    // ivfflat_scanner_time0+=
-                    // *cost_time+=(getmillisecs()-t0)/1000;
                     if (C::cmp(simi[0], dis))
                     {
                         int64_t id = store_pairs ? lo_build(list_no, j) : ids[j];

@@ -56,6 +56,13 @@ std::shared_ptr<const Table> SetVectorIndex::_on_execute() {
         } else {
           Assert(false, "wrong parameter for index::ivfflat\n");
         }
+      } else if (index_name == "ivfpq") {
+        if (parameter_name == "nprobe") {
+          float_array_index->change_param(value);
+          return nullptr;
+        } else {
+          Assert(false, "wrong parameter for index::ivfpq\n");
+        }
       } else if (index_name == "hnsw") {
         if (parameter_name == "efs") {
           float_array_index->change_param(value);

@@ -18,6 +18,8 @@
 #include "IndexFlat.hpp"
 #include "IndexIVF.hpp"
 #include "IndexIVFFlat.hpp"
+#include "IndexIVFPQ.hpp"
+#include "IndexPQ.hpp"
 
 
 namespace vindex {
@@ -168,6 +170,59 @@ static ArrayInvertedLists* set_array_invlist(
     return ail;
 }
 
+static void read_ProductQuantizer(ProductQuantizer* pq, IOReader* f) {
+    READ1(pq->d);
+    READ1(pq->M);
+    READ1(pq->nbits);
+    pq->set_derived_values();
+    READVECTOR(pq->centroids);
+}
+
+ProductQuantizer* read_ProductQuantizer(IOReader* reader) {
+    ProductQuantizer* pq = new ProductQuantizer();
+    ScopeDeleter1<ProductQuantizer> del(pq);
+
+    read_ProductQuantizer(pq, reader);
+    del.release();
+    return pq;
+}
+
+ProductQuantizer* read_ProductQuantizer(const char* fname) {
+    FileIOReader reader(fname);
+    return read_ProductQuantizer(&reader);
+}
+static IndexIVFPQ* read_ivfpq(IOReader* f, uint32_t h, int io_flags) {
+    bool legacy = h == fourcc("IvQR") || h == fourcc("IvPQ");
+
+    IndexIVFPQ* ivpq = new IndexIVFPQ();
+
+    std::vector<std::vector<int64_t>> ids;
+    read_ivf_header(ivpq, f, legacy ? &ids : nullptr);
+    READ1(ivpq->by_residual);
+    READ1(ivpq->code_size);
+    read_ProductQuantizer(&ivpq->pq, f);
+
+    if (legacy) {
+        ArrayInvertedLists* ail = set_array_invlist(ivpq, ids);
+        for (size_t i = 0; i < ail->nlist; i++)
+            READVECTOR(ail->codes[i]);
+    } else {
+        read_InvertedLists(ivpq, f, io_flags);
+    }
+
+    if (ivpq->is_trained) {
+        // precomputed table not stored. It is cheaper to recompute it.
+        // precompute_table() may be disabled with a flag.
+        ivpq->use_precomputed_table = 0;
+        if (ivpq->by_residual) {
+            if ((io_flags & IO_FLAG_SKIP_PRECOMPUTE_TABLE) == 0) {
+                ivpq->precompute_table();
+            }
+        }
+    }
+    return ivpq;
+}
+
 int read_old_fmt_hack = 0;
 
 Index* read_index(IOReader* f, int io_flags) {
@@ -194,6 +249,9 @@ Index* read_index(IOReader* f, int io_flags) {
         ivfl->code_size = ivfl->d * sizeof(float);
         read_InvertedLists(ivfl, f, io_flags);
         idx = ivfl;
+    } else if (
+            h == fourcc("IvPQ")  || h == fourcc("IwPQ")) {
+        idx = read_ivfpq(f, h, io_flags);
     } else {
         VINDEX_THROW_FMT(
                 "Index type 0x%08x (\"%s\") not recognized",

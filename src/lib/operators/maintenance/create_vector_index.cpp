@@ -8,6 +8,7 @@
 #include "types.hpp"
 // #include "operators/insert.hpp"
 #include "storage/index/IVF_Flat/ivf_flat_index.hpp"
+#include "storage/index/IVF_Flat/ivf_pq_index.hpp"
 #include "storage/index/hnsw/hnsw_index.hpp"
 #include "storage/table.hpp"
 
@@ -83,13 +84,15 @@ std::shared_ptr<const Table> CreateVectorIndex::_on_execute() {
     table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
   } else if (index_name == "ivfflat") {
     table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
-  } else {
+  } else if (index_name == "ivfpq") {
+    table->create_float_array_index<IVFPQIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
+  }else {
     std::cout << "other index type is not supported." << std::endl;
   }
   // printf("exit CreateVectorIndex::_on_execute\n");
-  // const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
-  // std::string index_save_path = index_type + "_" + table_name + ".bin";
-  // float_array_index->save_index(index_save_path);
+  const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
+  std::string index_save_path = index_name + "_" + table_name + ".bin";
+  float_array_index->save_index(index_save_path);
   return nullptr;
 }
 

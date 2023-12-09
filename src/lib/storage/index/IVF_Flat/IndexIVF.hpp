@@ -170,7 +170,7 @@ namespace vindex
         const int64_t *ids,
         float *distances,
         int64_t *labels,
-        size_t k, double* cost_time=nullptr) const;
+        size_t k) const;
 
     // same as scan_codes, using an iterator
     virtual size_t iterate_codes(

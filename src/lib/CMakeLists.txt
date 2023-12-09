@@ -517,6 +517,10 @@ set(
     storage/index/IVF_Flat/BlockInvertedLists.hpp
     storage/index/IVF_Flat/Clustering.cpp
     storage/index/IVF_Flat/Clustering.hpp
+    storage/index/IVF_Flat/code_distance_avx512.hpp
+    storage/index/IVF_Flat/code_distance-avx2.hpp
+    storage/index/IVF_Flat/code_distance-generic.hpp
+    storage/index/IVF_Flat/code_distance.hpp
     storage/index/IVF_Flat/CodePacker.cpp
     storage/index/IVF_Flat/CodePacker.hpp
     storage/index/IVF_Flat/DirectMap.cpp
@@ -536,6 +540,10 @@ set(
     storage/index/IVF_Flat/IndexIVF.hpp
     storage/index/IVF_Flat/IndexIVFFlat.cpp
     storage/index/IVF_Flat/IndexIVFFlat.hpp
+    storage/index/IVF_Flat/IndexIVFPQ.cpp
+    storage/index/IVF_Flat/IndexIVFPQ.hpp
+    storage/index/IVF_Flat/IndexPQ.cpp
+    storage/index/IVF_Flat/IndexPQ.hpp
     storage/index/IVF_Flat/InvertedLists.cpp
     storage/index/IVF_Flat/InvertedLists.hpp
     storage/index/IVF_Flat/InvertedListsIOHook.cpp
@@ -543,7 +551,15 @@ set(
     storage/index/IVF_Flat/MetricType.hpp
     storage/index/IVF_Flat/OnDiskInvertedLists.cpp
     storage/index/IVF_Flat/OnDiskInvertedLists.hpp
+    storage/index/IVF_Flat/PolysemousTraining.cpp
+    storage/index/IVF_Flat/PolysemousTraining.hpp
+    storage/index/IVF_Flat/ProductQuantizer-inl.hpp
+    storage/index/IVF_Flat/ProductQuantizer.cpp
+    storage/index/IVF_Flat/ProductQuantizer.hpp
+    storage/index/IVF_Flat/Quantizer.hpp
     storage/index/IVF_Flat/ResultHandler.hpp
+    storage/index/IVF_Flat/VectorTransform.cpp
+    storage/index/IVF_Flat/VectorTransform.hpp
     storage/index/IVF_Flat/VIndexAssert.hpp
     storage/index/IVF_Flat/VIndexException.cpp
     storage/index/IVF_Flat/VIndexException.hpp
@@ -574,6 +590,8 @@ set(
     storage/index/IVF_Flat/io.cpp
     storage/index/IVF_Flat/io.hpp
     storage/index/IVF_Flat/io_macros.hpp
+    storage/index/IVF_Flat/ivf_pq_index.cpp
+    storage/index/IVF_Flat/ivf_pq_index.hpp
     storage/index/IVF_Flat/mode.hpp
     storage/index/IVF_Flat/neon-inl.hpp
     storage/index/IVF_Flat/ordered_key_value.hpp

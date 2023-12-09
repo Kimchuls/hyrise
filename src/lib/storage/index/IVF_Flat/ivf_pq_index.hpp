@@ -1,0 +1,69 @@
+#pragma once
+
+#include <stdio.h>
+#include <unordered_map>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <tsl/sparse_map.h>
+#include <tsl/sparse_set.h>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <queue>
+#include <random>
+#include "IndexFlat.hpp"
+#include "IndexIVFPQ.hpp"
+
+#include "storage/index/abstract_vector_index.hpp"
+#include "types.hpp"
+
+// #define TRAIN_SIZE 6000000
+#define ADD_SIZE
+
+namespace hyrise {
+using SimilarKPair = std::priority_queue<std::pair<float, size_t>>;
+
+class IVFPQIndex : public AbstractVectorIndex {
+ public:
+  IVFPQIndex() = delete;
+  IVFPQIndex(const IVFPQIndex&) = delete;
+  IVFPQIndex(const std::string& path,const std::unordered_map<std::string, int> parameters);
+  IVFPQIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index, ColumnID column_id,
+            std::unordered_map<std::string, int> parameters);
+
+  void train_and_insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>&);
+
+  void similar_k(const float* query, int64_t* I, float* D, int k = 1);
+  void range_similar_k(size_t n, const float* query, int64_t* I, float* D, int k = 1);
+
+  void save_index(const std::string& save_path);
+  bool is_index_for(const ColumnID) const;
+  ColumnID get_indexed_column_id() const;
+
+  void change_param(const int param) {
+    _index->nprobe = param;
+    std::cout << "ivfpq nprobe: " << _index->nprobe << std::endl;
+  }
+
+  int get_dim() const {
+    return _d;
+  }
+
+  int get_nlist() const {
+    return _nlist;
+  }
+
+
+ private:
+  ColumnID _column_id;
+  int _d;
+  int _nlist;
+  int _m;
+  int _nbits_per_idx;
+  vindex::IndexFlatL2* _quantizer;
+  vindex::IndexIVFPQ* _index;
+  tsl::sparse_set<ChunkID> _indexed_chunk_ids = {};
+};
+
+}  // namespace hyrise

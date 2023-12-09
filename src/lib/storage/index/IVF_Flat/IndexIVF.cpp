@@ -447,7 +447,7 @@ void IndexIVF::search_preassigned(
     bool interrupt = false;
     std::mutex exception_mutex;
     std::string exception_string;
-
+    // TODO: PMODE
     int pmode = this->parallel_mode & ~PARALLEL_MODE_NO_HEAP_INIT;
     // int pmode=1;
     bool do_heap_init = !(this->parallel_mode & PARALLEL_MODE_NO_HEAP_INIT);
@@ -1237,7 +1237,7 @@ size_t InvertedListScanner::scan_codes(
         const int64_t* ids,
         float* simi,
         int64_t* idxi,
-        size_t k, double* cost_time) const {
+        size_t k) const {
     size_t nup = 0;
 
     if (!keep_max) {

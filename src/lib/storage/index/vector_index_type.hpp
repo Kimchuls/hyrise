@@ -10,16 +10,19 @@ namespace hyrise {
 
 namespace hana = boost::hana;
 
-enum class VectorIndexType : uint8_t { HNSW, IVFFlat };
+enum class VectorIndexType : uint8_t { HNSW, IVFFlat, IVFPQ };
 
 class HNSWIndex;
 class IVFFlatIndex;
+class IVFPQIndex;
 
 namespace detail {
 
 constexpr auto vector_index_map =
     hana::make_map(hana::make_pair(hana::type_c<HNSWIndex>, VectorIndexType::HNSW),
-    hana::make_pair(hana::type_c<IVFFlatIndex>, VectorIndexType::IVFFlat));
+    hana::make_pair(hana::type_c<IVFFlatIndex>, VectorIndexType::IVFFlat),
+    hana::make_pair(hana::type_c<IVFPQIndex>, VectorIndexType::IVFPQ)
+    );
 
 }  // namespace detail
 

@@ -77,6 +77,10 @@ std::shared_ptr<const Table> SimilarSearch::_on_execute() {
         vector_index = float_array_index;
 // std::cout << "index name(): " << index_name << std::endl;
         break;
+      } else if (index_name == "ivfpq") {
+        vector_index = float_array_index;
+// std::cout << "index name(): " << index_name << std::endl;
+        break;
       }
     }
   }

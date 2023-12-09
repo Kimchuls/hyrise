@@ -14,6 +14,7 @@
 #include "statistics/attribute_statistics.hpp"
 #include "statistics/table_statistics.hpp"
 #include "storage/index/IVF_Flat/ivf_flat_index.hpp"
+#include "storage/index/IVF_Flat/ivf_pq_index.hpp"
 #include "storage/index/abstract_vector_index.hpp"
 #include "storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "storage/index/group_key/composite_group_key_index.hpp"
@@ -707,11 +708,16 @@ template void Table::load_float_array_index<HNSWIndex>(const std::string& path,
                                                             const std::unordered_map<std::string, int> parameters);
 template void Table::load_float_array_index<IVFFlatIndex>(const std::string& path,
                                                             const std::unordered_map<std::string, int> parameters);
+template void Table::load_float_array_index<IVFPQIndex>(const std::string& path,
+                                                            const std::unordered_map<std::string, int> parameters);
 
 template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
                                                          const std::vector<ChunkID>& chunk_ids,
                                                          const std::unordered_map<std::string, int> parameters);
 template void Table::create_float_array_index<IVFFlatIndex>(const ColumnID column_id,
+                                                            const std::vector<ChunkID>& chunk_ids,
+                                                            const std::unordered_map<std::string, int> parameters);
+template void Table::create_float_array_index<IVFPQIndex>(const ColumnID column_id,
                                                             const std::vector<ChunkID>& chunk_ids,
                                                             const std::unordered_map<std::string, int> parameters);
 

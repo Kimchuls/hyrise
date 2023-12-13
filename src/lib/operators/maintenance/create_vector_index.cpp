@@ -9,7 +9,8 @@
 // #include "operators/insert.hpp"
 #include "storage/index/IVF_Flat/ivf_flat_index.hpp"
 #include "storage/index/IVF_Flat/ivf_pq_index.hpp"
-#include "storage/index/hnsw/hnsw_index.hpp"
+// #include "storage/index/hnsw/hnsw_index.hpp"
+#include "storage/index/IVF_Flat/hnsw_flat_index.hpp"
 #include "storage/table.hpp"
 
 // #include "utils/print_utils.hpp"
@@ -81,7 +82,8 @@ std::shared_ptr<const Table> CreateVectorIndex::_on_execute() {
   }
   // printf("checkpoint2.1.5\n");
   if (index_name == "hnsw") {
-    table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
+    // table->create_float_array_index<HNSWIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
+    table->create_float_array_index<HNSWFlatIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
   } else if (index_name == "ivfflat") {
     table->create_float_array_index<IVFFlatIndex>(table->column_id_by_name(column_name), chunk_ids, parameters);
   } else if (index_name == "ivfpq") {
@@ -92,6 +94,7 @@ std::shared_ptr<const Table> CreateVectorIndex::_on_execute() {
   // printf("exit CreateVectorIndex::_on_execute\n");
   const auto float_array_index = table->get_table_indexes_vector(column_id)[0];
   std::string index_save_path = index_name + "_" + table_name + ".bin";
+  
   float_array_index->save_index(index_save_path);
   return nullptr;
 }

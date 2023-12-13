@@ -7,10 +7,8 @@
 
 // -*- c++ -*-
 
-#include "random.hpp"
-#include "distances.hpp"
+#include "random.h"
 
-// TODO: need to check
 #ifndef FINTEGER
 #define FINTEGER long
 #endif
@@ -32,7 +30,7 @@ int sgemm_(
         FINTEGER* ldc);
 }
 
-namespace vindex {
+namespace faiss {
 
 /**************************************************
  * Random data generation functions
@@ -224,4 +222,4 @@ void rand_smooth_vectors(size_t n, size_t d, float* x, int64_t seed) {
     }
 }
 
-} // namespace vindex
+} // namespace faiss

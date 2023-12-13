@@ -1,20 +1,30 @@
-#include "DirectMap.hpp"
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+// -*- c++ -*-
+
+#include "DirectMap.h"
+
 #include <cassert>
 #include <cstdio>
 
-#include "AuxIndexStructures.hpp"
-#include "VIndexAssert.hpp"
-#include "IDSelector.hpp"
+#include "AuxIndexStructures.h"
+#include "FaissAssert.h"
+#include "IDSelector.h"
 
-namespace vindex
-{
-  DirectMap::DirectMap() : type(NoMap) {}
+namespace faiss {
+
+DirectMap::DirectMap() : type(NoMap) {}
 
 void DirectMap::set_type(
         Type new_type,
         const InvertedLists* invlists,
         size_t ntotal) {
-    VINDEX_THROW_IF_NOT(
+    FAISS_THROW_IF_NOT(
             new_type == NoMap || new_type == Array || new_type == Hashtable);
 
     if (new_type == type) {
@@ -40,7 +50,7 @@ void DirectMap::set_type(
 
         if (new_type == Array) {
             for (long ofs = 0; ofs < list_size; ofs++) {
-                VINDEX_THROW_IF_NOT_MSG(
+                FAISS_THROW_IF_NOT_MSG(
                         0 <= idlist[ofs] && idlist[ofs] < ntotal,
                         "direct map supported only for seuquential ids");
                 array[idlist[ofs]] = lo_build(key, ofs);
@@ -58,22 +68,22 @@ void DirectMap::clear() {
     hashtable.clear();
 }
 
-int64_t DirectMap::get(int64_t key) const {
+DirectMap::idx_t DirectMap::get(idx_t key) const {
     if (type == Array) {
-        VINDEX_THROW_IF_NOT_MSG(key >= 0 && key < array.size(), "invalid key");
-        int64_t lo = array[key];
-        VINDEX_THROW_IF_NOT_MSG(lo >= 0, "-1 entry in direct_map");
+        FAISS_THROW_IF_NOT_MSG(key >= 0 && key < array.size(), "invalid key");
+        idx_t lo = array[key];
+        FAISS_THROW_IF_NOT_MSG(lo >= 0, "-1 entry in direct_map");
         return lo;
     } else if (type == Hashtable) {
         auto res = hashtable.find(key);
-        VINDEX_THROW_IF_NOT_MSG(res != hashtable.end(), "key not found");
+        FAISS_THROW_IF_NOT_MSG(res != hashtable.end(), "key not found");
         return res->second;
     } else {
-        VINDEX_THROW_MSG("direct map not initialized");
+        FAISS_THROW_MSG("direct map not initialized");
     }
 }
 
-void DirectMap::add_single_id(int64_t id, int64_t list_no, size_t offset) {
+void DirectMap::add_single_id(idx_t id, idx_t list_no, size_t offset) {
     if (type == NoMap)
         return;
 
@@ -91,18 +101,18 @@ void DirectMap::add_single_id(int64_t id, int64_t list_no, size_t offset) {
     }
 }
 
-void DirectMap::check_can_add(const int64_t* ids) {
+void DirectMap::check_can_add(const idx_t* ids) {
     if (type == Array && ids) {
-        VINDEX_THROW_MSG("cannot have array direct map and add with ids");
+        FAISS_THROW_MSG("cannot have array direct map and add with ids");
     }
 }
 
 /********************* DirectMapAdd implementation */
 
-DirectMapAdd::DirectMapAdd(DirectMap& direct_map, size_t n, const int64_t* xids)
+DirectMapAdd::DirectMapAdd(DirectMap& direct_map, size_t n, const idx_t* xids)
         : direct_map(direct_map), type(direct_map.type), n(n), xids(xids) {
     if (type == DirectMap::Array) {
-        VINDEX_THROW_IF_NOT(xids == nullptr);
+        FAISS_THROW_IF_NOT(xids == nullptr);
         ntotal = direct_map.array.size();
         direct_map.array.resize(ntotal + n, -1);
     } else if (type == DirectMap::Hashtable) {
@@ -111,7 +121,7 @@ DirectMapAdd::DirectMapAdd(DirectMap& direct_map, size_t n, const int64_t* xids)
     }
 }
 
-void DirectMapAdd::add(size_t i, int64_t list_no, size_t ofs) {
+void DirectMapAdd::add(size_t i, idx_t list_no, size_t ofs) {
     if (type == DirectMap::Array) {
         direct_map.array[ntotal + i] = lo_build(list_no, ofs);
     } else if (type == DirectMap::Hashtable) {
@@ -122,7 +132,7 @@ void DirectMapAdd::add(size_t i, int64_t list_no, size_t ofs) {
 DirectMapAdd::~DirectMapAdd() {
     if (type == DirectMap::Hashtable) {
         for (int i = 0; i < n; i++) {
-            int64_t id = xids ? xids[i] : ntotal + i;
+            idx_t id = xids ? xids[i] : ntotal + i;
             direct_map.hashtable[id] = all_ofs[i];
         }
     }
@@ -135,15 +145,15 @@ using ScopedIds = InvertedLists::ScopedIds;
 
 size_t DirectMap::remove_ids(const IDSelector& sel, InvertedLists* invlists) {
     size_t nlist = invlists->nlist;
-    std::vector<int64_t> toremove(nlist);
+    std::vector<idx_t> toremove(nlist);
 
     size_t nremove = 0;
 
     if (type == NoMap) {
         // exhaustive scan of IVF
 #pragma omp parallel for
-        for (int64_t i = 0; i < nlist; i++) {
-            int64_t l0 = invlists->list_size(i), l = l0, j = 0;
+        for (idx_t i = 0; i < nlist; i++) {
+            idx_t l0 = invlists->list_size(i), l = l0, j = 0;
             ScopedIds idsi(invlists, i);
             while (j < l) {
                 if (sel.is_member(idsi[j])) {
@@ -161,7 +171,7 @@ size_t DirectMap::remove_ids(const IDSelector& sel, InvertedLists* invlists) {
         }
         // this will not run well in parallel on ondisk because of
         // possible shrinks
-        for (int64_t i = 0; i < nlist; i++) {
+        for (idx_t i = 0; i < nlist; i++) {
             if (toremove[i] > 0) {
                 nremove += toremove[i];
                 invlists->resize(i, invlists->list_size(i) - toremove[i]);
@@ -170,19 +180,19 @@ size_t DirectMap::remove_ids(const IDSelector& sel, InvertedLists* invlists) {
     } else if (type == Hashtable) {
         const IDSelectorArray* sela =
                 dynamic_cast<const IDSelectorArray*>(&sel);
-        VINDEX_THROW_IF_NOT_MSG(
+        FAISS_THROW_IF_NOT_MSG(
                 sela, "remove with hashtable works only with IDSelectorArray");
 
-        for (int64_t i = 0; i < sela->n; i++) {
-            int64_t id = sela->ids[i];
+        for (idx_t i = 0; i < sela->n; i++) {
+            idx_t id = sela->ids[i];
             auto res = hashtable.find(id);
             if (res != hashtable.end()) {
                 size_t list_no = lo_listno(res->second);
                 size_t offset = lo_offset(res->second);
-                int64_t last = invlists->list_size(list_no) - 1;
+                idx_t last = invlists->list_size(list_no) - 1;
                 hashtable.erase(res);
                 if (offset < last) {
-                    int64_t last_id = invlists->get_single_id(list_no, last);
+                    idx_t last_id = invlists->get_single_id(list_no, last);
                     invlists->update_entry(
                             list_no,
                             offset,
@@ -197,7 +207,7 @@ size_t DirectMap::remove_ids(const IDSelector& sel, InvertedLists* invlists) {
         }
 
     } else {
-        VINDEX_THROW_MSG("remove not supported with this direct_map format");
+        FAISS_THROW_MSG("remove not supported with this direct_map format");
     }
     return nremove;
 }
@@ -205,19 +215,19 @@ size_t DirectMap::remove_ids(const IDSelector& sel, InvertedLists* invlists) {
 void DirectMap::update_codes(
         InvertedLists* invlists,
         int n,
-        const int64_t* ids,
-        const int64_t* assign,
+        const idx_t* ids,
+        const idx_t* assign,
         const uint8_t* codes) {
-    VINDEX_THROW_IF_NOT(type == Array);
+    FAISS_THROW_IF_NOT(type == Array);
 
     size_t code_size = invlists->code_size;
 
     for (size_t i = 0; i < n; i++) {
-        int64_t id = ids[i];
-        VINDEX_THROW_IF_NOT_MSG(
+        idx_t id = ids[i];
+        FAISS_THROW_IF_NOT_MSG(
                 0 <= id && id < array.size(), "id to update out of range");
         { // remove old one
-            int64_t dm = array[id];
+            idx_t dm = array[id];
             int64_t ofs = lo_offset(dm);
             int64_t il = lo_listno(dm);
             size_t l = invlists->list_size(il);
@@ -232,11 +242,11 @@ void DirectMap::update_codes(
         { // insert new one
             int64_t il = assign[i];
             size_t l = invlists->list_size(il);
-            int64_t dm = lo_build(il, l);
+            idx_t dm = lo_build(il, l);
             array[id] = dm;
             invlists->add_entry(il, id, codes + i * code_size);
         }
     }
 }
 
-} // namespace vindex
+} // namespace faiss

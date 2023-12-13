@@ -5,19 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "InvertedListsIOHook.hpp"
+#include "InvertedListsIOHook.h"
 
-#include "VIndexAssert.hpp"
-#include "io.hpp"
-#include "io_macros.hpp"
+#include "FaissAssert.h"
+#include "io.h"
+#include "io_macros.h"
 
-#include "BlockInvertedLists.hpp"
+#include "BlockInvertedLists.h"
 
 #ifndef _MSC_VER
-#include "OnDiskInvertedLists.hpp"
+#include "OnDiskInvertedLists.h"
 #endif // !_MSC_VER
 
-namespace vindex {
+namespace faiss {
 
 /**********************************************************
  * InvertedListIOHook's
@@ -56,7 +56,7 @@ InvertedListsIOHook* InvertedListsIOHook::lookup(int h) {
             return callback;
         }
     }
-    VINDEX_THROW_FMT(
+    FAISS_THROW_FMT(
             "read_InvertedLists: could not load ArrayInvertedLists as "
             "%08x (\"%s\")",
             h,
@@ -70,7 +70,7 @@ InvertedListsIOHook* InvertedListsIOHook::lookup_classname(
             return callback;
         }
     }
-    VINDEX_THROW_FMT(
+    FAISS_THROW_FMT(
             "read_InvertedLists: could not find classname %s",
             classname.c_str());
 }
@@ -96,7 +96,7 @@ InvertedLists* InvertedListsIOHook::read_ArrayInvertedLists(
         size_t,
         size_t,
         const std::vector<size_t>&) const {
-    VINDEX_THROW_FMT("read to array not implemented for %s", classname.c_str());
+    FAISS_THROW_FMT("read to array not implemented for %s", classname.c_str());
 }
 
-} // namespace vindex
+} // namespace faiss

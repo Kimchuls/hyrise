@@ -7,7 +7,7 @@
 
 // -*- c++ -*-
 
-#include "ProductQuantizer.hpp"
+#include "ProductQuantizer.h"
 
 #include <cstddef>
 #include <cstdio>
@@ -16,17 +16,15 @@
 
 #include <algorithm>
 
-#include "IndexFlat.hpp"
-#include "VectorTransform.hpp"
-#include "VIndexAssert.hpp"
-#include "distances.hpp"
+#include "IndexFlat.h"
+#include "VectorTransform.h"
+#include "FaissAssert.h"
+#include "distances.h"
 
 extern "C" {
-//TODO: check this define
 #ifndef FINTEGER
 #define FINTEGER int
 #endif
-
 /* declare BLAS functions, see http://www.netlib.org/clapack/cblas/ */
 
 int sgemm_(
@@ -45,7 +43,7 @@ int sgemm_(
         FINTEGER* ldc);
 }
 
-namespace vindex {
+namespace faiss {
 
 /*********************************************
  * PQ implementation
@@ -60,7 +58,7 @@ ProductQuantizer::ProductQuantizer() : ProductQuantizer(0, 1, 0) {}
 
 void ProductQuantizer::set_derived_values() {
     // quite a few derived values
-    VINDEX_THROW_IF_NOT_MSG(
+    FAISS_THROW_IF_NOT_MSG(
             d % M == 0,
             "The dimension of the vector (d) should be a multiple of the number of subquantizers (M)");
     dsub = d / M;
@@ -241,26 +239,12 @@ void compute_code(const ProductQuantizer& pq, const float* x, uint8_t* code) {
     for (size_t m = 0; m < pq.M; m++) {
         const float* xsub = x + m * pq.dsub;
 
-        uint64_t idxm = 0;
-        if (pq.transposed_centroids.empty()) {
-            // the regular version
-            idxm = fvec_L2sqr_ny_nearest(
-                    distances.data(),
-                    xsub,
-                    pq.get_centroids(m, 0),
-                    pq.dsub,
-                    pq.ksub);
-        } else {
-            // transposed centroids are available, use'em
-            idxm = fvec_L2sqr_ny_nearest_y_transposed(
-                    distances.data(),
-                    xsub,
-                    pq.transposed_centroids.data() + m * pq.ksub,
-                    pq.centroids_sq_lengths.data() + m * pq.ksub,
-                    pq.dsub,
-                    pq.M * pq.ksub,
-                    pq.ksub);
-        }
+        uint64_t idxm = fvec_L2sqr_ny_nearest(
+                distances.data(),
+                xsub,
+                pq.get_centroids(m, 0),
+                pq.dsub,
+                pq.ksub);
 
         encoder.encode(idxm);
     }
@@ -269,15 +253,15 @@ void compute_code(const ProductQuantizer& pq, const float* x, uint8_t* code) {
 void ProductQuantizer::compute_code(const float* x, uint8_t* code) const {
     switch (nbits) {
         case 8:
-            vindex::compute_code<PQEncoder8>(*this, x, code);
+            faiss::compute_code<PQEncoder8>(*this, x, code);
             break;
 
         case 16:
-            vindex::compute_code<PQEncoder16>(*this, x, code);
+            faiss::compute_code<PQEncoder16>(*this, x, code);
             break;
 
         default:
-            vindex::compute_code<PQEncoderGeneric>(*this, x, code);
+            faiss::compute_code<PQEncoderGeneric>(*this, x, code);
             break;
     }
 }
@@ -296,15 +280,15 @@ void decode(const ProductQuantizer& pq, const uint8_t* code, float* x) {
 void ProductQuantizer::decode(const uint8_t* code, float* x) const {
     switch (nbits) {
         case 8:
-            vindex::decode<PQDecoder8>(*this, code, x);
+            faiss::decode<PQDecoder8>(*this, code, x);
             break;
 
         case 16:
-            vindex::decode<PQDecoder16>(*this, code, x);
+            faiss::decode<PQDecoder16>(*this, code, x);
             break;
 
         default:
-            vindex::decode<PQDecoderGeneric>(*this, code, x);
+            faiss::decode<PQDecoderGeneric>(*this, code, x);
             break;
     }
 }
@@ -340,7 +324,7 @@ void ProductQuantizer::compute_codes_with_assign_index(
         const float* x,
         uint8_t* codes,
         size_t n) {
-    VINDEX_THROW_IF_NOT(assign_index && assign_index->d == dsub);
+    FAISS_THROW_IF_NOT(assign_index && assign_index->d == dsub);
 
     for (size_t m = 0; m < M; m++) {
         assign_index->reset();
@@ -348,8 +332,8 @@ void ProductQuantizer::compute_codes_with_assign_index(
         size_t bs = 65536;
         float* xslice = new float[bs * dsub];
         ScopeDeleter<float> del(xslice);
-        int64_t* assign = new int64_t[bs];
-        ScopeDeleter<int64_t> del2(assign);
+        idx_t* assign = new idx_t[bs];
+        ScopeDeleter<idx_t> del2(assign);
 
         for (size_t i0 = 0; i0 < n; i0 += bs) {
             size_t i1 = std::min(i0 + bs, n);
@@ -425,28 +409,15 @@ void ProductQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
 
 void ProductQuantizer::compute_distance_table(const float* x, float* dis_table)
         const {
-    if (transposed_centroids.empty()) {
-        // use regular version
-        for (size_t m = 0; m < M; m++) {
-            fvec_L2sqr_ny(
-                    dis_table + m * ksub,
-                    x + m * dsub,
-                    get_centroids(m, 0),
-                    dsub,
-                    ksub);
-        }
-    } else {
-        // transposed centroids are available, use'em
-        for (size_t m = 0; m < M; m++) {
-            fvec_L2sqr_ny_transposed(
-                    dis_table + m * ksub,
-                    x + m * dsub,
-                    transposed_centroids.data() + m * ksub,
-                    centroids_sq_lengths.data() + m * ksub,
-                    dsub,
-                    M * ksub,
-                    ksub);
-        }
+    size_t m;
+
+    for (m = 0; m < M; m++) {
+        fvec_L2sqr_ny(
+                dis_table + m * ksub,
+                x + m * dsub,
+                get_centroids(m, 0),
+                dsub,
+                ksub);
     }
 }
 
@@ -477,7 +448,7 @@ void ProductQuantizer::compute_distance_tables(
 #endif
             if (dsub < 16) {
 
-#pragma omp parallel for if (nx > 1)
+#pragma omp parallel for
         for (int64_t i = 0; i < nx; i++) {
             compute_distance_table(x + i * d, dis_tables + i * ksub * M);
         }
@@ -511,7 +482,7 @@ void ProductQuantizer::compute_inner_prod_tables(
 #endif
             if (dsub < 16) {
 
-#pragma omp parallel for if (nx > 1)
+#pragma omp parallel for
         for (int64_t i = 0; i < nx; i++) {
             compute_inner_prod_table(x + i * d, dis_tables + i * ksub * M);
         }
@@ -685,7 +656,7 @@ void pq_knn_search_with_tables(
     size_t k = res->k, nx = res->nh;
     size_t ksub = pq.ksub, M = pq.M;
 
-#pragma omp parallel for if (nx > 1)
+#pragma omp parallel for
     for (int64_t i = 0; i < nx; i++) {
         /* query preparation for asymmetric search: compute look-up tables */
         const float* dis_table = dis_tables + i * ksub * M;
@@ -743,7 +714,7 @@ void ProductQuantizer::search(
         const size_t ncodes,
         float_maxheap_array_t* res,
         bool init_finalize_heap) const {
-    VINDEX_THROW_IF_NOT(nx == res->nh);
+    FAISS_THROW_IF_NOT(nx == res->nh);
     std::unique_ptr<float[]> dis_tables(new float[nx * ksub * M]);
     compute_distance_tables(nx, x, dis_tables.get());
 
@@ -764,7 +735,7 @@ void ProductQuantizer::search_ip(
         const size_t ncodes,
         float_minheap_array_t* res,
         bool init_finalize_heap) const {
-    VINDEX_THROW_IF_NOT(nx == res->nh);
+    FAISS_THROW_IF_NOT(nx == res->nh);
     std::unique_ptr<float[]> dis_tables(new float[nx * ksub * M]);
     compute_inner_prod_tables(nx, x, dis_tables.get());
 
@@ -817,14 +788,14 @@ void ProductQuantizer::search_sdc(
         const size_t nb,
         float_maxheap_array_t* res,
         bool init_finalize_heap) const {
-    VINDEX_THROW_IF_NOT(sdc_table.size() == M * ksub * ksub);
-    VINDEX_THROW_IF_NOT(nbits == 8);
+    FAISS_THROW_IF_NOT(sdc_table.size() == M * ksub * ksub);
+    FAISS_THROW_IF_NOT(nbits == 8);
     size_t k = res->k;
 
 #pragma omp parallel for
     for (int64_t i = 0; i < nq; i++) {
         /* Compute distances and keep smallest values */
-        int64_t* heap_ids = res->ids + i * k;
+        idx_t* heap_ids = res->ids + i * k;
         float* heap_dis = res->val + i * k;
         const uint8_t* qcode = qcodes + i * code_size;
 
@@ -850,32 +821,4 @@ void ProductQuantizer::search_sdc(
     }
 }
 
-void ProductQuantizer::sync_transposed_centroids() {
-    transposed_centroids.resize(d * ksub);
-    centroids_sq_lengths.resize(ksub * M);
-
-    for (size_t mi = 0; mi < M; mi++) {
-        for (size_t ki = 0; ki < ksub; ki++) {
-            float sqlen = 0;
-
-            for (size_t di = 0; di < dsub; di++) {
-                const float q = centroids[(mi * ksub + ki) * dsub + di];
-
-                transposed_centroids[(di * M + mi) * ksub + ki] = q;
-                sqlen += q * q;
-            }
-
-            centroids_sq_lengths[mi * ksub + ki] = sqlen;
-        }
-    }
-}
-
-void ProductQuantizer::clear_transposed_centroids() {
-    transposed_centroids.clear();
-    transposed_centroids.shrink_to_fit();
-
-    centroids_sq_lengths.clear();
-    centroids_sq_lengths.shrink_to_fit();
-}
-
-} // namespace vindex
+} // namespace faiss

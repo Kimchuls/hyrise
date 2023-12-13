@@ -7,7 +7,7 @@
 
 // -*- c++ -*-
 
-#include "OnDiskInvertedLists.hpp"
+#include "OnDiskInvertedLists.h"
 
 #include <pthread.h>
 
@@ -18,13 +18,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "VIndexAssert.hpp"
-#include "utils.hpp"
+#include "FaissAssert.h"
+#include "utils.h"
 
-#include "io.hpp"
-#include "io_macros.hpp"
+#include "io.h"
+#include "io_macros.h"
 
-namespace vindex {
+namespace faiss {
 
 /**********************************************
  * LockLevels
@@ -148,20 +148,20 @@ struct OnDiskInvertedLists::OngoingPrefetch {
         OngoingPrefetch* pf;
 
         bool one_list() {
-            int64_t list_no = pf->get_next_list();
+            idx_t list_no = pf->get_next_list();
             if (list_no == -1)
                 return false;
             const OnDiskInvertedLists* od = pf->od;
             od->locks->lock_1(list_no);
             size_t n = od->list_size(list_no);
-            const int64_t* idx = od->get_ids(list_no);
+            const Index::idx_t* idx = od->get_ids(list_no);
             const uint8_t* codes = od->get_codes(list_no);
             int cs = 0;
             for (size_t i = 0; i < n; i++) {
                 cs += idx[i];
             }
-            const int64_t* codes8 = (const int64_t*)codes;
-            int64_t n8 = n * od->code_size / 8;
+            const idx_t* codes8 = (const idx_t*)codes;
+            idx_t n8 = n * od->code_size / 8;
 
             for (size_t i = 0; i < n8; i++) {
                 cs += codes8[i];
@@ -176,7 +176,7 @@ struct OnDiskInvertedLists::OngoingPrefetch {
     std::vector<Thread> threads;
 
     pthread_mutex_t list_ids_mutex;
-    std::vector<int64_t> list_ids;
+    std::vector<idx_t> list_ids;
     int cur_list;
 
     // mutex for the list of tasks
@@ -202,8 +202,8 @@ struct OnDiskInvertedLists::OngoingPrefetch {
         return nullptr;
     }
 
-    int64_t get_next_list() {
-        int64_t list_no = -1;
+    idx_t get_next_list() {
+        idx_t list_no = -1;
         pthread_mutex_lock(&list_ids_mutex);
         if (cur_list >= 0 && cur_list < list_ids.size()) {
             list_no = list_ids[cur_list++];
@@ -212,7 +212,7 @@ struct OnDiskInvertedLists::OngoingPrefetch {
         return list_no;
     }
 
-    void prefetch_lists(const int64_t* list_nos, int n) {
+    void prefetch_lists(const idx_t* list_nos, int n) {
         pthread_mutex_lock(&mutex);
         pthread_mutex_lock(&list_ids_mutex);
         list_ids.clear();
@@ -228,7 +228,7 @@ struct OnDiskInvertedLists::OngoingPrefetch {
         if (nt > 0) {
             // prepare tasks
             for (int i = 0; i < n; i++) {
-                int64_t list_no = list_nos[i];
+                idx_t list_no = list_nos[i];
                 if (list_no >= 0 && od->list_size(list_no) > 0) {
                     list_ids.push_back(list_no);
                 }
@@ -256,7 +256,7 @@ struct OnDiskInvertedLists::OngoingPrefetch {
 
 int OnDiskInvertedLists::OngoingPrefetch::global_cs = 0;
 
-void OnDiskInvertedLists::prefetch_lists(const int64_t* list_nos, int n) const {
+void OnDiskInvertedLists::prefetch_lists(const idx_t* list_nos, int n) const {
     pf->prefetch_lists(list_nos, n);
 }
 
@@ -268,7 +268,7 @@ void OnDiskInvertedLists::do_mmap() {
     const char* rw_flags = read_only ? "r" : "r+";
     int prot = read_only ? PROT_READ : PROT_WRITE | PROT_READ;
     FILE* f = fopen(filename.c_str(), rw_flags);
-    VINDEX_THROW_IF_NOT_FMT(
+    FAISS_THROW_IF_NOT_FMT(
             f,
             "could not open %s in mode %s: %s",
             filename.c_str(),
@@ -280,7 +280,7 @@ void OnDiskInvertedLists::do_mmap() {
 
     fclose(f);
 
-    VINDEX_THROW_IF_NOT_FMT(
+    FAISS_THROW_IF_NOT_FMT(
             ptro != MAP_FAILED,
             "could not mmap %s: %s",
             filename.c_str(),
@@ -292,12 +292,12 @@ void OnDiskInvertedLists::update_totsize(size_t new_size) {
     // unmap file
     if (ptr != nullptr) {
         int err = munmap(ptr, totsize);
-        VINDEX_THROW_IF_NOT_FMT(err == 0, "munmap error: %s", strerror(errno));
+        FAISS_THROW_IF_NOT_FMT(err == 0, "munmap error: %s", strerror(errno));
     }
     if (totsize == 0) {
         // must create file before truncating it
         FILE* f = fopen(filename.c_str(), "w");
-        VINDEX_THROW_IF_NOT_FMT(
+        FAISS_THROW_IF_NOT_FMT(
                 f,
                 "could not open %s in mode W: %s",
                 filename.c_str(),
@@ -323,7 +323,7 @@ void OnDiskInvertedLists::update_totsize(size_t new_size) {
 
     int err = truncate(filename.c_str(), totsize);
 
-    VINDEX_THROW_IF_NOT_FMT(
+    FAISS_THROW_IF_NOT_FMT(
             err == 0,
             "truncate %s to %ld: %s",
             filename.c_str(),
@@ -389,27 +389,27 @@ const uint8_t* OnDiskInvertedLists::get_codes(size_t list_no) const {
     return ptr + lists[list_no].offset;
 }
 
-const int64_t* OnDiskInvertedLists::get_ids(size_t list_no) const {
+const Index::idx_t* OnDiskInvertedLists::get_ids(size_t list_no) const {
     if (lists[list_no].offset == INVALID_OFFSET) {
         return nullptr;
     }
 
     return (
-        const int64_t*)(ptr + lists[list_no].offset + code_size * lists[list_no].capacity);
+        const idx_t*)(ptr + lists[list_no].offset + code_size * lists[list_no].capacity);
 }
 
 void OnDiskInvertedLists::update_entries(
         size_t list_no,
         size_t offset,
         size_t n_entry,
-        const int64_t* ids_in,
+        const idx_t* ids_in,
         const uint8_t* codes_in) {
-    VINDEX_THROW_IF_NOT(!read_only);
+    FAISS_THROW_IF_NOT(!read_only);
     if (n_entry == 0)
         return;
     const List& l = lists[list_no];
     assert(n_entry + offset <= l.size);
-    int64_t* ids = const_cast<int64_t*>(get_ids(list_no));
+    idx_t* ids = const_cast<idx_t*>(get_ids(list_no));
     memcpy(ids + offset, ids_in, sizeof(ids_in[0]) * n_entry);
     uint8_t* codes = const_cast<uint8_t*>(get_codes(list_no));
     memcpy(codes + offset * code_size, codes_in, code_size * n_entry);
@@ -418,9 +418,9 @@ void OnDiskInvertedLists::update_entries(
 size_t OnDiskInvertedLists::add_entries(
         size_t list_no,
         size_t n_entry,
-        const int64_t* ids,
+        const idx_t* ids,
         const uint8_t* code) {
-    VINDEX_THROW_IF_NOT(!read_only);
+    FAISS_THROW_IF_NOT(!read_only);
     locks->lock_1(list_no);
     size_t o = list_size(list_no);
     resize_locked(list_no, n_entry + o);
@@ -430,7 +430,7 @@ size_t OnDiskInvertedLists::add_entries(
 }
 
 void OnDiskInvertedLists::resize(size_t list_no, size_t new_size) {
-    VINDEX_THROW_IF_NOT(!read_only);
+    FAISS_THROW_IF_NOT(!read_only);
     locks->lock_1(list_no);
     resize_locked(list_no, new_size);
     locks->unlock_1(list_no);
@@ -460,7 +460,7 @@ void OnDiskInvertedLists::resize_locked(size_t list_no, size_t new_size) {
             new_l.capacity *= 2;
         }
         new_l.offset =
-                allocate_slot(new_l.capacity * (sizeof(int64_t) + code_size));
+                allocate_slot(new_l.capacity * (sizeof(idx_t) + code_size));
     }
 
     // copy common data
@@ -470,7 +470,7 @@ void OnDiskInvertedLists::resize_locked(size_t list_no, size_t new_size) {
             memcpy(ptr + new_l.offset, get_codes(list_no), n * code_size);
             memcpy(ptr + new_l.offset + new_l.capacity * code_size,
                    get_ids(list_no),
-                   n * sizeof(int64_t));
+                   n * sizeof(idx_t));
         }
     }
 
@@ -570,13 +570,13 @@ size_t OnDiskInvertedLists::merge_from(
         const InvertedLists** ils,
         int n_il,
         bool verbose) {
-    VINDEX_THROW_IF_NOT_MSG(
+    FAISS_THROW_IF_NOT_MSG(
             totsize == 0, "works only on an empty InvertedLists");
 
     std::vector<size_t> sizes(nlist);
     for (int i = 0; i < n_il; i++) {
         const InvertedLists* il = ils[i];
-        VINDEX_THROW_IF_NOT(il->nlist == nlist && il->code_size == code_size);
+        FAISS_THROW_IF_NOT(il->nlist == nlist && il->code_size == code_size);
 
         for (size_t j = 0; j < nlist; j++) {
             sizes[j] += il->list_size(j);
@@ -590,7 +590,7 @@ size_t OnDiskInvertedLists::merge_from(
         lists[j].size = 0;
         lists[j].capacity = sizes[j];
         lists[j].offset = cums;
-        cums += lists[j].capacity * (sizeof(int64_t) + code_size);
+        cums += lists[j].capacity * (sizeof(idx_t) + code_size);
     }
 
     update_totsize(cums);
@@ -642,7 +642,7 @@ size_t OnDiskInvertedLists::merge_from_1(
 }
 
 void OnDiskInvertedLists::crop_invlists(size_t l0, size_t l1) {
-    VINDEX_THROW_IF_NOT(0 <= l0 && l0 <= l1 && l1 <= nlist);
+    FAISS_THROW_IF_NOT(0 <= l0 && l0 <= l1 && l1 <= nlist);
 
     std::vector<List> new_lists(l1 - l0);
     memcpy(new_lists.data(), &lists[l0], (l1 - l0) * sizeof(List));
@@ -657,7 +657,7 @@ void OnDiskInvertedLists::set_all_lists_sizes(const size_t* sizes) {
     for (size_t i = 0; i < nlist; i++) {
         lists[i].offset = ofs;
         lists[i].capacity = lists[i].size = sizes[i];
-        ofs += sizes[i] * (sizeof(int64_t) + code_size);
+        ofs += sizes[i] * (sizeof(idx_t) + code_size);
     }
 }
 
@@ -711,7 +711,7 @@ InvertedLists* OnDiskInvertedListsIOHook::read(IOReader* f, int io_flags)
 
         if (io_flags & IO_FLAG_ONDISK_SAME_DIR) {
             FileIOReader* reader = dynamic_cast<FileIOReader*>(f);
-            VINDEX_THROW_IF_NOT_MSG(
+            FAISS_THROW_IF_NOT_MSG(
                     reader,
                     "IO_FLAG_ONDISK_SAME_DIR only supported "
                     "when reading from file");
@@ -755,14 +755,14 @@ InvertedLists* OnDiskInvertedListsIOHook::read_ArrayInvertedLists(
     ails->lists.resize(nlist);
 
     FileIOReader* reader = dynamic_cast<FileIOReader*>(f);
-    VINDEX_THROW_IF_NOT_MSG(reader, "mmap only supported for File objects");
+    FAISS_THROW_IF_NOT_MSG(reader, "mmap only supported for File objects");
     FILE* fdesc = reader->f;
     size_t o0 = ftell(fdesc);
     size_t o = o0;
     { // do the mmap
         struct stat buf;
         int ret = fstat(fileno(fdesc), &buf);
-        VINDEX_THROW_IF_NOT_FMT(ret == 0, "fstat failed: %s", strerror(errno));
+        FAISS_THROW_IF_NOT_FMT(ret == 0, "fstat failed: %s", strerror(errno));
         ails->totsize = buf.st_size;
         ails->ptr = (uint8_t*)mmap(
                 nullptr,
@@ -771,17 +771,17 @@ InvertedLists* OnDiskInvertedListsIOHook::read_ArrayInvertedLists(
                 MAP_SHARED,
                 fileno(fdesc),
                 0);
-        VINDEX_THROW_IF_NOT_FMT(
+        FAISS_THROW_IF_NOT_FMT(
                 ails->ptr != MAP_FAILED, "could not mmap: %s", strerror(errno));
     }
 
-    VINDEX_THROW_IF_NOT(o <= ails->totsize);
+    FAISS_THROW_IF_NOT(o <= ails->totsize);
 
     for (size_t i = 0; i < ails->nlist; i++) {
         OnDiskInvertedLists::List& l = ails->lists[i];
         l.size = l.capacity = sizes[i];
         l.offset = o;
-        o += l.size * (sizeof(int64_t) + ails->code_size);
+        o += l.size * (sizeof(OnDiskInvertedLists::idx_t) + ails->code_size);
     }
     // resume normal reading of file
     fseek(fdesc, o, SEEK_SET);
@@ -789,4 +789,4 @@ InvertedLists* OnDiskInvertedListsIOHook::read_ArrayInvertedLists(
     return ails;
 }
 
-} // namespace vindex
+} // namespace faiss

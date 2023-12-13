@@ -12,8 +12,8 @@
 #include <iostream>
 #include <queue>
 #include <random>
-#include "IndexFlat.hpp"
-#include "IndexIVFFlat.hpp"
+#include "IndexFlat.h"
+#include "IndexIVFFlat.h"
 
 #include "storage/index/abstract_vector_index.hpp"
 #include "types.hpp"
@@ -58,8 +58,8 @@ class IVFFlatIndex : public AbstractVectorIndex {
   ColumnID _column_id;
   int _d;
   int _nlist;
-  vindex::IndexFlatL2* _quantizer;
-  vindex::IndexIVFFlat* _index;
+  faiss::IndexFlatL2* _quantizer;
+  faiss::IndexIVFFlat* _index;
   tsl::sparse_set<ChunkID> _indexed_chunk_ids = {};
 };
 

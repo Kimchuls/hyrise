@@ -40,9 +40,10 @@
 #include "sql/sql_translator.hpp"
 #include "ssb/ssb_table_generator.hpp"
 #include "storage/chunk_encoder.hpp"
-#include "storage/index/IVF_Flat/IndexIVF.hpp"
+#include "storage/index/IVF_Flat/IndexIVF.h"
 #include "storage/index/IVF_Flat/ivf_flat_index.hpp"
-#include "storage/index/hnsw/hnsw_index.hpp"
+// #include "storage/index/hnsw/hnsw_index.hpp"
+#include "storage/index/IVF_Flat/hnsw_flat_index.hpp"
 #include "tpcc/tpcc_table_generator.hpp"
 #include "tpcds/tpcds_table_generator.hpp"
 #include "tpch/tpch_constants.hpp"
@@ -764,7 +765,8 @@ int Console::_upload(const std::string& args){
         parameters["M"]=32;
         parameters["ef_construction"]=64;
       }
-      table->load_float_array_index<HNSWIndex>(index_save_path,parameters);
+      // table->load_float_array_index<HNSWIndex>(index_save_path,parameters);
+      table->load_float_array_index<HNSWFlatIndex>(index_save_path,parameters);
     } else if (index_type == "ivfflat") {
       table->load_float_array_index<IVFFlatIndex>(index_save_path,parameters);
     } else {
@@ -1320,7 +1322,7 @@ int Console::_exec_script(const std::string& script_file) {
   while (std::getline(script, command)) {
     // printf("command: %s\n",command.c_str());
     // if (number == 2) {
-    vindex::indexivf_time_clear();
+    // faiss::indexivf_time_clear();
     per_table_index_timer = Timer{};
     // }
     return_code = _eval(command);
@@ -1332,7 +1334,7 @@ int Console::_exec_script(const std::string& script_file) {
     //   printf("Now it is executing the %dth command\n", number);
     // }
     std::cout << "_eval_sql time(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-    // vindex::indexivf_print_time();
+    // faiss::indexivf_print_time();
   }
   out("Executing script file done\n");
   _verbose = false;

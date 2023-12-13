@@ -7,7 +7,7 @@
 
 // -*- c++ -*-
 
-#include "VectorTransform.hpp"
+#include "VectorTransform.h"
 
 #include <cinttypes>
 #include <cmath>
@@ -15,13 +15,13 @@
 #include <cstring>
 #include <memory>
 
-#include "IndexPQ.hpp"
-#include "VIndexAssert.hpp"
-#include "distances.hpp"
-#include "random.hpp"
-#include "utils.hpp"
+#include "IndexPQ.h"
+#include "FaissAssert.h"
+#include "distances.h"
+#include "random.h"
+#include "utils.h"
 
-using namespace vindex;
+using namespace faiss;
 
 extern "C" {
 
@@ -135,22 +135,18 @@ int dgesvd_(
  * VectorTransform
  *********************************************/
 
-float* VectorTransform::apply(int64_t n, const float* x) const {
+float* VectorTransform::apply(Index::idx_t n, const float* x) const {
     float* xt = new float[n * d_out];
     apply_noalloc(n, x, xt);
     return xt;
 }
 
-void VectorTransform::train(int64_t, const float*) {
+void VectorTransform::train(idx_t, const float*) {
     // does nothing by default
 }
 
-void VectorTransform::reverse_transform(int64_t, const float*, float*) const {
-    VINDEX_THROW_MSG("reverse transform not implemented");
-}
-
-void VectorTransform::check_identical(const VectorTransform& other) const {
-    VINDEX_THROW_IF_NOT(other.d_in == d_in && other.d_in == d_in);
+void VectorTransform::reverse_transform(idx_t, const float*, float*) const {
+    FAISS_THROW_MSG("reverse transform not implemented");
 }
 
 /*********************************************
@@ -166,12 +162,13 @@ LinearTransform::LinearTransform(int d_in, int d_out, bool have_bias)
     is_trained = false; // will be trained when A and b are initialized
 }
 
-void LinearTransform::apply_noalloc(int64_t n, const float* x, float* xt) const {
-    VINDEX_THROW_IF_NOT_MSG(is_trained, "Transformation not trained yet");
+void LinearTransform::apply_noalloc(Index::idx_t n, const float* x, float* xt)
+        const {
+    FAISS_THROW_IF_NOT_MSG(is_trained, "Transformation not trained yet");
 
     float c_factor;
     if (have_bias) {
-        VINDEX_THROW_IF_NOT_MSG(b.size() == d_out, "Bias not initialized");
+        FAISS_THROW_IF_NOT_MSG(b.size() == d_out, "Bias not initialized");
         float* xi = xt;
         for (int i = 0; i < n; i++)
             for (int j = 0; j < d_out; j++)
@@ -181,7 +178,7 @@ void LinearTransform::apply_noalloc(int64_t n, const float* x, float* xt) const 
         c_factor = 0.0;
     }
 
-    VINDEX_THROW_IF_NOT_MSG(
+    FAISS_THROW_IF_NOT_MSG(
             A.size() == d_out * d_in, "Transformation matrix not initialized");
 
     float one = 1;
@@ -201,13 +198,13 @@ void LinearTransform::apply_noalloc(int64_t n, const float* x, float* xt) const 
            &nbiti);
 }
 
-void LinearTransform::transform_transpose(int64_t n, const float* y, float* x)
+void LinearTransform::transform_transpose(idx_t n, const float* y, float* x)
         const {
     if (have_bias) { // allocate buffer to store bias-corrected data
         float* y_new = new float[n * d_out];
         const float* yr = y;
         float* yw = y_new;
-        for (int64_t i = 0; i < n; i++) {
+        for (idx_t i = 0; i < n; i++) {
             for (int j = 0; j < d_out; j++) {
                 *yw++ = *yr++ - b[j];
             }
@@ -249,7 +246,7 @@ void LinearTransform::set_is_orthonormal() {
     }
 
     double eps = 4e-5;
-    VINDEX_ASSERT(A.size() >= d_out * d_in);
+    FAISS_ASSERT(A.size() >= d_out * d_in);
     {
         std::vector<float> ATA(d_out * d_out);
         FINTEGER dii = d_in, doi = d_out;
@@ -283,12 +280,12 @@ void LinearTransform::set_is_orthonormal() {
     }
 }
 
-void LinearTransform::reverse_transform(int64_t n, const float* xt, float* x)
+void LinearTransform::reverse_transform(idx_t n, const float* xt, float* x)
         const {
     if (is_orthonormal) {
         transform_transpose(n, xt, x);
     } else {
-        VINDEX_THROW_MSG(
+        FAISS_THROW_MSG(
                 "reverse transform not implemented for non-orthonormal matrices");
     }
 }
@@ -301,7 +298,7 @@ void LinearTransform::print_if_verbose(
     if (!verbose)
         return;
     printf("matrix %s: %d*%d [\n", name, n, d);
-    VINDEX_THROW_IF_NOT(mat.size() >= n * d);
+    FAISS_THROW_IF_NOT(mat.size() >= n * d);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < d; j++) {
             printf("%10.5g ", mat[i * d + j]);
@@ -309,13 +306,6 @@ void LinearTransform::print_if_verbose(
         printf("\n");
     }
     printf("]\n");
-}
-
-void LinearTransform::check_identical(const VectorTransform& other_in) const {
-    VectorTransform::check_identical(other_in);
-    auto other = dynamic_cast<const LinearTransform*>(&other_in);
-    VINDEX_THROW_IF_NOT(other);
-    VINDEX_THROW_IF_NOT(other->A == A && other->b == b);
 }
 
 /*********************************************
@@ -347,7 +337,7 @@ void RandomRotationMatrix::init(int seed) {
     is_trained = true;
 }
 
-void RandomRotationMatrix::train(int64_t /*n*/, const float* /*x*/) {
+void RandomRotationMatrix::train(Index::idx_t /*n*/, const float* /*x*/) {
     // initialize with some arbitrary seed
     init(12345);
 }
@@ -441,10 +431,13 @@ void eig(size_t d_in, double* cov, double* eigenvalues, int verbose) {
 
 } // namespace
 
-void PCAMatrix::train(int64_t n, const float* x_in) {
-    const float* x = fvecs_maybe_subsample(
-            d_in, (size_t*)&n, max_points_per_d * d_in, x_in, verbose);
-    TransformedVectors tv(x_in, x);
+void PCAMatrix::train(Index::idx_t n, const float* x) {
+    const float* x_in = x;
+
+    x = fvecs_maybe_subsample(
+            d_in, (size_t*)&n, max_points_per_d * d_in, x, verbose);
+
+    ScopeDeleter<float> del_x(x != x_in ? x : nullptr);
 
     // compute mean
     mean.clear();
@@ -605,7 +598,7 @@ void PCAMatrix::train(int64_t n, const float* x_in) {
 }
 
 void PCAMatrix::copy_from(const PCAMatrix& other) {
-    VINDEX_THROW_IF_NOT(other.is_trained);
+    FAISS_THROW_IF_NOT(other.is_trained);
     mean = other.mean;
     eigenvalues = other.eigenvalues;
     PCAMat = other.PCAMat;
@@ -614,7 +607,7 @@ void PCAMatrix::copy_from(const PCAMatrix& other) {
 }
 
 void PCAMatrix::prepare_Ab() {
-    VINDEX_THROW_IF_NOT_FMT(
+    FAISS_THROW_IF_NOT_FMT(
             d_out * d_in <= PCAMat.size(),
             "PCA matrix cannot output %d dimensions from %d ",
             d_out,
@@ -635,7 +628,7 @@ void PCAMatrix::prepare_Ab() {
         }
 
         if (balanced_bins != 0) {
-            VINDEX_THROW_IF_NOT(d_out % balanced_bins == 0);
+            FAISS_THROW_IF_NOT(d_out % balanced_bins == 0);
             int dsub = d_out / balanced_bins;
             std::vector<float> Ain;
             std::swap(A, Ain);
@@ -670,7 +663,7 @@ void PCAMatrix::prepare_Ab() {
         }
 
     } else {
-        VINDEX_THROW_IF_NOT_MSG(
+        FAISS_THROW_IF_NOT_MSG(
                 balanced_bins == 0,
                 "both balancing bins and applying a random rotation "
                 "does not make sense");
@@ -729,7 +722,7 @@ ITQMatrix::ITQMatrix(int d)
         : LinearTransform(d, d, false), max_iter(50), seed(123) {}
 
 /** translated from fbcode/deeplearning/catalyzer/catalyzer/quantizers.py */
-void ITQMatrix::train(int64_t n, const float* xf) {
+void ITQMatrix::train(Index::idx_t n, const float* xf) {
     size_t d = d_in;
     std::vector<double> rotation(d * d);
 
@@ -819,7 +812,7 @@ void ITQMatrix::train(int64_t n, const float* xf) {
                     &lwork,
                     &info);
 
-            VINDEX_THROW_IF_NOT(info == 0);
+            FAISS_THROW_IF_NOT(info == 0);
             lwork = size_t(lwork1);
             std::vector<double> work(lwork);
             dgesvd_("A",
@@ -836,7 +829,7 @@ void ITQMatrix::train(int64_t n, const float* xf) {
                     work.data(),
                     &lwork,
                     &info);
-            VINDEX_THROW_IF_NOT_FMT(info == 0, "sgesvd returned info=%d", info);
+            FAISS_THROW_IF_NOT_FMT(info == 0, "sgesvd returned info=%d", info);
         }
         print_if_verbose("u", u, d, d);
         print_if_verbose("vt", vt, d, d);
@@ -875,35 +868,36 @@ ITQTransform::ITQTransform(int d_in, int d_out, bool do_pca)
           itq(d_out),
           pca_then_itq(d_in, d_out, false) {
     if (!do_pca) {
-        VINDEX_THROW_IF_NOT(d_in == d_out);
+        FAISS_THROW_IF_NOT(d_in == d_out);
     }
     max_train_per_dim = 10;
     is_trained = false;
 }
 
-void ITQTransform::train(int64_t n, const float* x_in) {
-    VINDEX_THROW_IF_NOT(!is_trained);
+void ITQTransform::train(idx_t n, const float* x) {
+    FAISS_THROW_IF_NOT(!is_trained);
 
+    const float* x_in = x;
     size_t max_train_points = std::max(d_in * max_train_per_dim, 32768);
-    const float* x =
-            fvecs_maybe_subsample(d_in, (size_t*)&n, max_train_points, x_in);
-    TransformedVectors tv(x_in, x);
+    x = fvecs_maybe_subsample(d_in, (size_t*)&n, max_train_points, x);
+
+    ScopeDeleter<float> del_x(x != x_in ? x : nullptr);
 
     std::unique_ptr<float[]> x_norm(new float[n * d_in]);
     { // normalize
         int d = d_in;
 
         mean.resize(d, 0);
-        for (int64_t i = 0; i < n; i++) {
-            for (int64_t j = 0; j < d; j++) {
+        for (idx_t i = 0; i < n; i++) {
+            for (idx_t j = 0; j < d; j++) {
                 mean[j] += x[i * d + j];
             }
         }
-        for (int64_t j = 0; j < d; j++) {
+        for (idx_t j = 0; j < d; j++) {
             mean[j] /= n;
         }
-        for (int64_t i = 0; i < n; i++) {
-            for (int64_t j = 0; j < d; j++) {
+        for (idx_t i = 0; i < n; i++) {
+            for (idx_t j = 0; j < d; j++) {
                 x_norm[i * d + j] = x[i * d + j] - mean[j];
             }
         }
@@ -952,14 +946,15 @@ void ITQTransform::train(int64_t n, const float* x_in) {
     is_trained = true;
 }
 
-void ITQTransform::apply_noalloc(int64_t n, const float* x, float* xt) const {
-    VINDEX_THROW_IF_NOT_MSG(is_trained, "Transformation not trained yet");
+void ITQTransform::apply_noalloc(Index::idx_t n, const float* x, float* xt)
+        const {
+    FAISS_THROW_IF_NOT_MSG(is_trained, "Transformation not trained yet");
 
     std::unique_ptr<float[]> x_norm(new float[n * d_in]);
     { // normalize
         int d = d_in;
-        for (int64_t i = 0; i < n; i++) {
-            for (int64_t j = 0; j < d; j++) {
+        for (idx_t i = 0; i < n; i++) {
+            for (idx_t j = 0; j < d; j++) {
                 x_norm[i * d + j] = x[i * d + j] - mean[j];
             }
         }
@@ -971,29 +966,30 @@ void ITQTransform::apply_noalloc(int64_t n, const float* x, float* xt) const {
     pca_then_itq.apply_noalloc(n, x_norm.get(), xt);
 }
 
-void ITQTransform::check_identical(const VectorTransform& other_in) const {
-    VectorTransform::check_identical(other_in);
-    auto other = dynamic_cast<const ITQTransform*>(&other_in);
-    VINDEX_THROW_IF_NOT(other);
-    pca_then_itq.check_identical(other->pca_then_itq);
-    VINDEX_THROW_IF_NOT(other->mean == mean);
-}
-
 /*********************************************
  * OPQMatrix
  *********************************************/
 
 OPQMatrix::OPQMatrix(int d, int M, int d2)
-        : LinearTransform(d, d2 == -1 ? d : d2, false), M(M) {
+        : LinearTransform(d, d2 == -1 ? d : d2, false),
+          M(M),
+          niter(50),
+          niter_pq(4),
+          niter_pq_0(40),
+          verbose(false),
+          pq(nullptr) {
     is_trained = false;
     // OPQ is quite expensive to train, so set this right.
     max_train_points = 256 * 256;
+    pq = nullptr;
 }
 
-void OPQMatrix::train(int64_t n, const float* x_in) {
-    const float* x = fvecs_maybe_subsample(
-            d_in, (size_t*)&n, max_train_points, x_in, verbose);
-    TransformedVectors tv(x_in, x);
+void OPQMatrix::train(Index::idx_t n, const float* x) {
+    const float* x_in = x;
+
+    x = fvecs_maybe_subsample(d_in, (size_t*)&n, max_train_points, x, verbose);
+
+    ScopeDeleter<float> del_x(x != x_in ? x : nullptr);
 
     // To support d_out > d_in, we pad input vectors with 0s to d_out
     size_t d = d_out <= d_in ? d_in : d_out;
@@ -1058,7 +1054,7 @@ void OPQMatrix::train(int64_t n, const float* x_in) {
         // we use only the d * d2 upper part of the matrix
         A.resize(d * d2);
     } else {
-        VINDEX_THROW_IF_NOT(A.size() == d * d2);
+        FAISS_THROW_IF_NOT(A.size() == d * d2);
         rotation = A.data();
     }
 
@@ -1213,29 +1209,21 @@ NormalizationTransform::NormalizationTransform(int d, float norm)
 NormalizationTransform::NormalizationTransform()
         : VectorTransform(-1, -1), norm(-1) {}
 
-void NormalizationTransform::apply_noalloc(int64_t n, const float* x, float* xt)
+void NormalizationTransform::apply_noalloc(idx_t n, const float* x, float* xt)
         const {
     if (norm == 2.0) {
         memcpy(xt, x, sizeof(x[0]) * n * d_in);
         fvec_renorm_L2(d_in, n, xt);
     } else {
-        VINDEX_THROW_MSG("not implemented");
+        FAISS_THROW_MSG("not implemented");
     }
 }
 
 void NormalizationTransform::reverse_transform(
-        int64_t n,
+        idx_t n,
         const float* xt,
         float* x) const {
     memcpy(x, xt, sizeof(xt[0]) * n * d_in);
-}
-
-void NormalizationTransform::check_identical(
-        const VectorTransform& other_in) const {
-    VectorTransform::check_identical(other_in);
-    auto other = dynamic_cast<const NormalizationTransform*>(&other_in);
-    VINDEX_THROW_IF_NOT(other);
-    VINDEX_THROW_IF_NOT(other->norm == norm);
 }
 
 /*********************************************
@@ -1246,10 +1234,10 @@ CenteringTransform::CenteringTransform(int d) : VectorTransform(d, d) {
     is_trained = false;
 }
 
-void CenteringTransform::train(int64_t n, const float* x) {
-    VINDEX_THROW_IF_NOT_MSG(n > 0, "need at least one training vector");
+void CenteringTransform::train(Index::idx_t n, const float* x) {
+    FAISS_THROW_IF_NOT_MSG(n > 0, "need at least one training vector");
     mean.resize(d_in, 0);
-    for (int64_t i = 0; i < n; i++) {
+    for (idx_t i = 0; i < n; i++) {
         for (size_t j = 0; j < d_in; j++) {
             mean[j] += *x++;
         }
@@ -1261,34 +1249,26 @@ void CenteringTransform::train(int64_t n, const float* x) {
     is_trained = true;
 }
 
-void CenteringTransform::apply_noalloc(int64_t n, const float* x, float* xt)
+void CenteringTransform::apply_noalloc(idx_t n, const float* x, float* xt)
         const {
-    VINDEX_THROW_IF_NOT(is_trained);
+    FAISS_THROW_IF_NOT(is_trained);
 
-    for (int64_t i = 0; i < n; i++) {
+    for (idx_t i = 0; i < n; i++) {
         for (size_t j = 0; j < d_in; j++) {
             *xt++ = *x++ - mean[j];
         }
     }
 }
 
-void CenteringTransform::reverse_transform(int64_t n, const float* xt, float* x)
+void CenteringTransform::reverse_transform(idx_t n, const float* xt, float* x)
         const {
-    VINDEX_THROW_IF_NOT(is_trained);
+    FAISS_THROW_IF_NOT(is_trained);
 
-    for (int64_t i = 0; i < n; i++) {
+    for (idx_t i = 0; i < n; i++) {
         for (size_t j = 0; j < d_in; j++) {
             *x++ = *xt++ + mean[j];
         }
     }
-}
-
-void CenteringTransform::check_identical(
-        const VectorTransform& other_in) const {
-    VectorTransform::check_identical(other_in);
-    auto other = dynamic_cast<const CenteringTransform*>(&other_in);
-    VINDEX_THROW_IF_NOT(other);
-    VINDEX_THROW_IF_NOT(other->mean == mean);
 }
 
 /*********************************************
@@ -1303,7 +1283,7 @@ RemapDimensionsTransform::RemapDimensionsTransform(
     map.resize(d_out);
     for (int i = 0; i < d_out; i++) {
         map[i] = map_in[i];
-        VINDEX_THROW_IF_NOT(map[i] == -1 || (map[i] >= 0 && map[i] < d_in));
+        FAISS_THROW_IF_NOT(map[i] == -1 || (map[i] >= 0 && map[i] < d_in));
     }
 }
 
@@ -1330,9 +1310,9 @@ RemapDimensionsTransform::RemapDimensionsTransform(
     }
 }
 
-void RemapDimensionsTransform::apply_noalloc(int64_t n, const float* x, float* xt)
+void RemapDimensionsTransform::apply_noalloc(idx_t n, const float* x, float* xt)
         const {
-    for (int64_t i = 0; i < n; i++) {
+    for (idx_t i = 0; i < n; i++) {
         for (int j = 0; j < d_out; j++) {
             xt[j] = map[j] < 0 ? 0 : x[map[j]];
         }
@@ -1342,11 +1322,11 @@ void RemapDimensionsTransform::apply_noalloc(int64_t n, const float* x, float* x
 }
 
 void RemapDimensionsTransform::reverse_transform(
-        int64_t n,
+        idx_t n,
         const float* xt,
         float* x) const {
     memset(x, 0, sizeof(*x) * n * d_in);
-    for (int64_t i = 0; i < n; i++) {
+    for (idx_t i = 0; i < n; i++) {
         for (int j = 0; j < d_out; j++) {
             if (map[j] >= 0)
                 x[map[j]] = xt[j];
@@ -1354,12 +1334,4 @@ void RemapDimensionsTransform::reverse_transform(
         x += d_in;
         xt += d_out;
     }
-}
-
-void RemapDimensionsTransform::check_identical(
-        const VectorTransform& other_in) const {
-    VectorTransform::check_identical(other_in);
-    auto other = dynamic_cast<const RemapDimensionsTransform*>(&other_in);
-    VINDEX_THROW_IF_NOT(other);
-    VINDEX_THROW_IF_NOT(other->map == map);
 }

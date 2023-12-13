@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <memory>
 #include <unordered_map>
-#include "index_io.hpp"
+#include "index_io.h"
 #include "storage/chunk.hpp"
 #include "storage/index/abstract_vector_index.hpp"
 #include "storage/segment_iterate.hpp"
@@ -17,8 +17,8 @@ namespace hyrise {
                                                             
 IVFFlatIndex::IVFFlatIndex(const std::string& path,const std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<IVFFlatIndex>(), "ivfflat"} {
-  vindex::Index* new_index = vindex::read_index(path.c_str());
-  _index = dynamic_cast<vindex::IndexIVFFlat*>(new_index);
+  faiss::Index* new_index = faiss::read_index(path.c_str());
+  _index = dynamic_cast<faiss::IndexIVFFlat*>(new_index);
 }
 
 IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
@@ -37,8 +37,8 @@ IVFFlatIndex::IVFFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<
     _nlist = DEFAULT_NLIST;
   else
     _nlist = get_item->second;
-  _quantizer = new vindex::IndexFlatL2(_d);
-  _index = new vindex::IndexIVFFlat(_quantizer, _d, _nlist);
+  _quantizer = new faiss::IndexFlatL2(_d);
+  _index = new faiss::IndexIVFFlat(_quantizer, _d, _nlist);
 
   // printf("checkpoint2.2.2\n");
   if (get_item = parameters.find("nprobe"), get_item == parameters.end())
@@ -113,6 +113,6 @@ void IVFFlatIndex::range_similar_k(size_t n, const float* query, int64_t* I, flo
 
 void IVFFlatIndex::save_index(const std::string& save_path) {
   // std::cout<<"not supported"<<std::endl;
-  vindex::write_index(_index, save_path.c_str());
+  faiss::write_index(_index, save_path.c_str());
 }
 }  // namespace hyrise

@@ -7,7 +7,8 @@
 
 // -*- c++ -*-
 
-#include "PolysemousTraining.hpp"
+#include "PolysemousTraining.h"
+#include "FaissAssert.h"
 
 #include <omp.h>
 #include <stdint.h>
@@ -18,22 +19,35 @@
 
 #include <algorithm>
 
-#include "distances.hpp"
-#include "hamming.hpp"
-#include "random.hpp"
-#include "utils.hpp"
+#include "distances.h"
+#include "hamming.h"
+#include "random.h"
+#include "utils.h"
 
-#include "VIndexAssert.hpp"
+#include "FaissAssert.h"
 
 /*****************************************
  * Mixed PQ / Hamming
  ******************************************/
 
-namespace vindex {
+namespace faiss {
 
 /****************************************************
  * Optimization code
  ****************************************************/
+
+SimulatedAnnealingParameters::SimulatedAnnealingParameters() {
+    // set some reasonable defaults for the optimization
+    init_temperature = 0.7;
+    temperature_decay = pow(0.9, 1 / 500.);
+    // reduce by a factor 0.9 every 500 it
+    n_iter = 500000;
+    n_redo = 2;
+    seed = 123;
+    verbose = 0;
+    only_bit_flips = false;
+    init_random = false;
+}
 
 // what would the cost update be if iw and jw were swapped?
 // default implementation just computes both and computes the difference
@@ -59,7 +73,7 @@ SimulatedAnnealingOptimizer::SimulatedAnnealingOptimizer(
           n(obj->n),
           logfile(nullptr) {
     rnd = new RandomGenerator(p.seed);
-    VINDEX_THROW_IF_NOT(n < 100000 && n >= 0);
+    FAISS_THROW_IF_NOT(n < 100000 && n >= 0);
 }
 
 SimulatedAnnealingOptimizer::~SimulatedAnnealingOptimizer() {
@@ -257,7 +271,7 @@ struct ReproduceWithHammingObjective : PermutationObjective {
             double dis_weight_factor)
             : nbits(nbits), dis_weight_factor(dis_weight_factor) {
         n = 1 << nbits;
-        VINDEX_THROW_IF_NOT(dis_table.size() == n * n);
+        FAISS_THROW_IF_NOT(dis_table.size() == n * n);
         set_affine_target_dis(dis_table);
     }
 
@@ -762,7 +776,7 @@ void PolysemousTraining::optimize_reproduce_distances(
 
     size_t mem1 = memory_usage_per_thread(pq);
     int nt = std::min(omp_get_max_threads(), int(pq.M));
-    VINDEX_THROW_IF_NOT_FMT(
+    FAISS_THROW_IF_NOT_FMT(
             mem1 < max_memory,
             "Polysemous training will use %zd bytes per thread, while the max is set to %zd",
             mem1,
@@ -800,7 +814,7 @@ void PolysemousTraining::optimize_reproduce_distances(
             snprintf(fname, 256, log_pattern.c_str(), m);
             printf("opening log file %s\n", fname);
             optim.logfile = fopen(fname, "w");
-            VINDEX_THROW_IF_NOT_MSG(optim.logfile, "could not open logfile");
+            FAISS_THROW_IF_NOT_MSG(optim.logfile, "could not open logfile");
         }
         double final_cost = optim.run_optimization(perm.data());
 
@@ -836,7 +850,7 @@ void PolysemousTraining::optimize_ranking(
 
     pq.compute_codes(x, all_codes.data(), n);
 
-    VINDEX_THROW_IF_NOT(pq.nbits == 8);
+    FAISS_THROW_IF_NOT(pq.nbits == 8);
 
     if (n == 0) {
         pq.compute_sdc_table();
@@ -892,7 +906,7 @@ void PolysemousTraining::optimize_ranking(
         ScopeDeleter1<PermutationObjective> del(obj);
 
         if (verbose > 0) {
-            printf("   m=%d, nq=%zd, nb=%zd, initialize RankingScore "
+            printf("   m=%d, nq=%zd, nb=%zd, intialize RankingScore "
                    "in %.3f ms\n",
                    m,
                    nq,
@@ -907,7 +921,7 @@ void PolysemousTraining::optimize_ranking(
             snprintf(fname, 256, log_pattern.c_str(), m);
             printf("opening log file %s\n", fname);
             optim.logfile = fopen(fname, "w");
-            VINDEX_THROW_IF_NOT_FMT(
+            FAISS_THROW_IF_NOT_FMT(
                     optim.logfile, "could not open logfile %s", fname);
         }
 
@@ -962,8 +976,8 @@ size_t PolysemousTraining::memory_usage_per_thread(
             return n * n * n * sizeof(float);
     }
 
-    VINDEX_THROW_MSG("Invalid optmization type");
+    FAISS_THROW_MSG("Invalid optmization type");
     return 0;
 }
 
-} // namespace vindex
+} // namespace faiss

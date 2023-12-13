@@ -510,110 +510,105 @@ set(
     storage/index/chunk_index_statistics.hpp
     storage/index/table_index_statistics.cpp
     storage/index/table_index_statistics.hpp
-    storage/index/IVF_Flat/AlignedTable.hpp
+    storage/index/IVF_Flat/AlignedTable.h
+    # from here
+    storage/index/IVF_Flat/AlignedTable.h
     storage/index/IVF_Flat/AuxIndexStructures.cpp
-    storage/index/IVF_Flat/AuxIndexStructures.hpp
+    storage/index/IVF_Flat/AuxIndexStructures.h
     storage/index/IVF_Flat/BlockInvertedLists.cpp
-    storage/index/IVF_Flat/BlockInvertedLists.hpp
+    storage/index/IVF_Flat/BlockInvertedLists.h
     storage/index/IVF_Flat/Clustering.cpp
-    storage/index/IVF_Flat/Clustering.hpp
-    storage/index/IVF_Flat/code_distance_avx512.hpp
-    storage/index/IVF_Flat/code_distance-avx2.hpp
-    storage/index/IVF_Flat/code_distance-generic.hpp
-    storage/index/IVF_Flat/code_distance.hpp
-    storage/index/IVF_Flat/CodePacker.cpp
-    storage/index/IVF_Flat/CodePacker.hpp
+    storage/index/IVF_Flat/Clustering.h
     storage/index/IVF_Flat/DirectMap.cpp
-    storage/index/IVF_Flat/DirectMap.hpp
-    storage/index/IVF_Flat/DistanceComputer.hpp
+    storage/index/IVF_Flat/DirectMap.h
+    storage/index/IVF_Flat/DistanceComputer.h
+    storage/index/IVF_Flat/FaissAssert.h
+    storage/index/IVF_Flat/FaissException.cpp
+    storage/index/IVF_Flat/FaissException.h
+    storage/index/IVF_Flat/HNSW.cpp
+    storage/index/IVF_Flat/HNSW.h
     storage/index/IVF_Flat/Heap.cpp
-    storage/index/IVF_Flat/Heap.hpp
+    storage/index/IVF_Flat/Heap.h
     storage/index/IVF_Flat/IDSelector.cpp
-    storage/index/IVF_Flat/IDSelector.hpp
+    storage/index/IVF_Flat/IDSelector.h
     storage/index/IVF_Flat/Index.cpp
-    storage/index/IVF_Flat/Index.hpp
+    storage/index/IVF_Flat/Index.h
+    storage/index/IVF_Flat/Index2Layer.cpp
+    storage/index/IVF_Flat/Index2Layer.h
     storage/index/IVF_Flat/IndexFlat.cpp
-    storage/index/IVF_Flat/IndexFlat.hpp
+    storage/index/IVF_Flat/IndexFlat.h
     storage/index/IVF_Flat/IndexFlatCodes.cpp
-    storage/index/IVF_Flat/IndexFlatCodes.hpp
+    storage/index/IVF_Flat/IndexFlatCodes.h
+    storage/index/IVF_Flat/IndexHNSW.cpp
+    storage/index/IVF_Flat/IndexHNSW.h
     storage/index/IVF_Flat/IndexIVF.cpp
-    storage/index/IVF_Flat/IndexIVF.hpp
+    storage/index/IVF_Flat/IndexIVF.h
     storage/index/IVF_Flat/IndexIVFFlat.cpp
-    storage/index/IVF_Flat/IndexIVFFlat.hpp
+    storage/index/IVF_Flat/IndexIVFFlat.h
     storage/index/IVF_Flat/IndexIVFPQ.cpp
-    storage/index/IVF_Flat/IndexIVFPQ.hpp
+    storage/index/IVF_Flat/IndexIVFPQ.h
     storage/index/IVF_Flat/IndexPQ.cpp
-    storage/index/IVF_Flat/IndexPQ.hpp
+    storage/index/IVF_Flat/IndexPQ.h
+    storage/index/IVF_Flat/IndexScalarQuantizer.cpp
+    storage/index/IVF_Flat/IndexScalarQuantizer.h
     storage/index/IVF_Flat/InvertedLists.cpp
-    storage/index/IVF_Flat/InvertedLists.hpp
+    storage/index/IVF_Flat/InvertedLists.h
     storage/index/IVF_Flat/InvertedListsIOHook.cpp
-    storage/index/IVF_Flat/InvertedListsIOHook.hpp
-    storage/index/IVF_Flat/MetricType.hpp
+    storage/index/IVF_Flat/InvertedListsIOHook.h
+    storage/index/IVF_Flat/MetricType.h
     storage/index/IVF_Flat/OnDiskInvertedLists.cpp
-    storage/index/IVF_Flat/OnDiskInvertedLists.hpp
+    storage/index/IVF_Flat/OnDiskInvertedLists.h
     storage/index/IVF_Flat/PolysemousTraining.cpp
-    storage/index/IVF_Flat/PolysemousTraining.hpp
-    storage/index/IVF_Flat/ProductQuantizer-inl.hpp
+    storage/index/IVF_Flat/PolysemousTraining.h
+    storage/index/IVF_Flat/ProductQuantizer-inl.h
     storage/index/IVF_Flat/ProductQuantizer.cpp
-    storage/index/IVF_Flat/ProductQuantizer.hpp
-    storage/index/IVF_Flat/Quantizer.hpp
-    storage/index/IVF_Flat/ResultHandler.hpp
+    storage/index/IVF_Flat/ProductQuantizer.h
+    storage/index/IVF_Flat/Quantizer.h
+    storage/index/IVF_Flat/ResultHandler.h
+    storage/index/IVF_Flat/ScalarQuantizer.cpp
+    storage/index/IVF_Flat/ScalarQuantizer.h
     storage/index/IVF_Flat/VectorTransform.cpp
-    storage/index/IVF_Flat/VectorTransform.hpp
-    storage/index/IVF_Flat/VIndexAssert.hpp
-    storage/index/IVF_Flat/VIndexException.cpp
-    storage/index/IVF_Flat/VIndexException.hpp
-    storage/index/IVF_Flat/approx_topk.hpp
-    storage/index/IVF_Flat/approx_topk_hamming.hpp
-    storage/index/IVF_Flat/approx_topk_avx2-inl.hpp
-    storage/index/IVF_Flat/avx512.cpp
-    storage/index/IVF_Flat/avx512.hpp
-    storage/index/IVF_Flat/common.hpp
+    storage/index/IVF_Flat/VectorTransform.h
+    storage/index/IVF_Flat/collect_list.py
     storage/index/IVF_Flat/distances.cpp
-    storage/index/IVF_Flat/distances.hpp
-    storage/index/IVF_Flat/distances_fused.cpp
-    storage/index/IVF_Flat/distances_fused.hpp
+    storage/index/IVF_Flat/distances.h
     storage/index/IVF_Flat/distances_simd.cpp
-    storage/index/IVF_Flat/extra_distances-inl.hpp
+    storage/index/IVF_Flat/extra_distances-inl.h
     storage/index/IVF_Flat/extra_distances.cpp
-    storage/index/IVF_Flat/extra_distances.hpp
-    storage/index/IVF_Flat/generic.hpp
-    storage/index/IVF_Flat/generic-inl.hpp
-    storage/index/IVF_Flat/hamdis-inl.hpp
+    storage/index/IVF_Flat/extra_distances.h
+    storage/index/IVF_Flat/fp16-fp16c.h
+    storage/index/IVF_Flat/fp16-inl.h
+    storage/index/IVF_Flat/fp16.h
+    storage/index/IVF_Flat/hamming-inl.h
     storage/index/IVF_Flat/hamming.cpp
-    storage/index/IVF_Flat/hamming.hpp
-    storage/index/IVF_Flat/hamming-inl.hpp
-    storage/index/IVF_Flat/hamming_distance_avx2-inl.hpp
-    storage/index/IVF_Flat/index_io.hpp
+    storage/index/IVF_Flat/hamming.h
+    storage/index/IVF_Flat/hnsw_flat_index.cpp
+    storage/index/IVF_Flat/hnsw_flat_index.hpp
+    storage/index/IVF_Flat/index_io.h
     storage/index/IVF_Flat/index_read.cpp
     storage/index/IVF_Flat/index_write.cpp
     storage/index/IVF_Flat/io.cpp
-    storage/index/IVF_Flat/io.hpp
-    storage/index/IVF_Flat/io_macros.hpp
-    storage/index/IVF_Flat/ivf_pq_index.cpp
-    storage/index/IVF_Flat/ivf_pq_index.hpp
-    storage/index/IVF_Flat/mode.hpp
-    storage/index/IVF_Flat/neon-inl.hpp
-    storage/index/IVF_Flat/ordered_key_value.hpp
-    storage/index/IVF_Flat/partitioning.cpp
-    storage/index/IVF_Flat/partitioning.hpp
-    storage/index/IVF_Flat/platform_macros.hpp
-    storage/index/IVF_Flat/prefetch.hpp
-    storage/index/IVF_Flat/random.cpp
-    storage/index/IVF_Flat/random.hpp
-    storage/index/IVF_Flat/simdlib.hpp
-    storage/index/IVF_Flat/simdlib_avx2.hpp
-    storage/index/IVF_Flat/simdlib_based.cpp
-    storage/index/IVF_Flat/simdlib_based.hpp
-    storage/index/IVF_Flat/simdlib_emulated.hpp
-    storage/index/IVF_Flat/simdlib_neon.hpp
-    storage/index/IVF_Flat/sorting.cpp
-    storage/index/IVF_Flat/sorting.hpp
-    storage/index/IVF_Flat/transpose-avx2-inl.hpp
-    storage/index/IVF_Flat/utils.cpp
-    storage/index/IVF_Flat/utils.hpp    
+    storage/index/IVF_Flat/io.h
+    storage/index/IVF_Flat/io_macros.h
     storage/index/IVF_Flat/ivf_flat_index.cpp
     storage/index/IVF_Flat/ivf_flat_index.hpp
+    storage/index/IVF_Flat/ivf_pq_index.cpp
+    storage/index/IVF_Flat/ivf_pq_index.hpp
+    storage/index/IVF_Flat/kmeans1d.cpp
+    storage/index/IVF_Flat/kmeans1d.h
+    storage/index/IVF_Flat/ordered_key_value.h
+    storage/index/IVF_Flat/partitioning.cpp
+    storage/index/IVF_Flat/partitioning.h
+    storage/index/IVF_Flat/platform_macros.h
+    storage/index/IVF_Flat/random.cpp
+    storage/index/IVF_Flat/random.h
+    storage/index/IVF_Flat/simdlib.h
+    storage/index/IVF_Flat/simdlib_avx2.h
+    storage/index/IVF_Flat/simdlib_emulated.h
+    storage/index/IVF_Flat/simdlib_neon.h
+    storage/index/IVF_Flat/utils.cpp
+    storage/index/IVF_Flat/utils.h
+    # end here
     storage/index/partial_hash/flat_map_iterator.cpp
     storage/index/partial_hash/flat_map_iterator.hpp
     storage/index/partial_hash/flat_map_iterator_impl.cpp
@@ -622,14 +617,14 @@ set(
     storage/index/partial_hash/partial_hash_index.hpp
     storage/index/partial_hash/partial_hash_index_impl.cpp
     storage/index/partial_hash/partial_hash_index_impl.hpp
-    storage/index/hnsw/hnsw_index.cpp
-    storage/index/hnsw/hnsw_index.hpp
-    storage/index/hnsw/bruteforce.h
-    storage/index/hnsw/hnswlib.h
-    storage/index/hnsw/hnswalg.h 
-    storage/index/hnsw/space_ip.h 
-    storage/index/hnsw/space_l2.h 
-    storage/index/hnsw/visited_list_pool.h
+    # storage/index/hnsw/hnsw_index.cpp
+    # storage/index/hnsw/hnsw_index.hpp
+    # storage/index/hnsw/bruteforce.h
+    # storage/index/hnsw/hnswlib.h
+    # storage/index/hnsw/hnswalg.h 
+    # storage/index/hnsw/space_ip.h 
+    # storage/index/hnsw/space_l2.h 
+    # storage/index/hnsw/visited_list_pool.h
     storage/index/chunk_index_type.hpp
     storage/index/vector_index_type.hpp
     storage/lqp_view.cpp

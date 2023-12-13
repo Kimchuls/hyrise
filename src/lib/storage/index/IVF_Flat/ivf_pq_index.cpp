@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <memory>
 #include <unordered_map>
-#include "index_io.hpp"
+#include "index_io.h"
 #include "storage/chunk.hpp"
 #include "storage/index/abstract_vector_index.hpp"
 #include "storage/segment_iterate.hpp"
@@ -20,8 +20,8 @@ namespace hyrise {
 IVFPQIndex::IVFPQIndex(const std::string& path,const std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<IVFPQIndex>(), "ivfpq"} {
       // printf("create ivfpq index-2\n");
-  vindex::Index* new_index = vindex::read_index(path.c_str());
-  _index = dynamic_cast<vindex::IndexIVFPQ*>(new_index);
+  faiss::Index* new_index = faiss::read_index(path.c_str());
+  _index = dynamic_cast<faiss::IndexIVFPQ*>(new_index);
 }
 
 IVFPQIndex::IVFPQIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
@@ -54,8 +54,8 @@ IVFPQIndex::IVFPQIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chun
     _nbits_per_idx = get_item->second;
 
 
-  _quantizer = new vindex::IndexFlatL2(_d);
-  _index = new vindex::IndexIVFPQ(_quantizer, _d, _nlist, _m, _nbits_per_idx);
+  _quantizer = new faiss::IndexFlatL2(_d);
+  _index = new faiss::IndexIVFPQ(_quantizer, _d, _nlist, _m, _nbits_per_idx);
 
   // printf("checkpoint2.2.2\n");
   if (get_item = parameters.find("nprobe"), get_item == parameters.end())
@@ -129,7 +129,7 @@ void IVFPQIndex::range_similar_k(size_t n, const float* query, int64_t* I, float
 }
 
 void IVFPQIndex::save_index(const std::string& save_path) {
-  // std::cout<<"not supported"<<std::endl;
-  vindex::write_index(_index, save_path.c_str());
+  // std::cout<<"IVFPQ save index"<<std::endl;
+  faiss::write_index(_index, save_path.c_str());
 }
 }  // namespace hyrise

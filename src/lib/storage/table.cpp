@@ -19,7 +19,8 @@
 #include "storage/index/adaptive_radix_tree/adaptive_radix_tree_index.hpp"
 #include "storage/index/group_key/composite_group_key_index.hpp"
 #include "storage/index/group_key/group_key_index.hpp"
-#include "storage/index/hnsw/hnsw_index.hpp"
+// #include "storage/index/hnsw/hnsw_index.hpp"
+#include "storage/index/IVF_Flat/hnsw_flat_index.hpp"
 #include "storage/index/partial_hash/partial_hash_index.hpp"
 #include "storage/segment_iterate.hpp"
 #include "types.hpp"
@@ -704,14 +705,16 @@ int Table::drop_index_vector(const int index_id) {
   return 0;
 }
 
-template void Table::load_float_array_index<HNSWIndex>(const std::string& path,
+// template void Table::load_float_array_index<HNSWIndex>(const std::string& path,
+template void Table::load_float_array_index<HNSWFlatIndex>(const std::string& path,
                                                             const std::unordered_map<std::string, int> parameters);
 template void Table::load_float_array_index<IVFFlatIndex>(const std::string& path,
                                                             const std::unordered_map<std::string, int> parameters);
 template void Table::load_float_array_index<IVFPQIndex>(const std::string& path,
                                                             const std::unordered_map<std::string, int> parameters);
 
-template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
+// template void Table::create_float_array_index<HNSWIndex>(const ColumnID column_id,
+template void Table::create_float_array_index<HNSWFlatIndex>(const ColumnID column_id,
                                                          const std::vector<ChunkID>& chunk_ids,
                                                          const std::unordered_map<std::string, int> parameters);
 template void Table::create_float_array_index<IVFFlatIndex>(const ColumnID column_id,

@@ -62,10 +62,10 @@ ColumnID HNSWFlatIndex::get_indexed_column_id() const {
 }
 
 void HNSWFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index) {
-  if (_index->is_trained) {
-    std::cout << "is_trained = true" << std::endl;
-    return;
-  }
+  // if (_index->is_trained) {
+  //   std::cout << "is_trained = true" << std::endl;
+  //   return;
+  // }
   auto indexed_chunks = size_t{0};
   float* data = new float[chunks_to_index.size() * Chunk::DEFAULT_SIZE * _d];
   int nb = 0;
@@ -82,15 +82,15 @@ void HNSWFlatIndex::train_and_insert(const std::vector<std::pair<ChunkID, std::s
     }
   }
   // std::cout << "cut data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  srand((int)time(0));
-  float* trainvecs = new float[nb / 100 * _d];
-  for (int i = 0; i < nb / 100; i++) {
-    int rng = (rand() % (nb + 1));
-    memcpy(trainvecs + i * _d, data + rng * _d, sizeof(float) * _d);
-  }
+  // srand((int)time(0));
+  // float* trainvecs = new float[nb / 100 * _d];
+  // for (int i = 0; i < nb / 100; i++) {
+  //   int rng = (rand() % (nb + 1));
+  //   memcpy(trainvecs + i * _d, data + rng * _d, sizeof(float) * _d);
+  // }
 
   // std::cout << "cut train data(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
-  _index->train(nb / 100, trainvecs);
+  // _index->train(nb / 100, trainvecs);
   // _index->train(nb, data);
   // std::cout << "cut finish train(" << per_table_index_timer.lap_formatted() << ")" << std::endl;
   // delete[] trainvecs;

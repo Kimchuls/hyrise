@@ -530,9 +530,15 @@ void knn_L2sqr_select(
         const IDSelector* sel) {
     if (sel) {
         exhaustive_L2sqr_seq<ResultHandler, true>(x, y, d, nx, ny, res, sel);
+    // } else {
+    //     exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
+    //     // exhaustive_L2sqr_blas(x, y, d, nx, ny, res, y_norm2);
+    // } // TAG: SGEMM
     } else if (nx < distance_compute_blas_threshold) {
+        // printf("checkpoint 1-1\n");
         exhaustive_L2sqr_seq(x, y, d, nx, ny, res);
     } else {
+        // printf("checkpoint 1-2\n");
         exhaustive_L2sqr_blas(x, y, d, nx, ny, res, y_norm2);
     }
 }
@@ -576,9 +582,15 @@ void knn_inner_product(
         RH res(nx, val, ids, k);
         if (sel) {
             exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, res, sel);
+        // } else {
+        //     exhaustive_inner_product_seq(x, y, d, nx, ny, res);
+        //     // exhaustive_inner_product_blas(x, y, d, nx, ny, res);
+        // } // TAG: SGEMM
         } else if (nx < distance_compute_blas_threshold) {
+            // printf("checkpoint 2-1\n");
             exhaustive_inner_product_seq(x, y, d, nx, ny, res);
         } else {
+            // printf("checkpoint 2-2\n");
             exhaustive_inner_product_blas(x, y, d, nx, ny, res);
         }
     } else {
@@ -586,9 +598,15 @@ void knn_inner_product(
         RH res(nx, val, ids, k);
         if (sel) {
             exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, res, sel);
+        // } else {
+        //     exhaustive_inner_product_seq(x, y, d, nx, ny, res, nullptr);
+        //     // exhaustive_inner_product_blas(x, y, d, nx, ny, res);
+        // } // TAG: SGEMM
         } else if (nx < distance_compute_blas_threshold) {
+            // printf("checkpoint 3-1\n");
             exhaustive_inner_product_seq(x, y, d, nx, ny, res, nullptr);
         } else {
+            // printf("checkpoint 3-2\n");
             exhaustive_inner_product_blas(x, y, d, nx, ny, res);
         }
     }
@@ -685,9 +703,15 @@ void range_search_L2sqr(
     RH resh(res, radius);
     if (sel) {
         exhaustive_L2sqr_seq<RH, true>(x, y, d, nx, ny, resh, sel);
+    // } else {
+    //     exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
+    //     // exhaustive_L2sqr_blas(x, y, d, nx, ny, resh);
+    // } // TAG: SGEMM
     } else if (nx < distance_compute_blas_threshold) {
+        // printf("checkpoint 4-1\n");
         exhaustive_L2sqr_seq(x, y, d, nx, ny, resh, sel);
     } else {
+        // printf("checkpoint 4-2\n");
         exhaustive_L2sqr_blas(x, y, d, nx, ny, resh);
     }
 }
@@ -705,9 +729,15 @@ void range_search_inner_product(
     RH resh(res, radius);
     if (sel) {
         exhaustive_inner_product_seq<RH, true>(x, y, d, nx, ny, resh, sel);
+    // } else {
+    //     exhaustive_inner_product_seq(x, y, d, nx, ny, resh);
+    //     // exhaustive_inner_product_blas(x, y, d, nx, ny, resh);
+    // } // TAG: SGEMM
     } else if (nx < distance_compute_blas_threshold) {
+        // printf("checkpoint 5-1\n");
         exhaustive_inner_product_seq(x, y, d, nx, ny, resh);
     } else {
+        // printf("checkpoint 5-2\n");
         exhaustive_inner_product_blas(x, y, d, nx, ny, resh);
     }
 }

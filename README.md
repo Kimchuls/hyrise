@@ -449,11 +449,11 @@ There will be a file in `./hyrise/cmake-build-debug/sift_base-output.txt` contai
 
 # Experiment results
 
-<img src="./TODS_build.png" width = 70% height = 70% alt="search" align=center />
+<img src="./TODS_build2.png" width = 70% height = 70% alt="search" align=center />
 
-<img src="./TODS_search.png" width = 70% height = 70% alt="build" align=center />
+<img src="./TODS_search2.png" width = 70% height = 70% alt="build" align=center />
 
-<img src="./TODS_size.png" width = 70% height = 70% alt="size" align=center />
+<img src="./TODS_size2.png" width = 70% height = 70% alt="size" align=center />
 
 # Conclusion
 

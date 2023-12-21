@@ -1,6 +1,8 @@
 # Supporting Vector Data Management in Relational Databases
 
 High-dimensional vector data is gaining increasing importance in data science applications. Consequently, various database systems have recently been developed to manage vector data. 
+
+
 These systems can be broadly categorized into two types: specialized and generalized vector databases. Specialized vector databases are explicitly designed and optimized for storing and querying vector data, while generalized vector databases support vector data management within a relational database like PostgreSQL. It is expected (and confirmed by our experiments) that generalized vector databases exhibit slower performance. However, two key questions remain unanswered: (1) What are the limitations for relational databases to efficiently support vector data management? (2) How to overcome these limitations and build a new vector database within a relational database that achieves performance comparable to a highly optimized specialized vector database? 
 
 To address the first question, we chose PostgreSQL as a representative relational database due to its popularity. We focused on Alibaba PASE, as it is a PostgreSQL-based vector database and is considered state-of-the-art among generalized vector databases. We analyzed the source code of PASE and compared its performance with the Faiss to identify the underlying root causes to the low performance in PASE. 

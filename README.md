@@ -1,11 +1,11 @@
-# Are There Fundamental Limitations in Supporting Vector Data Management in Relational Databases? A Case Study of PostgreSQL
+# Supporting Vector Data Management in Relational Databases
 
 High-dimensional vector data is gaining increasing importance in data science applications. Consequently, various database systems have recently been developed to manage vector data. 
 These systems can be broadly categorized into two types: specialized and generalized vector databases. Specialized vector databases are explicitly designed and optimized for storing and querying vector data, while generalized vector databases support vector data management within a relational database like PostgreSQL. It is expected (and confirmed by our experiments) that generalized vector databases exhibit slower performance. However, two key questions remain unanswered: (1) What are the limitations for relational databases to efficiently support vector data management? (2) How to overcome these limitations and build a new vector database within a relational database that achieves performance comparable to a highly optimized specialized vector database? 
 
 To address the first question, we chose PostgreSQL as a representative relational database due to its popularity. We focused on Alibaba PASE, as it is a PostgreSQL-based vector database and is considered state-of-the-art among generalized vector databases. We analyzed the source code of PASE and compared its performance with the Faiss to identify the underlying root causes to the low performance in PASE. 
 
-Based on these root causes and the lessons learned, we developed a novel generalized vector database termed HyriseVector, which is built within Hyrise, a main-memory relational database. HyriseVector achieves performance comparable to the highly optimized specialized vector database in search, index construction, and index size, thus answering the second question. In particular, HyriseVector improves existing generalized vector databases by up to 40×
+Based on these root causes and the lessons learned, we developed a novel generalized vector database termed HyriseVector, which is built within Hyrise, a main-memory relational database. HyriseVector achieves performance comparable to the highly optimized specialized vector database in search, index construction, and index size, thus answering the second question. In particular, HyriseVector improves existing generalized vector databases by up to 40×.
 
 
 # Repository Contents
@@ -457,4 +457,4 @@ There will be a file in `./hyrise/cmake-build-debug/sift_base-output.txt` contai
 
 # Conclusion
 
-In this paper, we present HyriseVector, a generalized vector database that matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by one to two orders of magnitude.
+We systematically investigated the performance issues in generalized vector databases and identified a collection of root causes for these issues. Based on our findings, we developed a new generalized vector database, named HyriseVector, which matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by an order of magnitude of one to two.

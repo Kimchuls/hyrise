@@ -395,7 +395,7 @@ int Console::_eval_sql(const std::string& sql) {
         dim = 960;
         gt_path = "/ssd_root/dataset/gist1m/gist_groundtruth.ivecs";
         gt_int = ivecs_read(gt_path.c_str(), &kk, &nnq);
-      } else if (table_name == "deep_10m") {
+      } else if (table_name == "deep_10m" || table_name == "deep_base") {
         nq = 10000;
         dim = 96;
         gt_path = "/ssd_root/dataset/deep1b/deep10M_groundtruth.ivecs";
@@ -420,7 +420,7 @@ int Console::_eval_sql(const std::string& sql) {
       }
       fclose(wr);
       int64_t* I = new int64_t[k * nq];
-      FILE* writes = fopen((table_name+std::string("-output.txt")).c_str(), "w");
+      FILE* writes = fopen((table_name + std::string("-output.txt")).c_str(), "w");
       const auto chunk_count = table->chunk_count();
       const auto column_count = table->column_count();
       int iter = 0;
@@ -431,8 +431,11 @@ int Console::_eval_sql(const std::string& sql) {
         const auto maxoffset = searched_segment->size();
         for (auto i = ChunkOffset{0}; i < maxoffset; i++) {
           auto x = get_AllTypeVariant_to_string<std::string>((*searched_chunk->get_segment(column_id))[i]);
-          I[iter++] = std::stoi(x);
-          fprintf(writes, "%d\n", std::stoi(x));
+          I[iter] = std::stoi(x);
+          if (I[iter] == 0 && I[iter - 1] <= 0 && I[iter - 2] <= 0)
+            I[iter] = -1;
+          fprintf(writes, "%lld\n", I[iter]);
+          iter++;
         }
       }
       fclose(writes);
@@ -726,7 +729,7 @@ int Console::_generate_ssb(const std::string& args) {
   return ReturnCode::Ok;
 }
 
-int Console::_download(const std::string& args){
+int Console::_download(const std::string& args) {
   const auto arguments = trim_and_split(args);
   const auto table_name = arguments.at(0);
   const auto index_name = arguments.at(1);
@@ -750,7 +753,7 @@ int Console::_download(const std::string& args){
   return ReturnCode::Ok;
 }
 
-int Console::_upload(const std::string& args){
+int Console::_upload(const std::string& args) {
   const auto arguments = trim_and_split(args);
   const auto table_name = arguments.at(0);
   const auto index_type = arguments.at(1);
@@ -758,21 +761,21 @@ int Console::_upload(const std::string& args){
   const auto index_save_path = arguments.at(3);
   std::unordered_map<std::string, int> parameters;
   const auto& table = Hyrise::get().storage_manager.get_table(table_name);
-   if (index_type == "hnsw") {
+  if (index_type == "hnsw") {
     parameters["dim"] = float_array_dim;
-      if(table_name=="deep_10m"){
-        parameters["dim"] = float_array_dim;
-        parameters["M"]=32;
-        parameters["ef_construction"]=64;
-      }
-      // table->load_float_array_index<HNSWIndex>(index_save_path,parameters);
-      table->load_float_array_index<HNSWFlatIndex>(index_save_path,parameters);
-    } else if (index_type == "ivfflat") {
-      table->load_float_array_index<IVFFlatIndex>(index_save_path,parameters);
-    } else {
-      std::cout << "other index type is not supported." << std::endl;
+    if (table_name == "deep_10m") {
+      parameters["dim"] = float_array_dim;
+      parameters["M"] = 32;
+      parameters["ef_construction"] = 64;
     }
-    return ReturnCode::Ok;
+    // table->load_float_array_index<HNSWIndex>(index_save_path,parameters);
+    table->load_float_array_index<HNSWFlatIndex>(index_save_path, parameters);
+  } else if (index_type == "ivfflat") {
+    table->load_float_array_index<IVFFlatIndex>(index_save_path, parameters);
+  } else {
+    std::cout << "other index type is not supported." << std::endl;
+  }
+  return ReturnCode::Ok;
 }
 
 int Console::_reset_para(const std::string& args) {

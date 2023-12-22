@@ -14,18 +14,17 @@
 
 namespace hyrise {
 
-                                                            
-HNSWFlatIndex::HNSWFlatIndex(const std::string& path,const std::unordered_map<std::string, int> parameters)
+HNSWFlatIndex::HNSWFlatIndex(const std::string& path, const std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWFlatIndex>(), "hnsw"} {
-      // printf("create ivfpq index-2\n");
+  // printf("create ivfpq index-2\n");
   faiss::Index* new_index = faiss::read_index(path.c_str());
   _index = dynamic_cast<faiss::IndexHNSWFlat*>(new_index);
 }
 
 HNSWFlatIndex::HNSWFlatIndex(const std::vector<std::pair<ChunkID, std::shared_ptr<Chunk>>>& chunks_to_index,
-                           ColumnID column_id, std::unordered_map<std::string, int> parameters)
+                             ColumnID column_id, std::unordered_map<std::string, int> parameters)
     : AbstractVectorIndex{get_vector_index_type_of<HNSWFlatIndex>(), "hnsw"} {
-      // printf("create ivfpq index-3\n");
+  // printf("create ivfpq index-3\n");
   auto per_table_index_timer = Timer{};
   Assert(!chunks_to_index.empty(), "HNSWFlatIndex requires chunks_to_index not to be empty.");
   _column_id = column_id;
@@ -110,6 +109,12 @@ void HNSWFlatIndex::range_similar_k(size_t n, const float* query, int64_t* I, fl
   // std::cout << "HNSWFlatIndex::range_similar_k" << std::endl;
   auto per_table_index_timer = Timer{};
   _index->search(n, query, k, D, I);
+  for (int i = 0; i < n*k; i++) {
+    if (I[i] == -1)
+      I[i] = 0;
+    // printf("%ld, ",I[i]);
+  }
+  // printf("\n");
   // std::cout << per_table_index_timer.lap_formatted() << std::endl;
 }
 

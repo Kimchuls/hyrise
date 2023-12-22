@@ -362,7 +362,23 @@ Index* read_index(IOReader* f, int io_flags) {
     Index* idx = nullptr;
     uint32_t h;
     READ1(h);
-    if (h == fourcc("IwFl")) {
+    if (h == fourcc("IxFI") || h == fourcc("IxF2") || h == fourcc("IxFl")) {
+        IndexFlat* idxf;
+        if (h == fourcc("IxFI")) {
+            idxf = new IndexFlatIP();
+        } else if (h == fourcc("IxF2")) {
+            idxf = new IndexFlatL2();
+        } else {
+            idxf = new IndexFlat();
+        }
+        read_index_header(idxf, f);
+        idxf->code_size = idxf->d * sizeof(float);
+        READXBVECTOR(idxf->codes);
+        FAISS_THROW_IF_NOT(
+                idxf->codes.size() == idxf->ntotal * idxf->code_size);
+        // leak!
+        idx = idxf;
+    } else if (h == fourcc("IwFl")) {
         IndexIVFFlat* ivfl = new IndexIVFFlat();
         read_ivf_header(ivfl, f);
         ivfl->code_size = ivfl->d * sizeof(float);

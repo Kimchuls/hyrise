@@ -10,14 +10,14 @@ To address the first question, we chose PostgreSQL as a representative relationa
 Based on these root causes and the lessons learned, we developed a novel generalized vector database termed HyriseVector, which is built within Hyrise, a main-memory relational database. HyriseVector achieves performance comparable to the highly optimized specialized vector database in search, index construction, and index size, thus answering the second question. In particular, HyriseVector improves existing generalized vector databases by up to 40×.
 
 
-# Repository Contents
+## Repository Contents
 
-## **postgresql-11.0** 
+### **postgresql-11.0** 
 This directory contains the source code distribution of the PostgreSQL
 database management system.
 
 
-## **Faiss** 
+### **Faiss** 
 This directory contains the source code of Faiss, a library for efficient similarity search and clustering of dense vectors
 
 * **faiss/IndexIVFFlat.cpp:** Faiss index IVF_FLAT implementation
@@ -27,7 +27,7 @@ This directory contains the source code of Faiss, a library for efficient simila
 * **faiss/IndexHNSW.cpp:** Faiss index HNSW implementation
 
 
-## **PASE**
+### **PASE**
 
 Code of PASE is in the directory **postgresql-11.0/contrib/pase**. 
 
@@ -45,18 +45,18 @@ Code of PASE is in the directory **postgresql-11.0/contrib/pase**.
 
 We implemented index IVF_PQ in PASE and the code is in **postgresql-11.0/contrib/pase/ivfpq**.
 
-# Prerequisite
+## Prerequisite
 
 OpenMP 4.0.1
 
-# Getting the Source
+## Getting the Source
 `git clone https://github.com/Anonymous-Vec/Vec-Exp.git`
 
-## How to use PASE
+### How to use PASE
 
-### Start PostgreSQL
+#### Start PostgreSQL
 
-#### Checking the Required Environment
+##### Checking the Required Environment
 
 `sudo apt-get install build-essential libreadline-dev zlib1g-dev flex bison libxml2-dev libxslt-dev libssl-dev libxml2-utils xsltproc ccache`
 
@@ -68,51 +68,51 @@ Code of PG11 here can not be used directly since some importance files are not u
 
 `cd postgresql-11.0`
 
-#### Configure
+##### Configure
 
 `mkdir build`
 
 `./configure --prefix=$/absolute/path/build CFLAGS="-O3" LDFLAGS="-fPIC -fopenmp" `
 
-#### Compile
+##### Compile
 `make`
 
 `make install`
 
 
-#### Initial new cluster named "data" on a folder:
+##### Initial new cluster named "data" on a folder:
 
 `build/bin/initdb -D data`
 
-#### Set the size of shared buffer in postgresql-11.0/build/data/postgresql.conf/:
+##### Set the size of shared buffer in postgresql-11.0/build/data/postgresql.conf/:
 `shared_buffers = 160GB`
 
-### Start PASE
+#### Start PASE
 
 `cd contrib/pase`
 
-#### May need to change the Makefile:
+##### May need to change the Makefile:
 `PG_CONFIG=postgresql-11.0/build/bin/pg_config`
-#### Compile the PASE
+##### Compile the PASE
 `make USE_PGXS=1`
 
 `make install`
 	
-#### Start the cluster:
+##### Start the cluster:
 `cd ../..`
 
 `build/bin/pg_ctl -D data start` 
-#### Create a database named "pasetest"
+##### Create a database named "pasetest"
 `build/bin/createdb -p 5432 pasetest`
-#### Connect the database
+##### Connect the database
 `build/bin/psql -p 5432 pasetest`
 
-### EXAMPLE CODE Used in Psql Command Line
-#### Create Extension
+#### EXAMPLE CODE Used in Psql Command Line
+##### Create Extension
 
 `create extension pase;`
 
-#### Create Table
+##### Create Table
 
 `CREATE TABLE vectors_ivfflat_test ( id serial, vector float4[]);`
 
@@ -147,7 +147,7 @@ INSERT INTO vectors_ivfflat_test SELECT id, ARRAY[id
        ]::float4[] FROM generate_series(1, 50000) id;
 ```
 
-#### Build Index
+##### Build Index
 
 ```
 CREATE INDEX v_ivfflat_idx ON vectors_ivfflat_test
@@ -157,7 +157,7 @@ CREATE INDEX v_ivfflat_idx ON vectors_ivfflat_test
     (clustering_type = 1, distance_type = 0, dimension = 256, clustering_params = "10,100");
 ```
 
-#### Search Index
+##### Search Index
 
 ```
 SELECT vector <#> '31111,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1'::pase as distance
@@ -168,13 +168,13 @@ SELECT vector <#> '31111,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ```
 
 
-### Original PASE Code:
+#### Original PASE Code:
 
 - [Pase: PostgreSQL Ultra-High Dimensional Approximate Nearest Neighbor Search Extension](https://github.com/alipay/PASE)
 
-## How to use Faiss
+### How to use Faiss
 
-### Prerequisite
+#### Prerequisite
 
 C++11 compiler (with support for OpenMP support version 2 or higher)
 
@@ -189,7 +189,7 @@ BLAS implementation (we strongly recommend using Intel MKL for best performance)
 CMake minimum required(VERSION 3.17)
 
 
-### Compile and Build:
+#### Compile and Build:
 `cd faiss`
 
 `cmake -B build . -DFAISS_ENABLE_GPU=OFF -DFAISS_ENABLE_PYTHON=OFF -DCMAKE_BUILD_TYPE=Release -DFAISS_OPT_LEVEL=generic `
@@ -200,46 +200,48 @@ CMake minimum required(VERSION 3.17)
 
 `make -C build 2-IVFFlat`
 
-### Run the Example Code:
+#### Run the Example Code:
 `./build/tutorial/cpp/2-IVFFlat` 
 
-### Original Faiss Code:
+#### Original Faiss Code:
 
 - [Faiss: A Library for Efficient Similarity Search and Clustering of Dense Vectors](https://github.com/facebookresearch/faiss)
 
-# Comparison Results
+## Comparison Results
 
-## Evaluating Index Construction
+### Evaluating Index Construction
 
-### IVF_FLAT
+#### IVF_FLAT
 ![plot](VecDB/results/ivfflat_build.png)
-### IVF_PQ
+#### IVF_PQ
 ![plot](VecDB/results/ivfpq_build.png)
-### HNSW
+#### HNSW
 ![plot](VecDB/results/HNSW_build.png)
 
 
-## Evaluating Index Size
+### Evaluating Index Size
 
-### IVF_FLAT
+#### IVF_FLAT
 ![plot](VecDB/results/ivfflat_indexSize.png)
-### IVF_PQ
+#### IVF_PQ
 ![plot](VecDB/results/ivfpq_indexSize.png)
-### HNSW
+#### HNSW
 ![plot](VecDB/results/HNSW_indexSize.png)
 
-## Evaluating Search Performance
+### Evaluating Search Performance
 
-### IVF_FLAT
+#### IVF_FLAT
 ![plot](VecDB/results/ivfflat_SearchTime.png)
-### IVF_PQ
+#### IVF_PQ
 ![plot](VecDB/results/ivfpq_SearchTime.png)
-### HNSW
+#### HNSW
 ![plot](VecDB/results/HNSW_SearchTime.png)
 
 
 
-## We summarize the root causes of the performance gap as follows:
+### Root Causes of the Performance Gap
+
+We summarize the root causes of the performance gap as follows:
 
 * **RC#1: SGEMM Optimization.**
 
@@ -255,7 +257,7 @@ CMake minimum required(VERSION 3.17)
 
 * **RC#7: Precomputed Table Implementation.**
 
-## Future Direction: How to Bridge the Gap?
+### Future Direction: How to Bridge the Gap?
 
 A follow-up of the work is how to overcome the root causes? In other words, how to build a new generalized vector database in the future that achieves comparable performance to the state-of-the-art specialized vector database? We show a few actionable guidelines and we are currently working on it.
 * Step#1: Start from PostgreSQL-based PASE (or other relational databases). In order to overcome RC#2, there are different solutions. The first solution is to start from PASE, which is based on PostgreSQL. But we need to optimize HNSW by embedding the actual vector data to the index, which can avoid unnecessary random accesses to fetch vector data during graph traversal. The second solution is to add a memory-optimized table in PostgreSQL following GaussDB or use a main-memory relational database (e.g., MonetDB) to directly access tuples (vectors) in memory to reduce the overhead of tuple accesses.
@@ -264,20 +266,16 @@ A follow-up of the work is how to overcome the root causes? In other words, how 
 * Step#4: Parallelism. The system shall efficiently support both index construction and index search with multiple threads. This requires the implementation of the operator-level (e.g., vector search) parallelism in relational databases, which can bridge the performance gap due to RC#3.
 * Step#5: More optimized implementations. The system needs to reduce space amplification, support optimized K-means and precomputated table as mentioned in RC#4, RC#5, and RC#7.
 
-## Overall Message. 
+## HyriseVector
 
-The overall conclusion of the work is that, with a careful implementation, it is feasible to support vector data management inside a relational database that achieves comparable performance to the state-of-the-art specialized vector database. We do not see a fundamental limitation in using a relational database to support efficient vector data management. In this way, we can use a single relational database to support more applications that involve tables and vectors. The paper lays out seven useful root causes with actionable guidelines to build a generalized vector database step by step to achieve both high performance and generality in the future.
-
-# HyriseVector
-
-We present **HyriseVector**, a novel generalized vector database that achieves performance similar to that of highly optimized specialized vector databases. 
+**HyriseVector** is a novel generalized vector database that achieves performance similar to that of highly optimized specialized vector databases. 
 At a high level, HyriseVector distinguishes itself from other generalized vector databases in two key aspects. First, it is built on top of Hyrise, a main-memory column-based relational database that we have carefully chosen. Second, HyriseVector treats high-dimensional indexes as first-class citizens. 
 
 Under the hood, HyriseVector introduces a suite of optimizations, including index-centric query optimization that pushes down top-k queries, batch-oriented execution that enables efficient index construction as well as vector similarity search and optimization for multi-core parallelism and SIMD to improve performance. Importantly, many of these design concepts and optimizations are applicable to other relational databases, and we discuss how to extend them to PostgreSQL. 
 
-We compare HyriseVector with **9 vector databases**, including 4 generalized vector databases (PASE, pgvector, AnalyticDB-V, ClickHouse) and 5 specialized vector databases (Faiss, Milvus, Qdrant, Weaviate, and Pinecone), using 3 datasets (SIFT1M, GIST1M, DEEP10M). Experiments demonstrate that HyriseVector achieves performance comparable to that of highly optimized specialized vector databases and improves existing generalized vector databases by up to **40X**.
+We compare HyriseVector with PASE and Faiss using 3 datasets (SIFT1M, GIST1M, DEEP10M). Experiments demonstrate that HyriseVector achieves performance comparable to Faiss and improves PASE by up to **40X**. We also do some ablation experiments about batch queries, SGEMM function and parallelism, which proves some optimization we list in the former part can successfully improve the performance of a generalized vector database.
 
-# Install HyriseVector
+### Install HyriseVector
 
 Our HyriseVector can be constructed following these steps:
 
@@ -301,12 +299,12 @@ cmake ..
 make hyriseConsole -j [#Threads]
 ```
 
-# System Structure
+### System Structure
 We illustrate the important parts in our HyriseVector implementation.
 
 <img src="./ppt_create_index_node_structure2.png" width = 70% height = 70% alt="search" align=center />
 
-# Code Structure
+### Code Structure
 
 ```txt
 .
@@ -317,6 +315,7 @@ We illustrate the important parts in our HyriseVector implementation.
 ├── install_dependencies.sh # install dependencies
 ├── README.md
 ├── requirements.txt
+├── VecDB # code for Faiss and PostgreSQL
 └── src/
     ├── ...
     ├── benchmark/
@@ -340,7 +339,7 @@ We illustrate the important parts in our HyriseVector implementation.
             └── table.hpp # Table 
 ```
 
-# Getting started
+### Getting started
 
 We can use the SQL sentense below to **create a table with vector variable**.
 ```sql
@@ -370,7 +369,7 @@ SELECT id FROM SIFT_BASE ORDER BY dat <$>
 LIMIT 100;
 ```
 
-# Sample Experiment
+### Sample Experiment
 
 Here are the process of executing an expriment.
 
@@ -449,14 +448,14 @@ limit 100;
 ```
 There will be a file in `./hyrise/cmake-build-debug/sift_base-output.txt` containing all the ids for similar vectors storing in table **SIFT_BASE**. User can check the results with ground truth (stored in the downloaded file).
 
-# Experiment results
+### Experiment results
 
-<img src="./TODS_build2.png" width = 70% height = 70% alt="search" align=center />
+<img src="./TODS_build.png" width = 70% height = 70% alt="search" align=center />
 
-<img src="./TODS_search2.png" width = 70% height = 70% alt="build" align=center />
+<img src="./TODS_search.png" width = 70% height = 70% alt="build" align=center />
 
-<img src="./TODS_size2.png" width = 70% height = 70% alt="size" align=center />
+<img src="./TODS_size.png" width = 70% height = 70% alt="size" align=center />
 
-# Conclusion
+## Conclusion
 
 We systematically investigated the performance issues in generalized vector databases and identified a collection of root causes for these issues. Based on our findings, we developed a new generalized vector database, named HyriseVector, which matches the performance of specialized vector databases in search, index construction, and index size. More importantly, HyriseVector improves the performance of existing generalized vector databases by an order of magnitude of one to two.

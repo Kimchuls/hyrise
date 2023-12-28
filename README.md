@@ -7,7 +7,7 @@ These systems can be broadly categorized into two types: specialized and general
 
 To address the first question, we chose PostgreSQL as a representative relational database due to its popularity. We focused on Alibaba PASE, as it is a PostgreSQL-based vector database and is considered state-of-the-art among generalized vector databases. We analyzed the source code of PASE and compared its performance with the Faiss to identify the underlying root causes to the low performance in PASE. 
 
-Based on these root causes and the lessons learned, we developed a novel generalized vector database termed HyriseVector, which is built within Hyrise, a main-memory relational database. HyriseVector achieves performance comparable to the highly optimized specialized vector database in search, index construction, and index size, thus answering the second question. In particular, HyriseVector improves existing generalized vector databases by up to 16.1×.
+Based on these root causes and the lessons learned, we developed a novel generalized vector database termed HyriseVector, which is built within Hyrise, a main-memory relational database. HyriseVector achieves performance comparable to the highly optimized specialized vector database in search, index construction, and index size, thus answering the second question. In particular, HyriseVector improves the search time performance of existing generalized vector databases by up to 16.1×.
 
 
 ## Repository Contents
